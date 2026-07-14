@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/berserker/projects/project_GQuest
+CMAKE_SOURCE_DIR = /home/berserker/projects/GQuestRedux
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/berserker/projects/project_GQuest/build
+CMAKE_BINARY_DIR = /home/berserker/projects/GQuestRedux/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -236,14 +236,14 @@ src/game/clean: src/game/CMakeFiles/game.dir/clean
 libs/objects/CMakeFiles/objects.dir/all:
 	$(MAKE) $(MAKESILENT) -f libs/objects/CMakeFiles/objects.dir/build.make libs/objects/CMakeFiles/objects.dir/depend
 	$(MAKE) $(MAKESILENT) -f libs/objects/CMakeFiles/objects.dir/build.make libs/objects/CMakeFiles/objects.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=20,21 "Built target objects"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=20,21 "Built target objects"
 .PHONY : libs/objects/CMakeFiles/objects.dir/all
 
 # Build rule for subdir invocation for target.
 libs/objects/CMakeFiles/objects.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/CMakeFiles/objects.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : libs/objects/CMakeFiles/objects.dir/rule
 
 # Convenience name for target.
@@ -262,14 +262,14 @@ libs/objects/CMakeFiles/objects.dir/clean:
 libs/logging/CMakeFiles/logging.dir/all: libs/objects/CMakeFiles/objects.dir/all
 	$(MAKE) $(MAKESILENT) -f libs/logging/CMakeFiles/logging.dir/build.make libs/logging/CMakeFiles/logging.dir/depend
 	$(MAKE) $(MAKESILENT) -f libs/logging/CMakeFiles/logging.dir/build.make libs/logging/CMakeFiles/logging.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=18,19 "Built target logging"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=18,19 "Built target logging"
 .PHONY : libs/logging/CMakeFiles/logging.dir/all
 
 # Build rule for subdir invocation for target.
 libs/logging/CMakeFiles/logging.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/logging/CMakeFiles/logging.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : libs/logging/CMakeFiles/logging.dir/rule
 
 # Convenience name for target.
@@ -288,14 +288,14 @@ libs/logging/CMakeFiles/logging.dir/clean:
 libs/gcurses/CMakeFiles/gcurses.dir/all: libs/objects/CMakeFiles/objects.dir/all
 	$(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/depend
 	$(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=11,12,13 "Built target gcurses"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=11,12,13 "Built target gcurses"
 .PHONY : libs/gcurses/CMakeFiles/gcurses.dir/all
 
 # Build rule for subdir invocation for target.
 libs/gcurses/CMakeFiles/gcurses.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/CMakeFiles/gcurses.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : libs/gcurses/CMakeFiles/gcurses.dir/rule
 
 # Convenience name for target.
@@ -314,14 +314,14 @@ libs/gcurses/CMakeFiles/gcurses.dir/clean:
 libs/gio/CMakeFiles/gio.dir/all:
 	$(MAKE) $(MAKESILENT) -f libs/gio/CMakeFiles/gio.dir/build.make libs/gio/CMakeFiles/gio.dir/depend
 	$(MAKE) $(MAKESILENT) -f libs/gio/CMakeFiles/gio.dir/build.make libs/gio/CMakeFiles/gio.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=14,15 "Built target gio"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=14,15 "Built target gio"
 .PHONY : libs/gio/CMakeFiles/gio.dir/all
 
 # Build rule for subdir invocation for target.
 libs/gio/CMakeFiles/gio.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gio/CMakeFiles/gio.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : libs/gio/CMakeFiles/gio.dir/rule
 
 # Convenience name for target.
@@ -342,14 +342,14 @@ src/game/CMakeFiles/game.dir/all: libs/logging/CMakeFiles/logging.dir/all
 src/game/CMakeFiles/game.dir/all: libs/gio/CMakeFiles/gio.dir/all
 	$(MAKE) $(MAKESILENT) -f src/game/CMakeFiles/game.dir/build.make src/game/CMakeFiles/game.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/game/CMakeFiles/game.dir/build.make src/game/CMakeFiles/game.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=9,10 "Built target game"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=9,10 "Built target game"
 .PHONY : src/game/CMakeFiles/game.dir/all
 
 # Build rule for subdir invocation for target.
 src/game/CMakeFiles/game.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 8
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 8
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/game/CMakeFiles/game.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : src/game/CMakeFiles/game.dir/rule
 
 # Convenience name for target.
@@ -371,14 +371,14 @@ src/editor/CMakeFiles/editor.dir/all: libs/gcurses/CMakeFiles/gcurses.dir/all
 src/editor/CMakeFiles/editor.dir/all: libs/gio/CMakeFiles/gio.dir/all
 	$(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=4,5,6,7,8 "Built target editor"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=4,5,6,7,8 "Built target editor"
 .PHONY : src/editor/CMakeFiles/editor.dir/all
 
 # Build rule for subdir invocation for target.
 src/editor/CMakeFiles/editor.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 14
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/CMakeFiles/editor.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : src/editor/CMakeFiles/editor.dir/rule
 
 # Convenience name for target.
@@ -400,14 +400,14 @@ src/devstudio/CMakeFiles/devstudio.dir/all: libs/gcurses/CMakeFiles/gcurses.dir/
 src/devstudio/CMakeFiles/devstudio.dir/all: libs/gio/CMakeFiles/gio.dir/all
 	$(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=1,2,3 "Built target devstudio"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=1,2,3 "Built target devstudio"
 .PHONY : src/devstudio/CMakeFiles/devstudio.dir/all
 
 # Build rule for subdir invocation for target.
 src/devstudio/CMakeFiles/devstudio.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/CMakeFiles/devstudio.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : src/devstudio/CMakeFiles/devstudio.dir/rule
 
 # Convenience name for target.
@@ -426,14 +426,14 @@ src/devstudio/CMakeFiles/devstudio.dir/clean:
 src/devstudio/CMakeFiles/launcher-wrapper.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/launcher-wrapper.dir/build.make src/devstudio/CMakeFiles/launcher-wrapper.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/launcher-wrapper.dir/build.make src/devstudio/CMakeFiles/launcher-wrapper.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=16,17 "Built target launcher-wrapper"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=16,17 "Built target launcher-wrapper"
 .PHONY : src/devstudio/CMakeFiles/launcher-wrapper.dir/all
 
 # Build rule for subdir invocation for target.
 src/devstudio/CMakeFiles/launcher-wrapper.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/CMakeFiles/launcher-wrapper.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : src/devstudio/CMakeFiles/launcher-wrapper.dir/rule
 
 # Convenience name for target.
@@ -452,7 +452,7 @@ src/devstudio/CMakeFiles/launcher-wrapper.dir/clean:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -P /home/berserker/projects/project_GQuest/build/CMakeFiles/VerifyGlobs.cmake
+	$(CMAKE_COMMAND) -P /home/berserker/projects/GQuestRedux/build/CMakeFiles/VerifyGlobs.cmake
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

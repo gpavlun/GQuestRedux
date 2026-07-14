@@ -1,5 +1,5 @@
 libs/logging/CMakeFiles/logging.dir/src/logging.c.o: \
- /home/berserker/projects/project_GQuest/libs/logging/src/logging.c \
+ /home/berserker/projects/GQuestRedux/libs/logging/src/logging.c \
  /usr/include/stdc-predef.h /usr/include/time.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -56,4 +56,4 @@ libs/logging/CMakeFiles/logging.dir/src/logging.c.o: \
  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h /usr/include/string.h \
  /usr/include/strings.h \
- /home/berserker/projects/project_GQuest/libs/logging/include/logging.h
+ /home/berserker/projects/GQuestRedux/libs/logging/include/logging.h

@@ -1,5 +1,5 @@
 src/editor/CMakeFiles/editor.dir/editor_menu.c.o: \
- /home/berserker/projects/project_GQuest/src/editor/editor_menu.c \
+ /home/berserker/projects/GQuestRedux/src/editor/editor_menu.c \
  /usr/include/stdc-predef.h /usr/include/unistd.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -47,7 +47,7 @@ src/editor/CMakeFiles/editor.dir/editor_menu.c.o: \
  /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
- /home/berserker/projects/project_GQuest/libs/gio/include/gio.h \
+ /home/berserker/projects/GQuestRedux/libs/gio/include/gio.h \
  /usr/include/termios.h /usr/include/x86_64-linux-gnu/bits/termios.h \
  /usr/include/x86_64-linux-gnu/bits/termios-struct.h \
  /usr/include/x86_64-linux-gnu/bits/termios-c_cc.h \
@@ -93,8 +93,8 @@ src/editor/CMakeFiles/editor.dir/editor_menu.c.o: \
  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
  /usr/include/alloca.h /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /home/berserker/projects/project_GQuest/libs/logging/include/logging.h \
- /home/berserker/projects/project_GQuest/src/editor/editor.h \
+ /home/berserker/projects/GQuestRedux/libs/logging/include/logging.h \
+ /home/berserker/projects/GQuestRedux/src/editor/editor.h \
  /usr/local/include/SDL2/SDL.h /usr/local/include/SDL2/SDL_main.h \
  /usr/local/include/SDL2/SDL_stdinc.h \
  /usr/local/include/SDL2/SDL_config.h \

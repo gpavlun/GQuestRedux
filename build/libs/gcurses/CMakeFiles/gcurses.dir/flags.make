@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = -I/home/berserker/projects/project_GQuest/libs/gcurses/include -I/home/berserker/projects/project_GQuest/libs/objects/include
+C_INCLUDES = -I/home/berserker/projects/GQuestRedux/libs/gcurses/include -I/home/berserker/projects/GQuestRedux/libs/objects/include
 
 C_FLAGS = -std=gnu11
 

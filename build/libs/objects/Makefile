@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/berserker/projects/project_GQuest
+CMAKE_SOURCE_DIR = /home/berserker/projects/GQuestRedux
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/berserker/projects/project_GQuest/build
+CMAKE_BINARY_DIR = /home/berserker/projects/GQuestRedux/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles /home/berserker/projects/project_GQuest/build/libs/objects//CMakeFiles/progress.marks
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles /home/berserker/projects/GQuestRedux/build/libs/objects//CMakeFiles/progress.marks
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/clean
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,23 +103,23 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/preinstall
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/preinstall
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -P /home/berserker/projects/project_GQuest/build/CMakeFiles/VerifyGlobs.cmake
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -P /home/berserker/projects/GQuestRedux/build/CMakeFiles/VerifyGlobs.cmake
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 libs/objects/CMakeFiles/objects.dir/rule:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/CMakeFiles/objects.dir/rule
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/objects/CMakeFiles/objects.dir/rule
 .PHONY : libs/objects/CMakeFiles/objects.dir/rule
 
 # Convenience name for target.
@@ -128,7 +128,7 @@ objects: libs/objects/CMakeFiles/objects.dir/rule
 
 # fast build rule for target.
 objects/fast:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/objects/CMakeFiles/objects.dir/build.make libs/objects/CMakeFiles/objects.dir/build
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/objects/CMakeFiles/objects.dir/build.make libs/objects/CMakeFiles/objects.dir/build
 .PHONY : objects/fast
 
 src/oop.o: src/oop.c.o
@@ -136,7 +136,7 @@ src/oop.o: src/oop.c.o
 
 # target to build an object file
 src/oop.c.o:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/objects/CMakeFiles/objects.dir/build.make libs/objects/CMakeFiles/objects.dir/src/oop.c.o
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/objects/CMakeFiles/objects.dir/build.make libs/objects/CMakeFiles/objects.dir/src/oop.c.o
 .PHONY : src/oop.c.o
 
 src/oop.i: src/oop.c.i
@@ -144,7 +144,7 @@ src/oop.i: src/oop.c.i
 
 # target to preprocess a source file
 src/oop.c.i:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/objects/CMakeFiles/objects.dir/build.make libs/objects/CMakeFiles/objects.dir/src/oop.c.i
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/objects/CMakeFiles/objects.dir/build.make libs/objects/CMakeFiles/objects.dir/src/oop.c.i
 .PHONY : src/oop.c.i
 
 src/oop.s: src/oop.c.s
@@ -152,7 +152,7 @@ src/oop.s: src/oop.c.s
 
 # target to generate assembly for a file
 src/oop.c.s:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/objects/CMakeFiles/objects.dir/build.make libs/objects/CMakeFiles/objects.dir/src/oop.c.s
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/objects/CMakeFiles/objects.dir/build.make libs/objects/CMakeFiles/objects.dir/src/oop.c.s
 .PHONY : src/oop.c.s
 
 # Help Target
@@ -178,7 +178,7 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -P /home/berserker/projects/project_GQuest/build/CMakeFiles/VerifyGlobs.cmake
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -P /home/berserker/projects/GQuestRedux/build/CMakeFiles/VerifyGlobs.cmake
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

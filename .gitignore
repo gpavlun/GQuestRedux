@@ -1,0 +1,95 @@
+# ==============================
+# CMake build files
+# ==============================
+
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+Makefile
+
+
+# ==============================
+# Compiled binaries / libraries
+# ==============================
+
+*.o
+*.obj
+*.a
+*.so
+*.so.*
+*.dll
+
+bin/*.grg
+bin/launcher-wrapper
+
+
+# ==============================
+# Dependency files
+# ==============================
+
+*.d
+
+
+# ==============================
+# Debug / profiling output
+# ==============================
+
+*.log
+*.out
+*.prof
+*.gcda
+*.gcno
+*.gcov
+
+
+# ==============================
+# Temporary files
+# ==============================
+
+tmp/
+*.tmp
+*.temp
+*~
+
+# Editor swap files
+*.swp
+*.swo
+
+
+# ==============================
+# IDE/editor files
+# ==============================
+
+.vscode/
+.idea/
+*.code-workspace
+
+# Vim
+.*.swp
+
+
+# ==============================
+# OS generated files
+# ==============================
+
+.DS_Store
+Thumbs.db
+
+
+# ==============================
+# Local configuration
+# ==============================
+
+*.local
+.env
+
+
+# ==============================
+# Keep project scripts executable
+# ==============================
+
+# (intentionally empty)

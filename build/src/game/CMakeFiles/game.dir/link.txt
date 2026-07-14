@@ -1,1 +1,1 @@
-/usr/bin/cc -Wl,-rpath,/usr/local/lib -Wl,--enable-new-dtags CMakeFiles/game.dir/game.c.o -o /home/berserker/projects/project_GQuest/bin/game.grg  ../../libs/logging/liblogging.a ../../libs/gio/libgio.a /usr/lib/x86_64-linux-gnu/libSDL2.so ../../libs/objects/libobjects.a 
+/usr/bin/cc -Wl,-rpath,/usr/local/lib -Wl,--enable-new-dtags CMakeFiles/game.dir/game.c.o -o /home/berserker/projects/GQuestRedux/bin/game.grg  ../../libs/logging/liblogging.a ../../libs/gio/libgio.a /usr/lib/x86_64-linux-gnu/libSDL2.so ../../libs/objects/libobjects.a 

@@ -1,4 +1,4 @@
-# Install script for directory: /home/berserker/projects/project_GQuest
+# Install script for directory: /home/berserker/projects/GQuestRedux
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -44,12 +44,12 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/berserker/projects/project_GQuest/build/libs/cmake_install.cmake")
+  include("/home/berserker/projects/GQuestRedux/build/libs/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/berserker/projects/project_GQuest/build/src/cmake_install.cmake")
+  include("/home/berserker/projects/GQuestRedux/build/src/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -60,5 +60,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/berserker/projects/project_GQuest/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/berserker/projects/GQuestRedux/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

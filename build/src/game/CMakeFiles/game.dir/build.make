@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/berserker/projects/project_GQuest
+CMAKE_SOURCE_DIR = /home/berserker/projects/GQuestRedux
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/berserker/projects/project_GQuest/build
+CMAKE_BINARY_DIR = /home/berserker/projects/GQuestRedux/build
 
 # Include any dependencies generated for this target.
 include src/game/CMakeFiles/game.dir/depend.make
@@ -70,18 +70,18 @@ include src/game/CMakeFiles/game.dir/progress.make
 include src/game/CMakeFiles/game.dir/flags.make
 
 src/game/CMakeFiles/game.dir/game.c.o: src/game/CMakeFiles/game.dir/flags.make
-src/game/CMakeFiles/game.dir/game.c.o: /home/berserker/projects/project_GQuest/src/game/game.c
+src/game/CMakeFiles/game.dir/game.c.o: /home/berserker/projects/GQuestRedux/src/game/game.c
 src/game/CMakeFiles/game.dir/game.c.o: src/game/CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/game/CMakeFiles/game.dir/game.c.o"
-	cd /home/berserker/projects/project_GQuest/build/src/game && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/game/CMakeFiles/game.dir/game.c.o -MF CMakeFiles/game.dir/game.c.o.d -o CMakeFiles/game.dir/game.c.o -c /home/berserker/projects/project_GQuest/src/game/game.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/game/CMakeFiles/game.dir/game.c.o"
+	cd /home/berserker/projects/GQuestRedux/build/src/game && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/game/CMakeFiles/game.dir/game.c.o -MF CMakeFiles/game.dir/game.c.o.d -o CMakeFiles/game.dir/game.c.o -c /home/berserker/projects/GQuestRedux/src/game/game.c
 
 src/game/CMakeFiles/game.dir/game.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/game.dir/game.c.i"
-	cd /home/berserker/projects/project_GQuest/build/src/game && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/berserker/projects/project_GQuest/src/game/game.c > CMakeFiles/game.dir/game.c.i
+	cd /home/berserker/projects/GQuestRedux/build/src/game && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/berserker/projects/GQuestRedux/src/game/game.c > CMakeFiles/game.dir/game.c.i
 
 src/game/CMakeFiles/game.dir/game.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/game.dir/game.c.s"
-	cd /home/berserker/projects/project_GQuest/build/src/game && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/berserker/projects/project_GQuest/src/game/game.c -o CMakeFiles/game.dir/game.c.s
+	cd /home/berserker/projects/GQuestRedux/build/src/game && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/berserker/projects/GQuestRedux/src/game/game.c -o CMakeFiles/game.dir/game.c.s
 
 # Object files for target game
 game_OBJECTS = \
@@ -90,25 +90,25 @@ game_OBJECTS = \
 # External object files for target game
 game_EXTERNAL_OBJECTS =
 
-/home/berserker/projects/project_GQuest/bin/game.grg: src/game/CMakeFiles/game.dir/game.c.o
-/home/berserker/projects/project_GQuest/bin/game.grg: src/game/CMakeFiles/game.dir/build.make
-/home/berserker/projects/project_GQuest/bin/game.grg: libs/logging/liblogging.a
-/home/berserker/projects/project_GQuest/bin/game.grg: libs/gio/libgio.a
-/home/berserker/projects/project_GQuest/bin/game.grg: /usr/lib/x86_64-linux-gnu/libSDL2.so
-/home/berserker/projects/project_GQuest/bin/game.grg: libs/objects/libobjects.a
-/home/berserker/projects/project_GQuest/bin/game.grg: src/game/CMakeFiles/game.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable /home/berserker/projects/project_GQuest/bin/game.grg"
-	cd /home/berserker/projects/project_GQuest/build/src/game && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/game.dir/link.txt --verbose=$(VERBOSE)
+/home/berserker/projects/GQuestRedux/bin/game.grg: src/game/CMakeFiles/game.dir/game.c.o
+/home/berserker/projects/GQuestRedux/bin/game.grg: src/game/CMakeFiles/game.dir/build.make
+/home/berserker/projects/GQuestRedux/bin/game.grg: libs/logging/liblogging.a
+/home/berserker/projects/GQuestRedux/bin/game.grg: libs/gio/libgio.a
+/home/berserker/projects/GQuestRedux/bin/game.grg: /usr/lib/x86_64-linux-gnu/libSDL2.so
+/home/berserker/projects/GQuestRedux/bin/game.grg: libs/objects/libobjects.a
+/home/berserker/projects/GQuestRedux/bin/game.grg: src/game/CMakeFiles/game.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable /home/berserker/projects/GQuestRedux/bin/game.grg"
+	cd /home/berserker/projects/GQuestRedux/build/src/game && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/game.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-src/game/CMakeFiles/game.dir/build: /home/berserker/projects/project_GQuest/bin/game.grg
+src/game/CMakeFiles/game.dir/build: /home/berserker/projects/GQuestRedux/bin/game.grg
 .PHONY : src/game/CMakeFiles/game.dir/build
 
 src/game/CMakeFiles/game.dir/clean:
-	cd /home/berserker/projects/project_GQuest/build/src/game && $(CMAKE_COMMAND) -P CMakeFiles/game.dir/cmake_clean.cmake
+	cd /home/berserker/projects/GQuestRedux/build/src/game && $(CMAKE_COMMAND) -P CMakeFiles/game.dir/cmake_clean.cmake
 .PHONY : src/game/CMakeFiles/game.dir/clean
 
 src/game/CMakeFiles/game.dir/depend:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/berserker/projects/project_GQuest /home/berserker/projects/project_GQuest/src/game /home/berserker/projects/project_GQuest/build /home/berserker/projects/project_GQuest/build/src/game /home/berserker/projects/project_GQuest/build/src/game/CMakeFiles/game.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/berserker/projects/GQuestRedux /home/berserker/projects/GQuestRedux/src/game /home/berserker/projects/GQuestRedux/build /home/berserker/projects/GQuestRedux/build/src/game /home/berserker/projects/GQuestRedux/build/src/game/CMakeFiles/game.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : src/game/CMakeFiles/game.dir/depend
 

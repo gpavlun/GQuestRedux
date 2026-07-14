@@ -1,5 +1,5 @@
 libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o: \
- /home/berserker/projects/project_GQuest/libs/gcurses/src/gcurses.c \
+ /home/berserker/projects/GQuestRedux/libs/gcurses/src/gcurses.c \
  /usr/include/stdc-predef.h /usr/include/termios.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -99,5 +99,5 @@ libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o: \
  /usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
  /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
- /home/berserker/projects/project_GQuest/libs/gcurses/include/gcurses.h \
- /home/berserker/projects/project_GQuest/libs/objects/include/objects.h
+ /home/berserker/projects/GQuestRedux/libs/gcurses/include/gcurses.h \
+ /home/berserker/projects/GQuestRedux/libs/objects/include/objects.h

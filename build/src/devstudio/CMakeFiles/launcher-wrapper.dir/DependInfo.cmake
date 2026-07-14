@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/berserker/projects/project_GQuest/src/devstudio/launcher-wrapper.c" "src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o" "gcc" "src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o.d"
+  "/home/berserker/projects/GQuestRedux/src/devstudio/launcher-wrapper.c" "src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o" "gcc" "src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

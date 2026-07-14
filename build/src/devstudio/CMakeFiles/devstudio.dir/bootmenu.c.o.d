@@ -1,5 +1,5 @@
 src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o: \
- /home/berserker/projects/project_GQuest/src/devstudio/bootmenu.c \
+ /home/berserker/projects/GQuestRedux/src/devstudio/bootmenu.c \
  /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -91,7 +91,7 @@ src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o: \
  /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
  /usr/include/x86_64-linux-gnu/sys/wait.h \
  /usr/include/x86_64-linux-gnu/bits/types/idtype_t.h \
- /home/berserker/projects/project_GQuest/libs/gio/include/gio.h \
+ /home/berserker/projects/GQuestRedux/libs/gio/include/gio.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
  /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
@@ -107,10 +107,10 @@ src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o: \
  /usr/include/x86_64-linux-gnu/sys/stat.h \
  /usr/include/x86_64-linux-gnu/bits/stat.h \
  /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
- /home/berserker/projects/project_GQuest/libs/gcurses/include/gcurses.h \
- /home/berserker/projects/project_GQuest/libs/objects/include/objects.h \
- /home/berserker/projects/project_GQuest/libs/logging/include/logging.h \
+ /home/berserker/projects/GQuestRedux/libs/gcurses/include/gcurses.h \
+ /home/berserker/projects/GQuestRedux/libs/objects/include/objects.h \
+ /home/berserker/projects/GQuestRedux/libs/logging/include/logging.h \
  /usr/include/time.h /usr/include/x86_64-linux-gnu/bits/time.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
- /home/berserker/projects/project_GQuest/src/devstudio/dev.h
+ /home/berserker/projects/GQuestRedux/src/devstudio/dev.h

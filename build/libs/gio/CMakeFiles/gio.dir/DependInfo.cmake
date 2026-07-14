@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/berserker/projects/project_GQuest/libs/gio/src/cli_input.c" "libs/gio/CMakeFiles/gio.dir/src/cli_input.c.o" "gcc" "libs/gio/CMakeFiles/gio.dir/src/cli_input.c.o.d"
+  "/home/berserker/projects/GQuestRedux/libs/gio/src/cli_input.c" "libs/gio/CMakeFiles/gio.dir/src/cli_input.c.o" "gcc" "libs/gio/CMakeFiles/gio.dir/src/cli_input.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

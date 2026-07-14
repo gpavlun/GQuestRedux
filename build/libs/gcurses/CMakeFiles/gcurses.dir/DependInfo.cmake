@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/berserker/projects/project_GQuest/libs/gcurses/src/gcurses.c" "libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o" "gcc" "libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o.d"
-  "/home/berserker/projects/project_GQuest/libs/gcurses/src/objective.c" "libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o" "gcc" "libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o.d"
+  "/home/berserker/projects/GQuestRedux/libs/gcurses/src/gcurses.c" "libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o" "gcc" "libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o.d"
+  "/home/berserker/projects/GQuestRedux/libs/gcurses/src/objective.c" "libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o" "gcc" "libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

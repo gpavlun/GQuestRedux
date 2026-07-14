@@ -1,4 +1,4 @@
-# Install script for directory: /home/berserker/projects/project_GQuest/src/devstudio
+# Install script for directory: /home/berserker/projects/GQuestRedux/src/devstudio
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

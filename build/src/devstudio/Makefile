@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/berserker/projects/project_GQuest
+CMAKE_SOURCE_DIR = /home/berserker/projects/GQuestRedux
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/berserker/projects/project_GQuest/build
+CMAKE_BINARY_DIR = /home/berserker/projects/GQuestRedux/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles /home/berserker/projects/project_GQuest/build/src/devstudio//CMakeFiles/progress.marks
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles /home/berserker/projects/GQuestRedux/build/src/devstudio//CMakeFiles/progress.marks
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/clean
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,23 +103,23 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/preinstall
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/preinstall
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -P /home/berserker/projects/project_GQuest/build/CMakeFiles/VerifyGlobs.cmake
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -P /home/berserker/projects/GQuestRedux/build/CMakeFiles/VerifyGlobs.cmake
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 src/devstudio/CMakeFiles/devstudio.dir/rule:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/CMakeFiles/devstudio.dir/rule
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/CMakeFiles/devstudio.dir/rule
 .PHONY : src/devstudio/CMakeFiles/devstudio.dir/rule
 
 # Convenience name for target.
@@ -128,12 +128,12 @@ devstudio: src/devstudio/CMakeFiles/devstudio.dir/rule
 
 # fast build rule for target.
 devstudio/fast:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/build
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/build
 .PHONY : devstudio/fast
 
 # Convenience name for target.
 src/devstudio/CMakeFiles/launcher-wrapper.dir/rule:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/CMakeFiles/launcher-wrapper.dir/rule
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/devstudio/CMakeFiles/launcher-wrapper.dir/rule
 .PHONY : src/devstudio/CMakeFiles/launcher-wrapper.dir/rule
 
 # Convenience name for target.
@@ -142,7 +142,7 @@ launcher-wrapper: src/devstudio/CMakeFiles/launcher-wrapper.dir/rule
 
 # fast build rule for target.
 launcher-wrapper/fast:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/launcher-wrapper.dir/build.make src/devstudio/CMakeFiles/launcher-wrapper.dir/build
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/launcher-wrapper.dir/build.make src/devstudio/CMakeFiles/launcher-wrapper.dir/build
 .PHONY : launcher-wrapper/fast
 
 bootmenu.o: bootmenu.c.o
@@ -150,7 +150,7 @@ bootmenu.o: bootmenu.c.o
 
 # target to build an object file
 bootmenu.c.o:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o
 .PHONY : bootmenu.c.o
 
 bootmenu.i: bootmenu.c.i
@@ -158,7 +158,7 @@ bootmenu.i: bootmenu.c.i
 
 # target to preprocess a source file
 bootmenu.c.i:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.i
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.i
 .PHONY : bootmenu.c.i
 
 bootmenu.s: bootmenu.c.s
@@ -166,7 +166,7 @@ bootmenu.s: bootmenu.c.s
 
 # target to generate assembly for a file
 bootmenu.c.s:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.s
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.s
 .PHONY : bootmenu.c.s
 
 confparser.o: confparser.c.o
@@ -174,7 +174,7 @@ confparser.o: confparser.c.o
 
 # target to build an object file
 confparser.c.o:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o
 .PHONY : confparser.c.o
 
 confparser.i: confparser.c.i
@@ -182,7 +182,7 @@ confparser.i: confparser.c.i
 
 # target to preprocess a source file
 confparser.c.i:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/confparser.c.i
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/confparser.c.i
 .PHONY : confparser.c.i
 
 confparser.s: confparser.c.s
@@ -190,7 +190,7 @@ confparser.s: confparser.c.s
 
 # target to generate assembly for a file
 confparser.c.s:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/confparser.c.s
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/devstudio.dir/build.make src/devstudio/CMakeFiles/devstudio.dir/confparser.c.s
 .PHONY : confparser.c.s
 
 launcher-wrapper.o: launcher-wrapper.c.o
@@ -198,7 +198,7 @@ launcher-wrapper.o: launcher-wrapper.c.o
 
 # target to build an object file
 launcher-wrapper.c.o:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/launcher-wrapper.dir/build.make src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/launcher-wrapper.dir/build.make src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o
 .PHONY : launcher-wrapper.c.o
 
 launcher-wrapper.i: launcher-wrapper.c.i
@@ -206,7 +206,7 @@ launcher-wrapper.i: launcher-wrapper.c.i
 
 # target to preprocess a source file
 launcher-wrapper.c.i:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/launcher-wrapper.dir/build.make src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.i
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/launcher-wrapper.dir/build.make src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.i
 .PHONY : launcher-wrapper.c.i
 
 launcher-wrapper.s: launcher-wrapper.c.s
@@ -214,7 +214,7 @@ launcher-wrapper.s: launcher-wrapper.c.s
 
 # target to generate assembly for a file
 launcher-wrapper.c.s:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/launcher-wrapper.dir/build.make src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.s
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/devstudio/CMakeFiles/launcher-wrapper.dir/build.make src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.s
 .PHONY : launcher-wrapper.c.s
 
 # Help Target
@@ -247,7 +247,7 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -P /home/berserker/projects/project_GQuest/build/CMakeFiles/VerifyGlobs.cmake
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -P /home/berserker/projects/GQuestRedux/build/CMakeFiles/VerifyGlobs.cmake
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

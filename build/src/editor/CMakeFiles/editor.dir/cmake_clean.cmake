@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/berserker/projects/project_GQuest/bin/editor.grg"
-  "/home/berserker/projects/project_GQuest/bin/editor.grg.pdb"
+  "/home/berserker/projects/GQuestRedux/bin/editor.grg"
+  "/home/berserker/projects/GQuestRedux/bin/editor.grg.pdb"
   "CMakeFiles/editor.dir/chunk_operations.c.o"
   "CMakeFiles/editor.dir/chunk_operations.c.o.d"
   "CMakeFiles/editor.dir/editor.c.o"

@@ -1,4 +1,4 @@
-# Install script for directory: /home/berserker/projects/project_GQuest/libs/gio
+# Install script for directory: /home/berserker/projects/GQuestRedux/libs/gio
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

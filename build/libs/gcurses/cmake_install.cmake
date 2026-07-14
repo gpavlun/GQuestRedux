@@ -1,4 +1,4 @@
-# Install script for directory: /home/berserker/projects/project_GQuest/libs/gcurses
+# Install script for directory: /home/berserker/projects/GQuestRedux/libs/gcurses
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

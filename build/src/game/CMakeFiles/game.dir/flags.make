@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = -I/home/berserker/projects/project_GQuest/libs/logging/include -I/home/berserker/projects/project_GQuest/libs/objects/include -I/home/berserker/projects/project_GQuest/libs/gio/include -isystem /usr/local/include/SDL2
+C_INCLUDES = -I/home/berserker/projects/GQuestRedux/libs/logging/include -I/home/berserker/projects/GQuestRedux/libs/objects/include -I/home/berserker/projects/GQuestRedux/libs/gio/include -isystem /usr/local/include/SDL2
 
 C_FLAGS = -std=gnu11 -D_REENTRANT
 

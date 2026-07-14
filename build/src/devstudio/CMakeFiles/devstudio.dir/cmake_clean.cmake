@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/berserker/projects/project_GQuest/bin/devstudio.grg"
-  "/home/berserker/projects/project_GQuest/bin/devstudio.grg.pdb"
+  "/home/berserker/projects/GQuestRedux/bin/devstudio.grg"
+  "/home/berserker/projects/GQuestRedux/bin/devstudio.grg.pdb"
   "CMakeFiles/devstudio.dir/bootmenu.c.o"
   "CMakeFiles/devstudio.dir/bootmenu.c.o.d"
   "CMakeFiles/devstudio.dir/confparser.c.o"

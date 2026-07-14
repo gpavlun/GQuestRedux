@@ -1,5 +1,5 @@
 src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o: \
- /home/berserker/projects/project_GQuest/src/devstudio/confparser.c \
+ /home/berserker/projects/GQuestRedux/src/devstudio/confparser.c \
  /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -69,4 +69,4 @@ src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o: \
  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h \
- /home/berserker/projects/project_GQuest/src/devstudio/dev.h
+ /home/berserker/projects/GQuestRedux/src/devstudio/dev.h

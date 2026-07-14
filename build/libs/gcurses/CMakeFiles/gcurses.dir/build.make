@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/berserker/projects/project_GQuest
+CMAKE_SOURCE_DIR = /home/berserker/projects/GQuestRedux
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/berserker/projects/project_GQuest/build
+CMAKE_BINARY_DIR = /home/berserker/projects/GQuestRedux/build
 
 # Include any dependencies generated for this target.
 include libs/gcurses/CMakeFiles/gcurses.dir/depend.make
@@ -70,32 +70,32 @@ include libs/gcurses/CMakeFiles/gcurses.dir/progress.make
 include libs/gcurses/CMakeFiles/gcurses.dir/flags.make
 
 libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o: libs/gcurses/CMakeFiles/gcurses.dir/flags.make
-libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o: /home/berserker/projects/project_GQuest/libs/gcurses/src/gcurses.c
+libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o: /home/berserker/projects/GQuestRedux/libs/gcurses/src/gcurses.c
 libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o: libs/gcurses/CMakeFiles/gcurses.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o"
-	cd /home/berserker/projects/project_GQuest/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o -MF CMakeFiles/gcurses.dir/src/gcurses.c.o.d -o CMakeFiles/gcurses.dir/src/gcurses.c.o -c /home/berserker/projects/project_GQuest/libs/gcurses/src/gcurses.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o"
+	cd /home/berserker/projects/GQuestRedux/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o -MF CMakeFiles/gcurses.dir/src/gcurses.c.o.d -o CMakeFiles/gcurses.dir/src/gcurses.c.o -c /home/berserker/projects/GQuestRedux/libs/gcurses/src/gcurses.c
 
 libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/gcurses.dir/src/gcurses.c.i"
-	cd /home/berserker/projects/project_GQuest/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/berserker/projects/project_GQuest/libs/gcurses/src/gcurses.c > CMakeFiles/gcurses.dir/src/gcurses.c.i
+	cd /home/berserker/projects/GQuestRedux/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/berserker/projects/GQuestRedux/libs/gcurses/src/gcurses.c > CMakeFiles/gcurses.dir/src/gcurses.c.i
 
 libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/gcurses.dir/src/gcurses.c.s"
-	cd /home/berserker/projects/project_GQuest/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/berserker/projects/project_GQuest/libs/gcurses/src/gcurses.c -o CMakeFiles/gcurses.dir/src/gcurses.c.s
+	cd /home/berserker/projects/GQuestRedux/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/berserker/projects/GQuestRedux/libs/gcurses/src/gcurses.c -o CMakeFiles/gcurses.dir/src/gcurses.c.s
 
 libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o: libs/gcurses/CMakeFiles/gcurses.dir/flags.make
-libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o: /home/berserker/projects/project_GQuest/libs/gcurses/src/objective.c
+libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o: /home/berserker/projects/GQuestRedux/libs/gcurses/src/objective.c
 libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o: libs/gcurses/CMakeFiles/gcurses.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o"
-	cd /home/berserker/projects/project_GQuest/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o -MF CMakeFiles/gcurses.dir/src/objective.c.o.d -o CMakeFiles/gcurses.dir/src/objective.c.o -c /home/berserker/projects/project_GQuest/libs/gcurses/src/objective.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o"
+	cd /home/berserker/projects/GQuestRedux/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o -MF CMakeFiles/gcurses.dir/src/objective.c.o.d -o CMakeFiles/gcurses.dir/src/objective.c.o -c /home/berserker/projects/GQuestRedux/libs/gcurses/src/objective.c
 
 libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/gcurses.dir/src/objective.c.i"
-	cd /home/berserker/projects/project_GQuest/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/berserker/projects/project_GQuest/libs/gcurses/src/objective.c > CMakeFiles/gcurses.dir/src/objective.c.i
+	cd /home/berserker/projects/GQuestRedux/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/berserker/projects/GQuestRedux/libs/gcurses/src/objective.c > CMakeFiles/gcurses.dir/src/objective.c.i
 
 libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/gcurses.dir/src/objective.c.s"
-	cd /home/berserker/projects/project_GQuest/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/berserker/projects/project_GQuest/libs/gcurses/src/objective.c -o CMakeFiles/gcurses.dir/src/objective.c.s
+	cd /home/berserker/projects/GQuestRedux/build/libs/gcurses && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/berserker/projects/GQuestRedux/libs/gcurses/src/objective.c -o CMakeFiles/gcurses.dir/src/objective.c.s
 
 # Object files for target gcurses
 gcurses_OBJECTS = \
@@ -109,19 +109,19 @@ libs/gcurses/libgcurses.a: libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o
 libs/gcurses/libgcurses.a: libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o
 libs/gcurses/libgcurses.a: libs/gcurses/CMakeFiles/gcurses.dir/build.make
 libs/gcurses/libgcurses.a: libs/gcurses/CMakeFiles/gcurses.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C static library libgcurses.a"
-	cd /home/berserker/projects/project_GQuest/build/libs/gcurses && $(CMAKE_COMMAND) -P CMakeFiles/gcurses.dir/cmake_clean_target.cmake
-	cd /home/berserker/projects/project_GQuest/build/libs/gcurses && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/gcurses.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C static library libgcurses.a"
+	cd /home/berserker/projects/GQuestRedux/build/libs/gcurses && $(CMAKE_COMMAND) -P CMakeFiles/gcurses.dir/cmake_clean_target.cmake
+	cd /home/berserker/projects/GQuestRedux/build/libs/gcurses && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/gcurses.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 libs/gcurses/CMakeFiles/gcurses.dir/build: libs/gcurses/libgcurses.a
 .PHONY : libs/gcurses/CMakeFiles/gcurses.dir/build
 
 libs/gcurses/CMakeFiles/gcurses.dir/clean:
-	cd /home/berserker/projects/project_GQuest/build/libs/gcurses && $(CMAKE_COMMAND) -P CMakeFiles/gcurses.dir/cmake_clean.cmake
+	cd /home/berserker/projects/GQuestRedux/build/libs/gcurses && $(CMAKE_COMMAND) -P CMakeFiles/gcurses.dir/cmake_clean.cmake
 .PHONY : libs/gcurses/CMakeFiles/gcurses.dir/clean
 
 libs/gcurses/CMakeFiles/gcurses.dir/depend:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/berserker/projects/project_GQuest /home/berserker/projects/project_GQuest/libs/gcurses /home/berserker/projects/project_GQuest/build /home/berserker/projects/project_GQuest/build/libs/gcurses /home/berserker/projects/project_GQuest/build/libs/gcurses/CMakeFiles/gcurses.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/berserker/projects/GQuestRedux /home/berserker/projects/GQuestRedux/libs/gcurses /home/berserker/projects/GQuestRedux/build /home/berserker/projects/GQuestRedux/build/libs/gcurses /home/berserker/projects/GQuestRedux/build/libs/gcurses/CMakeFiles/gcurses.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : libs/gcurses/CMakeFiles/gcurses.dir/depend
 

@@ -1,5 +1,5 @@
 libs/objects/CMakeFiles/objects.dir/src/oop.c.o: \
- /home/berserker/projects/project_GQuest/libs/objects/src/oop.c \
+ /home/berserker/projects/GQuestRedux/libs/objects/src/oop.c \
  /usr/include/stdc-predef.h /usr/include/x86_64-linux-gnu/sys/mman.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -67,4 +67,4 @@ libs/objects/CMakeFiles/objects.dir/src/oop.c.o: \
  /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /home/berserker/projects/project_GQuest/libs/objects/include/objects.h
+ /home/berserker/projects/GQuestRedux/libs/objects/include/objects.h

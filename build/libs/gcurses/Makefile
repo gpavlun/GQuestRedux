@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/berserker/projects/project_GQuest
+CMAKE_SOURCE_DIR = /home/berserker/projects/GQuestRedux
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/berserker/projects/project_GQuest/build
+CMAKE_BINARY_DIR = /home/berserker/projects/GQuestRedux/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles /home/berserker/projects/project_GQuest/build/libs/gcurses//CMakeFiles/progress.marks
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles /home/berserker/projects/GQuestRedux/build/libs/gcurses//CMakeFiles/progress.marks
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/clean
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,23 +103,23 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/preinstall
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/preinstall
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -P /home/berserker/projects/project_GQuest/build/CMakeFiles/VerifyGlobs.cmake
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -P /home/berserker/projects/GQuestRedux/build/CMakeFiles/VerifyGlobs.cmake
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 libs/gcurses/CMakeFiles/gcurses.dir/rule:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/CMakeFiles/gcurses.dir/rule
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libs/gcurses/CMakeFiles/gcurses.dir/rule
 .PHONY : libs/gcurses/CMakeFiles/gcurses.dir/rule
 
 # Convenience name for target.
@@ -128,7 +128,7 @@ gcurses: libs/gcurses/CMakeFiles/gcurses.dir/rule
 
 # fast build rule for target.
 gcurses/fast:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/build
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/build
 .PHONY : gcurses/fast
 
 src/gcurses.o: src/gcurses.c.o
@@ -136,7 +136,7 @@ src/gcurses.o: src/gcurses.c.o
 
 # target to build an object file
 src/gcurses.c.o:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o
 .PHONY : src/gcurses.c.o
 
 src/gcurses.i: src/gcurses.c.i
@@ -144,7 +144,7 @@ src/gcurses.i: src/gcurses.c.i
 
 # target to preprocess a source file
 src/gcurses.c.i:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.i
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.i
 .PHONY : src/gcurses.c.i
 
 src/gcurses.s: src/gcurses.c.s
@@ -152,7 +152,7 @@ src/gcurses.s: src/gcurses.c.s
 
 # target to generate assembly for a file
 src/gcurses.c.s:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.s
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.s
 .PHONY : src/gcurses.c.s
 
 src/objective.o: src/objective.c.o
@@ -160,7 +160,7 @@ src/objective.o: src/objective.c.o
 
 # target to build an object file
 src/objective.c.o:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o
 .PHONY : src/objective.c.o
 
 src/objective.i: src/objective.c.i
@@ -168,7 +168,7 @@ src/objective.i: src/objective.c.i
 
 # target to preprocess a source file
 src/objective.c.i:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.i
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.i
 .PHONY : src/objective.c.i
 
 src/objective.s: src/objective.c.s
@@ -176,7 +176,7 @@ src/objective.s: src/objective.c.s
 
 # target to generate assembly for a file
 src/objective.c.s:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.s
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f libs/gcurses/CMakeFiles/gcurses.dir/build.make libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.s
 .PHONY : src/objective.c.s
 
 # Help Target
@@ -205,7 +205,7 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -P /home/berserker/projects/project_GQuest/build/CMakeFiles/VerifyGlobs.cmake
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -P /home/berserker/projects/GQuestRedux/build/CMakeFiles/VerifyGlobs.cmake
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

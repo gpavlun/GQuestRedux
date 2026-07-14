@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/berserker/projects/project_GQuest/src/devstudio/bootmenu.c" "src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o" "gcc" "src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o.d"
-  "/home/berserker/projects/project_GQuest/src/devstudio/confparser.c" "src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o" "gcc" "src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o.d"
+  "/home/berserker/projects/GQuestRedux/src/devstudio/bootmenu.c" "src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o" "gcc" "src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o.d"
+  "/home/berserker/projects/GQuestRedux/src/devstudio/confparser.c" "src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o" "gcc" "src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

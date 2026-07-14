@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/berserker/projects/project_GQuest/libs/objects/src/oop.c" "libs/objects/CMakeFiles/objects.dir/src/oop.c.o" "gcc" "libs/objects/CMakeFiles/objects.dir/src/oop.c.o.d"
+  "/home/berserker/projects/GQuestRedux/libs/objects/src/oop.c" "libs/objects/CMakeFiles/objects.dir/src/oop.c.o" "gcc" "libs/objects/CMakeFiles/objects.dir/src/oop.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

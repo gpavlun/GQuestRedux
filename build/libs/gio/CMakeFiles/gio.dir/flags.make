@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = -I/home/berserker/projects/project_GQuest/libs/gio/include
+C_INCLUDES = -I/home/berserker/projects/GQuestRedux/libs/gio/include
 
 C_FLAGS = -std=gnu11
 

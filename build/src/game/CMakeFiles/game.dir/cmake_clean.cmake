@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/berserker/projects/project_GQuest/bin/game.grg"
-  "/home/berserker/projects/project_GQuest/bin/game.grg.pdb"
+  "/home/berserker/projects/GQuestRedux/bin/game.grg"
+  "/home/berserker/projects/GQuestRedux/bin/game.grg.pdb"
   "CMakeFiles/game.dir/game.c.o"
   "CMakeFiles/game.dir/game.c.o.d"
 )

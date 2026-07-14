@@ -1,4 +1,4 @@
-# Install script for directory: /home/berserker/projects/project_GQuest/src/game
+# Install script for directory: /home/berserker/projects/GQuestRedux/src/game
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

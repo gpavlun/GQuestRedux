@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/berserker/projects/project_GQuest
+CMAKE_SOURCE_DIR = /home/berserker/projects/GQuestRedux
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/berserker/projects/project_GQuest/build
+CMAKE_BINARY_DIR = /home/berserker/projects/GQuestRedux/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles /home/berserker/projects/project_GQuest/build/src/editor//CMakeFiles/progress.marks
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/project_GQuest/build/CMakeFiles 0
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles /home/berserker/projects/GQuestRedux/build/src/editor//CMakeFiles/progress.marks
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/berserker/projects/GQuestRedux/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/clean
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,23 +103,23 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/preinstall
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/preinstall
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -P /home/berserker/projects/project_GQuest/build/CMakeFiles/VerifyGlobs.cmake
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -P /home/berserker/projects/GQuestRedux/build/CMakeFiles/VerifyGlobs.cmake
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 src/editor/CMakeFiles/editor.dir/rule:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/CMakeFiles/editor.dir/rule
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/editor/CMakeFiles/editor.dir/rule
 .PHONY : src/editor/CMakeFiles/editor.dir/rule
 
 # Convenience name for target.
@@ -128,7 +128,7 @@ editor: src/editor/CMakeFiles/editor.dir/rule
 
 # fast build rule for target.
 editor/fast:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/build
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/build
 .PHONY : editor/fast
 
 chunk_operations.o: chunk_operations.c.o
@@ -136,7 +136,7 @@ chunk_operations.o: chunk_operations.c.o
 
 # target to build an object file
 chunk_operations.c.o:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/chunk_operations.c.o
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/chunk_operations.c.o
 .PHONY : chunk_operations.c.o
 
 chunk_operations.i: chunk_operations.c.i
@@ -144,7 +144,7 @@ chunk_operations.i: chunk_operations.c.i
 
 # target to preprocess a source file
 chunk_operations.c.i:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/chunk_operations.c.i
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/chunk_operations.c.i
 .PHONY : chunk_operations.c.i
 
 chunk_operations.s: chunk_operations.c.s
@@ -152,7 +152,7 @@ chunk_operations.s: chunk_operations.c.s
 
 # target to generate assembly for a file
 chunk_operations.c.s:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/chunk_operations.c.s
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/chunk_operations.c.s
 .PHONY : chunk_operations.c.s
 
 editor.o: editor.c.o
@@ -160,7 +160,7 @@ editor.o: editor.c.o
 
 # target to build an object file
 editor.c.o:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor.c.o
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor.c.o
 .PHONY : editor.c.o
 
 editor.i: editor.c.i
@@ -168,7 +168,7 @@ editor.i: editor.c.i
 
 # target to preprocess a source file
 editor.c.i:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor.c.i
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor.c.i
 .PHONY : editor.c.i
 
 editor.s: editor.c.s
@@ -176,7 +176,7 @@ editor.s: editor.c.s
 
 # target to generate assembly for a file
 editor.c.s:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor.c.s
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor.c.s
 .PHONY : editor.c.s
 
 editor_menu.o: editor_menu.c.o
@@ -184,7 +184,7 @@ editor_menu.o: editor_menu.c.o
 
 # target to build an object file
 editor_menu.c.o:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_menu.c.o
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_menu.c.o
 .PHONY : editor_menu.c.o
 
 editor_menu.i: editor_menu.c.i
@@ -192,7 +192,7 @@ editor_menu.i: editor_menu.c.i
 
 # target to preprocess a source file
 editor_menu.c.i:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_menu.c.i
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_menu.c.i
 .PHONY : editor_menu.c.i
 
 editor_menu.s: editor_menu.c.s
@@ -200,7 +200,7 @@ editor_menu.s: editor_menu.c.s
 
 # target to generate assembly for a file
 editor_menu.c.s:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_menu.c.s
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_menu.c.s
 .PHONY : editor_menu.c.s
 
 editor_window.o: editor_window.c.o
@@ -208,7 +208,7 @@ editor_window.o: editor_window.c.o
 
 # target to build an object file
 editor_window.c.o:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_window.c.o
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_window.c.o
 .PHONY : editor_window.c.o
 
 editor_window.i: editor_window.c.i
@@ -216,7 +216,7 @@ editor_window.i: editor_window.c.i
 
 # target to preprocess a source file
 editor_window.c.i:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_window.c.i
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_window.c.i
 .PHONY : editor_window.c.i
 
 editor_window.s: editor_window.c.s
@@ -224,7 +224,7 @@ editor_window.s: editor_window.c.s
 
 # target to generate assembly for a file
 editor_window.c.s:
-	cd /home/berserker/projects/project_GQuest/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_window.c.s
+	cd /home/berserker/projects/GQuestRedux/build && $(MAKE) $(MAKESILENT) -f src/editor/CMakeFiles/editor.dir/build.make src/editor/CMakeFiles/editor.dir/editor_window.c.s
 .PHONY : editor_window.c.s
 
 # Help Target
@@ -259,7 +259,7 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -P /home/berserker/projects/project_GQuest/build/CMakeFiles/VerifyGlobs.cmake
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -P /home/berserker/projects/GQuestRedux/build/CMakeFiles/VerifyGlobs.cmake
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -3,77 +3,77 @@
 cmake_policy(SET CMP0009 NEW)
 
 # GCURSES_SOURCES at libs/gcurses/CMakeLists.txt:3 (file)
-file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/project_GQuest/libs/gcurses/src/*.c")
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/GQuestRedux/libs/gcurses/src/*.c")
 set(OLD_GLOB
-  "/home/berserker/projects/project_GQuest/libs/gcurses/src/gcurses.c"
-  "/home/berserker/projects/project_GQuest/libs/gcurses/src/objective.c"
+  "/home/berserker/projects/GQuestRedux/libs/gcurses/src/gcurses.c"
+  "/home/berserker/projects/GQuestRedux/libs/gcurses/src/objective.c"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/home/berserker/projects/project_GQuest/build/CMakeFiles/cmake.verify_globs")
+  file(TOUCH_NOCREATE "/home/berserker/projects/GQuestRedux/build/CMakeFiles/cmake.verify_globs")
 endif()
 
 # GIO_SOURCES at libs/gio/CMakeLists.txt:3 (file)
-file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/project_GQuest/libs/gio/src/*.c")
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/GQuestRedux/libs/gio/src/*.c")
 set(OLD_GLOB
-  "/home/berserker/projects/project_GQuest/libs/gio/src/cli_input.c"
+  "/home/berserker/projects/GQuestRedux/libs/gio/src/cli_input.c"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/home/berserker/projects/project_GQuest/build/CMakeFiles/cmake.verify_globs")
+  file(TOUCH_NOCREATE "/home/berserker/projects/GQuestRedux/build/CMakeFiles/cmake.verify_globs")
 endif()
 
 # LOGGING_SOURCES at libs/logging/CMakeLists.txt:3 (file)
-file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/project_GQuest/libs/logging/src/*.c")
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/GQuestRedux/libs/logging/src/*.c")
 set(OLD_GLOB
-  "/home/berserker/projects/project_GQuest/libs/logging/src/logging.c"
+  "/home/berserker/projects/GQuestRedux/libs/logging/src/logging.c"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/home/berserker/projects/project_GQuest/build/CMakeFiles/cmake.verify_globs")
+  file(TOUCH_NOCREATE "/home/berserker/projects/GQuestRedux/build/CMakeFiles/cmake.verify_globs")
 endif()
 
 # OBJECTS_SOURCES at libs/objects/CMakeLists.txt:3 (file)
-file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/project_GQuest/libs/objects/src/*.c")
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/GQuestRedux/libs/objects/src/*.c")
 set(OLD_GLOB
-  "/home/berserker/projects/project_GQuest/libs/objects/src/oop.c"
+  "/home/berserker/projects/GQuestRedux/libs/objects/src/oop.c"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/home/berserker/projects/project_GQuest/build/CMakeFiles/cmake.verify_globs")
+  file(TOUCH_NOCREATE "/home/berserker/projects/GQuestRedux/build/CMakeFiles/cmake.verify_globs")
 endif()
 
 # DEVSTUDIO_SOURCES at src/devstudio/CMakeLists.txt:1 (file)
-file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/project_GQuest/src/devstudio/*.c")
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/GQuestRedux/src/devstudio/*.c")
 set(OLD_GLOB
-  "/home/berserker/projects/project_GQuest/src/devstudio/bootmenu.c"
-  "/home/berserker/projects/project_GQuest/src/devstudio/confparser.c"
-  "/home/berserker/projects/project_GQuest/src/devstudio/launcher-wrapper.c"
+  "/home/berserker/projects/GQuestRedux/src/devstudio/bootmenu.c"
+  "/home/berserker/projects/GQuestRedux/src/devstudio/confparser.c"
+  "/home/berserker/projects/GQuestRedux/src/devstudio/launcher-wrapper.c"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/home/berserker/projects/project_GQuest/build/CMakeFiles/cmake.verify_globs")
+  file(TOUCH_NOCREATE "/home/berserker/projects/GQuestRedux/build/CMakeFiles/cmake.verify_globs")
 endif()
 
 # EDITOR_SOURCES at src/editor/CMakeLists.txt:3 (file)
-file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/project_GQuest/src/editor/*.c")
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/GQuestRedux/src/editor/*.c")
 set(OLD_GLOB
-  "/home/berserker/projects/project_GQuest/src/editor/chunk_operations.c"
-  "/home/berserker/projects/project_GQuest/src/editor/editor.c"
-  "/home/berserker/projects/project_GQuest/src/editor/editor_menu.c"
-  "/home/berserker/projects/project_GQuest/src/editor/editor_window.c"
+  "/home/berserker/projects/GQuestRedux/src/editor/chunk_operations.c"
+  "/home/berserker/projects/GQuestRedux/src/editor/editor.c"
+  "/home/berserker/projects/GQuestRedux/src/editor/editor_menu.c"
+  "/home/berserker/projects/GQuestRedux/src/editor/editor_window.c"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/home/berserker/projects/project_GQuest/build/CMakeFiles/cmake.verify_globs")
+  file(TOUCH_NOCREATE "/home/berserker/projects/GQuestRedux/build/CMakeFiles/cmake.verify_globs")
 endif()
 
 # GAME_SOURCES at src/game/CMakeLists.txt:3 (file)
-file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/project_GQuest/src/game/*.c")
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/berserker/projects/GQuestRedux/src/game/*.c")
 set(OLD_GLOB
-  "/home/berserker/projects/project_GQuest/src/game/game.c"
+  "/home/berserker/projects/GQuestRedux/src/game/game.c"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/home/berserker/projects/project_GQuest/build/CMakeFiles/cmake.verify_globs")
+  file(TOUCH_NOCREATE "/home/berserker/projects/GQuestRedux/build/CMakeFiles/cmake.verify_globs")
 endif()

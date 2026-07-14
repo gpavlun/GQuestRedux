@@ -1,5 +1,5 @@
 src/editor/CMakeFiles/editor.dir/editor_window.c.o: \
- /home/berserker/projects/project_GQuest/src/editor/editor_window.c \
+ /home/berserker/projects/GQuestRedux/src/editor/editor_window.c \
  /usr/include/stdc-predef.h /usr/local/include/SDL2/SDL.h \
  /usr/local/include/SDL2/SDL_main.h /usr/local/include/SDL2/SDL_stdinc.h \
  /usr/local/include/SDL2/SDL_config.h \
@@ -197,7 +197,7 @@ src/editor/CMakeFiles/editor.dir/editor_window.c.o: \
  /usr/local/include/SDL2/SDL_system.h /usr/local/include/SDL2/SDL_timer.h \
  /usr/local/include/SDL2/SDL_version.h \
  /usr/local/include/SDL2/SDL_locale.h /usr/local/include/SDL2/SDL_misc.h \
- /home/berserker/projects/project_GQuest/libs/gio/include/gio.h \
+ /home/berserker/projects/GQuestRedux/libs/gio/include/gio.h \
  /usr/include/termios.h /usr/include/x86_64-linux-gnu/bits/termios.h \
  /usr/include/x86_64-linux-gnu/bits/termios-struct.h \
  /usr/include/x86_64-linux-gnu/bits/termios-c_cc.h \
@@ -226,4 +226,4 @@ src/editor/CMakeFiles/editor.dir/editor_window.c.o: \
  /usr/include/x86_64-linux-gnu/sys/stat.h \
  /usr/include/x86_64-linux-gnu/bits/stat.h \
  /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
- /home/berserker/projects/project_GQuest/src/editor/editor.h
+ /home/berserker/projects/GQuestRedux/src/editor/editor.h

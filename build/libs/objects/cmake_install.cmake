@@ -1,4 +1,4 @@
-# Install script for directory: /home/berserker/projects/project_GQuest/libs/objects
+# Install script for directory: /home/berserker/projects/GQuestRedux/libs/objects
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

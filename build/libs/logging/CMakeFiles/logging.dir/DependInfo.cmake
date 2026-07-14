@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/berserker/projects/project_GQuest/libs/logging/src/logging.c" "libs/logging/CMakeFiles/logging.dir/src/logging.c.o" "gcc" "libs/logging/CMakeFiles/logging.dir/src/logging.c.o.d"
+  "/home/berserker/projects/GQuestRedux/libs/logging/src/logging.c" "libs/logging/CMakeFiles/logging.dir/src/logging.c.o" "gcc" "libs/logging/CMakeFiles/logging.dir/src/logging.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

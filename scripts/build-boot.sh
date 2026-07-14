@@ -1,3 +1,3 @@
 #! /bin/bash
 
-make devstudio
+cmake --build build --target devstudio

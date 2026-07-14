@@ -1,7 +1,7 @@
 libs/gio/CMakeFiles/gio.dir/src/cli_input.c.o: \
- /home/berserker/projects/project_GQuest/libs/gio/src/cli_input.c \
+ /home/berserker/projects/GQuestRedux/libs/gio/src/cli_input.c \
  /usr/include/stdc-predef.h \
- /home/berserker/projects/project_GQuest/libs/gio/include/gio.h \
+ /home/berserker/projects/GQuestRedux/libs/gio/include/gio.h \
  /usr/include/termios.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \

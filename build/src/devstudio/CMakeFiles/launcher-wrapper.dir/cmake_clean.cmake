@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/berserker/projects/project_GQuest/bin/launcher-wrapper"
-  "/home/berserker/projects/project_GQuest/bin/launcher-wrapper.pdb"
+  "/home/berserker/projects/GQuestRedux/bin/launcher-wrapper"
+  "/home/berserker/projects/GQuestRedux/bin/launcher-wrapper.pdb"
   "CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o"
   "CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o.d"
 )

@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/berserker/projects/project_GQuest/src/game/game.c" "src/game/CMakeFiles/game.dir/game.c.o" "gcc" "src/game/CMakeFiles/game.dir/game.c.o.d"
+  "/home/berserker/projects/GQuestRedux/src/game/game.c" "src/game/CMakeFiles/game.dir/game.c.o" "gcc" "src/game/CMakeFiles/game.dir/game.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

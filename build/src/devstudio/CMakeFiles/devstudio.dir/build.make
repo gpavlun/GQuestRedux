@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/berserker/projects/project_GQuest
+CMAKE_SOURCE_DIR = /home/berserker/projects/GQuestRedux
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/berserker/projects/project_GQuest/build
+CMAKE_BINARY_DIR = /home/berserker/projects/GQuestRedux/build
 
 # Include any dependencies generated for this target.
 include src/devstudio/CMakeFiles/devstudio.dir/depend.make
@@ -70,32 +70,32 @@ include src/devstudio/CMakeFiles/devstudio.dir/progress.make
 include src/devstudio/CMakeFiles/devstudio.dir/flags.make
 
 src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o: src/devstudio/CMakeFiles/devstudio.dir/flags.make
-src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o: /home/berserker/projects/project_GQuest/src/devstudio/bootmenu.c
+src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o: /home/berserker/projects/GQuestRedux/src/devstudio/bootmenu.c
 src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o: src/devstudio/CMakeFiles/devstudio.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o"
-	cd /home/berserker/projects/project_GQuest/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o -MF CMakeFiles/devstudio.dir/bootmenu.c.o.d -o CMakeFiles/devstudio.dir/bootmenu.c.o -c /home/berserker/projects/project_GQuest/src/devstudio/bootmenu.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o"
+	cd /home/berserker/projects/GQuestRedux/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o -MF CMakeFiles/devstudio.dir/bootmenu.c.o.d -o CMakeFiles/devstudio.dir/bootmenu.c.o -c /home/berserker/projects/GQuestRedux/src/devstudio/bootmenu.c
 
 src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/devstudio.dir/bootmenu.c.i"
-	cd /home/berserker/projects/project_GQuest/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/berserker/projects/project_GQuest/src/devstudio/bootmenu.c > CMakeFiles/devstudio.dir/bootmenu.c.i
+	cd /home/berserker/projects/GQuestRedux/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/berserker/projects/GQuestRedux/src/devstudio/bootmenu.c > CMakeFiles/devstudio.dir/bootmenu.c.i
 
 src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/devstudio.dir/bootmenu.c.s"
-	cd /home/berserker/projects/project_GQuest/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/berserker/projects/project_GQuest/src/devstudio/bootmenu.c -o CMakeFiles/devstudio.dir/bootmenu.c.s
+	cd /home/berserker/projects/GQuestRedux/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/berserker/projects/GQuestRedux/src/devstudio/bootmenu.c -o CMakeFiles/devstudio.dir/bootmenu.c.s
 
 src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o: src/devstudio/CMakeFiles/devstudio.dir/flags.make
-src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o: /home/berserker/projects/project_GQuest/src/devstudio/confparser.c
+src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o: /home/berserker/projects/GQuestRedux/src/devstudio/confparser.c
 src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o: src/devstudio/CMakeFiles/devstudio.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o"
-	cd /home/berserker/projects/project_GQuest/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o -MF CMakeFiles/devstudio.dir/confparser.c.o.d -o CMakeFiles/devstudio.dir/confparser.c.o -c /home/berserker/projects/project_GQuest/src/devstudio/confparser.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o"
+	cd /home/berserker/projects/GQuestRedux/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o -MF CMakeFiles/devstudio.dir/confparser.c.o.d -o CMakeFiles/devstudio.dir/confparser.c.o -c /home/berserker/projects/GQuestRedux/src/devstudio/confparser.c
 
 src/devstudio/CMakeFiles/devstudio.dir/confparser.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/devstudio.dir/confparser.c.i"
-	cd /home/berserker/projects/project_GQuest/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/berserker/projects/project_GQuest/src/devstudio/confparser.c > CMakeFiles/devstudio.dir/confparser.c.i
+	cd /home/berserker/projects/GQuestRedux/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/berserker/projects/GQuestRedux/src/devstudio/confparser.c > CMakeFiles/devstudio.dir/confparser.c.i
 
 src/devstudio/CMakeFiles/devstudio.dir/confparser.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/devstudio.dir/confparser.c.s"
-	cd /home/berserker/projects/project_GQuest/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/berserker/projects/project_GQuest/src/devstudio/confparser.c -o CMakeFiles/devstudio.dir/confparser.c.s
+	cd /home/berserker/projects/GQuestRedux/build/src/devstudio && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/berserker/projects/GQuestRedux/src/devstudio/confparser.c -o CMakeFiles/devstudio.dir/confparser.c.s
 
 # Object files for target devstudio
 devstudio_OBJECTS = \
@@ -105,26 +105,26 @@ devstudio_OBJECTS = \
 # External object files for target devstudio
 devstudio_EXTERNAL_OBJECTS =
 
-/home/berserker/projects/project_GQuest/bin/devstudio.grg: src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o
-/home/berserker/projects/project_GQuest/bin/devstudio.grg: src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o
-/home/berserker/projects/project_GQuest/bin/devstudio.grg: src/devstudio/CMakeFiles/devstudio.dir/build.make
-/home/berserker/projects/project_GQuest/bin/devstudio.grg: libs/logging/liblogging.a
-/home/berserker/projects/project_GQuest/bin/devstudio.grg: libs/gcurses/libgcurses.a
-/home/berserker/projects/project_GQuest/bin/devstudio.grg: libs/gio/libgio.a
-/home/berserker/projects/project_GQuest/bin/devstudio.grg: libs/objects/libobjects.a
-/home/berserker/projects/project_GQuest/bin/devstudio.grg: src/devstudio/CMakeFiles/devstudio.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/berserker/projects/project_GQuest/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable /home/berserker/projects/project_GQuest/bin/devstudio.grg"
-	cd /home/berserker/projects/project_GQuest/build/src/devstudio && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/devstudio.dir/link.txt --verbose=$(VERBOSE)
+/home/berserker/projects/GQuestRedux/bin/devstudio.grg: src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o
+/home/berserker/projects/GQuestRedux/bin/devstudio.grg: src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o
+/home/berserker/projects/GQuestRedux/bin/devstudio.grg: src/devstudio/CMakeFiles/devstudio.dir/build.make
+/home/berserker/projects/GQuestRedux/bin/devstudio.grg: libs/logging/liblogging.a
+/home/berserker/projects/GQuestRedux/bin/devstudio.grg: libs/gcurses/libgcurses.a
+/home/berserker/projects/GQuestRedux/bin/devstudio.grg: libs/gio/libgio.a
+/home/berserker/projects/GQuestRedux/bin/devstudio.grg: libs/objects/libobjects.a
+/home/berserker/projects/GQuestRedux/bin/devstudio.grg: src/devstudio/CMakeFiles/devstudio.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/berserker/projects/GQuestRedux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable /home/berserker/projects/GQuestRedux/bin/devstudio.grg"
+	cd /home/berserker/projects/GQuestRedux/build/src/devstudio && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/devstudio.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-src/devstudio/CMakeFiles/devstudio.dir/build: /home/berserker/projects/project_GQuest/bin/devstudio.grg
+src/devstudio/CMakeFiles/devstudio.dir/build: /home/berserker/projects/GQuestRedux/bin/devstudio.grg
 .PHONY : src/devstudio/CMakeFiles/devstudio.dir/build
 
 src/devstudio/CMakeFiles/devstudio.dir/clean:
-	cd /home/berserker/projects/project_GQuest/build/src/devstudio && $(CMAKE_COMMAND) -P CMakeFiles/devstudio.dir/cmake_clean.cmake
+	cd /home/berserker/projects/GQuestRedux/build/src/devstudio && $(CMAKE_COMMAND) -P CMakeFiles/devstudio.dir/cmake_clean.cmake
 .PHONY : src/devstudio/CMakeFiles/devstudio.dir/clean
 
 src/devstudio/CMakeFiles/devstudio.dir/depend:
-	cd /home/berserker/projects/project_GQuest/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/berserker/projects/project_GQuest /home/berserker/projects/project_GQuest/src/devstudio /home/berserker/projects/project_GQuest/build /home/berserker/projects/project_GQuest/build/src/devstudio /home/berserker/projects/project_GQuest/build/src/devstudio/CMakeFiles/devstudio.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/berserker/projects/GQuestRedux/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/berserker/projects/GQuestRedux /home/berserker/projects/GQuestRedux/src/devstudio /home/berserker/projects/GQuestRedux/build /home/berserker/projects/GQuestRedux/build/src/devstudio /home/berserker/projects/GQuestRedux/build/src/devstudio/CMakeFiles/devstudio.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : src/devstudio/CMakeFiles/devstudio.dir/depend
 
