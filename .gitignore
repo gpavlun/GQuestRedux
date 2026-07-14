@@ -23,8 +23,7 @@ Makefile
 *.so.*
 *.dll
 
-bin/*.grg
-bin/launcher-wrapper
+bin/
 
 
 # ==============================
