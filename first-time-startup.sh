@@ -14,7 +14,7 @@ echo "Use them with extreme caution. The code is instead compiled with CMake."
 echo "The commands are simple, assuming this script finishes,"
 echo "you would only need to run 'cmake --build build'"
 echo "The Devstudio handles all of that though! When in doubt, stay there."
-
+echo ""
 echo "When you have those, hit any key to continue."
 read -n1
 
