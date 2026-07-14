@@ -42,6 +42,7 @@ pkg-config --exists sdl2 || {
 
 
 chmod +x ./scripts/*
+chmod +x ./launch.sh
 cmake -B build
 cmake --build build
-./bin/devstudio
+./launch.sh
