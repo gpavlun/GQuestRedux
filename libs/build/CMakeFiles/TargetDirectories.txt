@@ -1,0 +1,5 @@
+/home/berserker/projects/project_GQuest/libs/build/CMakeFiles/edit_cache.dir
+/home/berserker/projects/project_GQuest/libs/build/CMakeFiles/rebuild_cache.dir
+/home/berserker/projects/project_GQuest/libs/build/objects/CMakeFiles/objects.dir
+/home/berserker/projects/project_GQuest/libs/build/objects/CMakeFiles/edit_cache.dir
+/home/berserker/projects/project_GQuest/libs/build/objects/CMakeFiles/rebuild_cache.dir

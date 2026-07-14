@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/devstudio.dir/bootmenu.c.o CMakeFiles/devstudio.dir/confparser.c.o -o /home/berserker/projects/project_GQuest/bin/devstudio.grg  ../../libs/logging/liblogging.a ../../libs/gcurses/libgcurses.a ../../libs/gio/libgio.a ../../libs/objects/libobjects.a 

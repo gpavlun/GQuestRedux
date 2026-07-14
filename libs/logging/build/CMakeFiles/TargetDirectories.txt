@@ -1,0 +1,3 @@
+/home/berserker/projects/project_GQuest/libs/logging/build/CMakeFiles/logging.dir
+/home/berserker/projects/project_GQuest/libs/logging/build/CMakeFiles/edit_cache.dir
+/home/berserker/projects/project_GQuest/libs/logging/build/CMakeFiles/rebuild_cache.dir

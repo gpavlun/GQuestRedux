@@ -1,0 +1,80 @@
+[
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/libs/objects",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/objects/include -std=gnu11 -o CMakeFiles/objects.dir/src/oop.c.o -c /home/berserker/projects/project_GQuest/libs/objects/src/oop.c",
+  "file": "/home/berserker/projects/project_GQuest/libs/objects/src/oop.c",
+  "output": "libs/objects/CMakeFiles/objects.dir/src/oop.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/libs/logging",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/logging/include -I/home/berserker/projects/project_GQuest/libs/objects/include -std=gnu11 -o CMakeFiles/logging.dir/src/logging.c.o -c /home/berserker/projects/project_GQuest/libs/logging/src/logging.c",
+  "file": "/home/berserker/projects/project_GQuest/libs/logging/src/logging.c",
+  "output": "libs/logging/CMakeFiles/logging.dir/src/logging.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/libs/gcurses",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/gcurses/include -I/home/berserker/projects/project_GQuest/libs/objects/include -std=gnu11 -o CMakeFiles/gcurses.dir/src/gcurses.c.o -c /home/berserker/projects/project_GQuest/libs/gcurses/src/gcurses.c",
+  "file": "/home/berserker/projects/project_GQuest/libs/gcurses/src/gcurses.c",
+  "output": "libs/gcurses/CMakeFiles/gcurses.dir/src/gcurses.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/libs/gcurses",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/gcurses/include -I/home/berserker/projects/project_GQuest/libs/objects/include -std=gnu11 -o CMakeFiles/gcurses.dir/src/objective.c.o -c /home/berserker/projects/project_GQuest/libs/gcurses/src/objective.c",
+  "file": "/home/berserker/projects/project_GQuest/libs/gcurses/src/objective.c",
+  "output": "libs/gcurses/CMakeFiles/gcurses.dir/src/objective.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/libs/gio",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/gio/include -std=gnu11 -o CMakeFiles/gio.dir/src/cli_input.c.o -c /home/berserker/projects/project_GQuest/libs/gio/src/cli_input.c",
+  "file": "/home/berserker/projects/project_GQuest/libs/gio/src/cli_input.c",
+  "output": "libs/gio/CMakeFiles/gio.dir/src/cli_input.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/src/game",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/logging/include -I/home/berserker/projects/project_GQuest/libs/objects/include -I/home/berserker/projects/project_GQuest/libs/gio/include -isystem /usr/local/include/SDL2 -std=gnu11 -D_REENTRANT -o CMakeFiles/game.dir/game.c.o -c /home/berserker/projects/project_GQuest/src/game/game.c",
+  "file": "/home/berserker/projects/project_GQuest/src/game/game.c",
+  "output": "src/game/CMakeFiles/game.dir/game.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/src/editor",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/logging/include -I/home/berserker/projects/project_GQuest/libs/objects/include -I/home/berserker/projects/project_GQuest/libs/gcurses/include -I/home/berserker/projects/project_GQuest/libs/gio/include -isystem /usr/local/include/SDL2 -std=gnu11 -D_REENTRANT -o CMakeFiles/editor.dir/chunk_operations.c.o -c /home/berserker/projects/project_GQuest/src/editor/chunk_operations.c",
+  "file": "/home/berserker/projects/project_GQuest/src/editor/chunk_operations.c",
+  "output": "src/editor/CMakeFiles/editor.dir/chunk_operations.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/src/editor",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/logging/include -I/home/berserker/projects/project_GQuest/libs/objects/include -I/home/berserker/projects/project_GQuest/libs/gcurses/include -I/home/berserker/projects/project_GQuest/libs/gio/include -isystem /usr/local/include/SDL2 -std=gnu11 -D_REENTRANT -o CMakeFiles/editor.dir/editor.c.o -c /home/berserker/projects/project_GQuest/src/editor/editor.c",
+  "file": "/home/berserker/projects/project_GQuest/src/editor/editor.c",
+  "output": "src/editor/CMakeFiles/editor.dir/editor.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/src/editor",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/logging/include -I/home/berserker/projects/project_GQuest/libs/objects/include -I/home/berserker/projects/project_GQuest/libs/gcurses/include -I/home/berserker/projects/project_GQuest/libs/gio/include -isystem /usr/local/include/SDL2 -std=gnu11 -D_REENTRANT -o CMakeFiles/editor.dir/editor_menu.c.o -c /home/berserker/projects/project_GQuest/src/editor/editor_menu.c",
+  "file": "/home/berserker/projects/project_GQuest/src/editor/editor_menu.c",
+  "output": "src/editor/CMakeFiles/editor.dir/editor_menu.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/src/editor",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/logging/include -I/home/berserker/projects/project_GQuest/libs/objects/include -I/home/berserker/projects/project_GQuest/libs/gcurses/include -I/home/berserker/projects/project_GQuest/libs/gio/include -isystem /usr/local/include/SDL2 -std=gnu11 -D_REENTRANT -o CMakeFiles/editor.dir/editor_window.c.o -c /home/berserker/projects/project_GQuest/src/editor/editor_window.c",
+  "file": "/home/berserker/projects/project_GQuest/src/editor/editor_window.c",
+  "output": "src/editor/CMakeFiles/editor.dir/editor_window.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/src/devstudio",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/logging/include -I/home/berserker/projects/project_GQuest/libs/objects/include -I/home/berserker/projects/project_GQuest/libs/gcurses/include -I/home/berserker/projects/project_GQuest/libs/gio/include -std=gnu11 -o CMakeFiles/devstudio.dir/bootmenu.c.o -c /home/berserker/projects/project_GQuest/src/devstudio/bootmenu.c",
+  "file": "/home/berserker/projects/project_GQuest/src/devstudio/bootmenu.c",
+  "output": "src/devstudio/CMakeFiles/devstudio.dir/bootmenu.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/src/devstudio",
+  "command": "/usr/bin/cc  -I/home/berserker/projects/project_GQuest/libs/logging/include -I/home/berserker/projects/project_GQuest/libs/objects/include -I/home/berserker/projects/project_GQuest/libs/gcurses/include -I/home/berserker/projects/project_GQuest/libs/gio/include -std=gnu11 -o CMakeFiles/devstudio.dir/confparser.c.o -c /home/berserker/projects/project_GQuest/src/devstudio/confparser.c",
+  "file": "/home/berserker/projects/project_GQuest/src/devstudio/confparser.c",
+  "output": "src/devstudio/CMakeFiles/devstudio.dir/confparser.c.o"
+},
+{
+  "directory": "/home/berserker/projects/project_GQuest/build/src/devstudio",
+  "command": "/usr/bin/cc   -std=gnu11 -o CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o -c /home/berserker/projects/project_GQuest/src/devstudio/launcher-wrapper.c",
+  "file": "/home/berserker/projects/project_GQuest/src/devstudio/launcher-wrapper.c",
+  "output": "src/devstudio/CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o"
+}
+]

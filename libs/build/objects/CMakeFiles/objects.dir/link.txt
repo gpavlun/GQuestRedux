@@ -1,0 +1,2 @@
+/usr/bin/ar qc libobjects.a CMakeFiles/objects.dir/src/oop.o
+/usr/bin/ranlib libobjects.a
