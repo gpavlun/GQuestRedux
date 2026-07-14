@@ -1,2 +1,0 @@
-/usr/bin/ar qc libgcurses.a CMakeFiles/gcurses.dir/src/gcurses.c.o CMakeFiles/gcurses.dir/src/objective.c.o
-/usr/bin/ranlib libgcurses.a

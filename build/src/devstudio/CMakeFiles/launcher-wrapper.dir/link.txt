@@ -1,1 +1,0 @@
-/usr/bin/cc "CMakeFiles/launcher-wrapper.dir/launcher-wrapper.c.o" -o /home/berserker/projects/GQuestRedux/bin/launcher-wrapper 

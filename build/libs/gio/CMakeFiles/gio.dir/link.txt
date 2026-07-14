@@ -1,2 +1,0 @@
-/usr/bin/ar qc libgio.a CMakeFiles/gio.dir/src/cli_input.c.o
-/usr/bin/ranlib libgio.a
