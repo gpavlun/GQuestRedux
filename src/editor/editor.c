@@ -12,14 +12,26 @@
 
 #include "editor.h"
 
+typedef int64_t i64;
+typedef int32_t i32;
+typedef int16_t i16;
+typedef int8_t i8;
+
+typedef uint64_t u64;
+typedef uint32_t u32;
+typedef uint16_t u16;
+typedef uint8_t u8;
+
+
+
+
+
 boolean_t modes;
 debug_t debug;
 
 world_t world;
 pthread_mutex_t origin_lock;
 
-uint32_t mouse_x;
-uint32_t mouse_y;
 
 int origin_chunk_x;
 int origin_chunk_y;
@@ -27,8 +39,7 @@ int origin_chunk_y;
 uint32_t selected_terrain;
 uint8_t painting;
 
-int window_w = CHUNK_SIZE*CELL_RESOLUTION + 200;
-int window_h = CHUNK_SIZE*CELL_RESOLUTION + 200;
+
 
 
 
@@ -47,14 +58,12 @@ void load_world(void){
     int world_x,world_y;
 
     for(world_y=0;world_y<RENDER_DISTANCE;world_y++) for(world_x=0;world_x<RENDER_DISTANCE;world_x++){
-        if(world.world_array[world_y][world_x].defined){ 
-            save_chunk(world.world_array[world_y][world_x]);
-            free(world.world_array[world_y][world_x].chunk);
-            world.world_array[world_y][world_x].chunk = NULL;
-            world.world_array[world_y][world_x].defined=0;
+        if(world.array[world_y][world_x].defined){ 
+            save_chunk(world.array[world_y][world_x]);
+            free(world.array[world_y][world_x].chunk);
+            world.array[world_y][world_x].chunk = NULL;
+            world.array[world_y][world_x].defined=0;
 
-        }else{
-            logging.detail("chunk %d %d not defined",world_x,world_y);
         }
 
     }
@@ -69,13 +78,13 @@ void load_world(void){
             chunk_file = fopen(path, "rb");
 
             if(chunk_file){
-                world.world_array[world_y][world_x].chunk = malloc(sizeof(chunk_t));
-                world.world_array[world_y][world_x].x_pos = chunk_x;
-                world.world_array[world_y][world_x].y_pos = chunk_y;
-                if(fread(world.world_array[world_y][world_x].chunk, sizeof(chunk_t), 1, chunk_file)!=1) 
+                world.array[world_y][world_x].chunk = malloc(sizeof(chunk_t));
+                world.array[world_y][world_x].x_pos = chunk_x;
+                world.array[world_y][world_x].y_pos = chunk_y;
+                if(fread(world.array[world_y][world_x].chunk, sizeof(chunk_t), 1, chunk_file)!=1) 
                     logging.error(500,"Couldn't read data!");
                 fclose(chunk_file);
-                world.world_array[world_y][world_x].defined=1;
+                world.array[world_y][world_x].defined=1;
             }
         }        
     }
@@ -85,17 +94,21 @@ void load_world(void){
 
 
 
-void paint(void){
-    int cell_x = ( mouse_x - ( ( window_w - (CHUNK_SIZE*CELL_RESOLUTION) ) / 2 ) ) / CELL_RESOLUTION;
-    int cell_y = (mouse_y - (window_h-CHUNK_SIZE*CELL_RESOLUTION)/2)/CELL_RESOLUTION;
-    if(cell_x>=0&&cell_y>=0&&cell_x<CHUNK_SIZE&&cell_y<CHUNK_SIZE){
-        world.world_array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].chunk->cell_array[cell_y][cell_x].terrain.type = selected_terrain;
+void paint(gui_engine_t *gui){
+    int cell_x = ( gui->mouse.x - (  gui->dim.w/2 - CHUNK_SIZE*CELL_RESOLUTION / 2 ) ) / CELL_RESOLUTION;
+    int cell_y = ( gui->mouse.y - (  gui->dim.h/2 - CHUNK_SIZE*CELL_RESOLUTION / 2 ) ) / CELL_RESOLUTION;
+    
+    if(world.array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].defined){
+        if(cell_x>=0&&cell_y>=0&&cell_x<CHUNK_SIZE&&cell_y<CHUNK_SIZE){
+            world.array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].chunk->cell_array[cell_y][cell_x].terrain.type = selected_terrain;
+        }
     }
 }
 
 
 
 void *editor_event_handler(void *args){
+    gui_engine_t *gui = (gui_engine_t *)args;
     SDL_Event event;
     const uint8_t *keyscan = SDL_GetKeyboardState(NULL);
     while(modes.RUNNING){
@@ -148,12 +161,12 @@ void *editor_event_handler(void *args){
                                         origin_chunk_x++;                                    
                                         load_world();
                                     $}case(SDLK_RETURN):{
-                                        if(!world.world_array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].defined){
+                                        if(!world.array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].defined){
                                             create_dynamic(origin_chunk_x,origin_chunk_y);
                                             load_world();
                                         }                                     
                                     $}case(SDLK_DELETE):{
-                                        if(world.world_array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].defined){
+                                        if(world.array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].defined){
                                             delete_dynamic(origin_chunk_x,origin_chunk_y);
                                             load_world();
                                         }
@@ -169,7 +182,7 @@ void *editor_event_handler(void *args){
                         if(!painting){
                             painting = 1;
                             logging.data("Painting: ", painting);
-                            paint();
+                            paint(gui);
                             
                         }
                 $}case(SDL_MOUSEBUTTONUP):{
@@ -178,10 +191,10 @@ void *editor_event_handler(void *args){
                         logging.data("Painting: ", painting);
                     }
                 $}case(SDL_MOUSEMOTION):{
-                    mouse_x = event.motion.x;
-                    mouse_y = event.motion.y;
+                    gui->mouse.x = event.motion.x;
+                    gui->mouse.y = event.motion.y;
                     if(painting)
-                        paint();
+                        paint(gui);
                 $}default:$
             }
         }
@@ -200,77 +213,64 @@ void start_editor(void){
     modes.RUNNING = 1;
     logging.info("Begin program");
     
+    gui_engine_t gui = gui_engine_init();
 
-    SDL_Window *window = init_editor_window();
-    if(window)  
-            logging.info("Window initialized");
-    else    logging.error(NO_RETRUN, "Window failed");
-       
-    SDL_Renderer* renderer = init_editor_renderer(window);
-    if(renderer)
-            logging.info("Renderer initialized");
-    else    logging.error(NO_RETRUN, "Renderer failed");
-
-    pthread_t event_thread;
-    if(pthread_create(&event_thread, NULL, editor_event_handler, NULL))
-            logging.error(NO_RETRUN, "Event thread failed");        
-    else    logging.info("Event thread initialized");
-
-    SDL_GetMouseState(&mouse_x, &mouse_y);
+    init_events(&gui);
 
 
-    cell_t cell;
-    uint8_t cell_y, cell_x;
-    uint8_t chunk_y, chunk_x;
 
-    SDL_Rect cell_box;
-    cell_box.w = cell_box.h = CELL_RESOLUTION;
+    u8 world_r, world_c;
+    i32 ch_width = CHUNK_SIZE*CELL_RESOLUTION;
+    i32 ch_origin = ch_width/2;
+
     SDL_Rect chunk_box;
-    chunk_box.w = chunk_box.h = CHUNK_SIZE*CELL_RESOLUTION;
-    chunk_box.y = window_h/2 - CHUNK_SIZE*CELL_RESOLUTION/2;
-    chunk_box.x = window_w/2 - CHUNK_SIZE*CELL_RESOLUTION/2;
+    chunk_box.w = chunk_box.h = ch_width;
+    
     hexcode_u color;
 
+    i32 ch_origin_y, ch_origin_x;
 
 
     while(modes.RUNNING){
-        window_change(window);
 
-        SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
-        SDL_RenderClear(renderer);
+        get_dim(gui.sdl2.window, &gui.dim);
+
+        clear_screen(gui.sdl2.renderer);
 
         pthread_mutex_lock(&origin_lock);
-        for(chunk_y=0; chunk_y<RENDER_DISTANCE; chunk_y++){
-            chunk_box.y = window_h/2 - RENDER_DISTANCE*CHUNK_SIZE*CELL_RESOLUTION/2 + chunk_y*CHUNK_SIZE*CELL_RESOLUTION;
-            for(chunk_x=0; chunk_x<RENDER_DISTANCE; chunk_x++){
-                chunk_box.x = window_w/2 - RENDER_DISTANCE*CHUNK_SIZE*CELL_RESOLUTION/2 + chunk_x*CHUNK_SIZE*CELL_RESOLUTION;
 
-                if(world.world_array[chunk_y][chunk_x].chunk){
+        ch_origin_y = gui.dim.h/2 - RENDER_DISTANCE*ch_origin;
+        ch_origin_x = gui.dim.w/2 - RENDER_DISTANCE*ch_origin;
 
-                    draw_chunk()
+
+        for(world_r=0; world_r<RENDER_DISTANCE; world_r++){
+
+            chunk_box.y = ch_origin_y + world_r*ch_width;
+
+            for(world_c=0; world_c<RENDER_DISTANCE; world_c++){
+                chunk_box.x = ch_origin_x + world_c*ch_width;
+
+                if(world.array[world_r][world_c].defined){
+
+                    draw_chunk(&gui, world_r, world_c, ch_origin_y, ch_origin_x);
                     
                 }
 
                 if(debug.chunk_borders){
                     color.code = 0xFF0000;
-                    SDL_SetRenderDrawColor(renderer, color.rgba.red, color.rgba.green, color.rgba.blue, color.rgba.opacity);
-                    SDL_RenderDrawRect(renderer, &chunk_box);
+                    draw_rect(gui.sdl2.renderer, &chunk_box, color);
                 }
-                //logging.data("x",chunk_x);
-                //logging.data("y",chunk_y);
-                //usleep(125000);
-                //SDL_RenderPresent(renderer);
             }
         }
         pthread_mutex_unlock(&origin_lock);
 
 
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(gui.sdl2.renderer);
         usleep(event_rate);
     }
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(gui.sdl2.renderer);
+    SDL_DestroyWindow(gui.sdl2.window);
     SDL_Quit();
     return;
 }

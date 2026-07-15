@@ -10,7 +10,8 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
-#define NO_RETRUN 500
+#define NO_RETURN 500
+
 #define $ break;
 
 #define RENDER_DISTANCE 5
@@ -58,7 +59,7 @@ typedef struct chunk_meta_data{
 
 
 typedef struct world_data{
-    world_tile_t world_array[RENDER_DISTANCE][RENDER_DISTANCE];
+    world_tile_t array[RENDER_DISTANCE][RENDER_DISTANCE];
 }world_t;
 
 

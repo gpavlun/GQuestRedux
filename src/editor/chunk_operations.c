@@ -32,9 +32,9 @@ void delete_dynamic(int x, int y){
     logging.info(path);
     if(remove(path)) logging.error(500,"File could not be deleted!");
     else logging.info("Deleted chunk");
-    free(world.world_array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].chunk);
-    world.world_array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].chunk = NULL;
-    world.world_array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].defined = 0;
+    free(world.array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].chunk);
+    world.array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].chunk = NULL;
+    world.array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].defined = 0;
 
     return;   
 }
@@ -78,9 +78,9 @@ void load_chunk_single(char *path){
     logging.info("Read chunk data");
 
     if(RENDER_DISTANCE%2){
-        world.world_array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].chunk = &chunk;
+        world.array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].chunk = &chunk;
     }else{
-        logging.error(405,"Renderdistance cannot be even!");
+        logging.error(405,"Render distance cannot be even!");
     }
 
     start_editor();
