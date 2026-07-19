@@ -23,6 +23,8 @@ int get_mouse(mouse_t *mouse){
     return 0;  
 }
 
+
+
 SDL_Window *init_editor_window(window_t win){
 
     SDL_Window *window = 
@@ -36,7 +38,7 @@ SDL_Window *init_editor_window(window_t win){
             SDL_WINDOW_SHOWN);
 
     if(window)  
-            logging.info("Window initialized");
+            ;//logging.info("Window initialized");
     else    logging.error(NO_RETURN, "Window failed");
 
     return window;
@@ -51,7 +53,7 @@ SDL_Renderer *init_editor_renderer(SDL_Window *window){
             SDL_RENDERER_PRESENTVSYNC);
 
     if(renderer)
-            logging.info("Renderer initialized");
+            ;//logging.info("Renderer initialized");
     else    logging.error(NO_RETURN, "Renderer failed");
 
     return renderer;  
@@ -73,7 +75,7 @@ sdl2_t sdl2init(window_t dimensions){
 gui_engine_t gui_engine_init(void){
     if(SDL_Init(SDL_INIT_VIDEO))            
             logging.error(NO_RETURN, "SDL2 failed to init");      
-    else    logging.info("SDL2 initialized");
+    else    ;//logging.info("SDL2 initialized");
     
     gui_engine_t gui;
     get_mouse(&gui.mouse);
@@ -90,6 +92,6 @@ void init_events(gui_engine_t *gui){
     pthread_t event_thread;
     if(pthread_create(&event_thread, NULL, editor_event_handler, gui))
             logging.error(NO_RETURN, "Event thread failed");        
-    else    logging.info("Event thread initialized");
+    else    ;//logging.info("Event thread initialized");
 
 }

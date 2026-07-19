@@ -178,8 +178,12 @@ void draw_display(term_w_t *terminal, char *message,  int selected){
 
     tframe_t title_box;
     init_tframe(&title_box);
+
     
+
     title_box.set.min_w(strlen("GQ DEVELOPER STUDIO") + 2);
+
+
 
     title_box.set.h(3);
     title_box.dim.tile.color = GCS_BLUE;
@@ -295,6 +299,7 @@ void boot_menu(void){
     
     term_w_t terminal;
     init_tui(&terminal);
+
     terminal.io_block(0);
     terminal.clear();
     terminal.present();

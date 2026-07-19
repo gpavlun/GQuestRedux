@@ -95,8 +95,8 @@ void load_world(void){
 
 
 void paint(gui_engine_t *gui){
-    int cell_x = ( gui->mouse.x - (  gui->dim.w/2 - CHUNK_SIZE*CELL_RESOLUTION / 2 ) ) / CELL_RESOLUTION;
-    int cell_y = ( gui->mouse.y - (  gui->dim.h/2 - CHUNK_SIZE*CELL_RESOLUTION / 2 ) ) / CELL_RESOLUTION;
+    int cell_x = ( gui->mouse.x - (  gui->window.cen.x - CHUNK_SIZE*CELL_RESOLUTION / 2 ) ) / CELL_RESOLUTION;
+    int cell_y = ( gui->mouse.y - (  gui->window.cen.y - CHUNK_SIZE*CELL_RESOLUTION / 2 ) ) / CELL_RESOLUTION;
     
     if(world.array[RENDER_DISTANCE/2][RENDER_DISTANCE/2].defined){
         if(cell_x>=0&&cell_y>=0&&cell_x<CHUNK_SIZE&&cell_y<CHUNK_SIZE){
@@ -217,48 +217,53 @@ void start_editor(void){
 
     init_events(&gui);
 
+    ch_ref_t chunk;
+    chunk.width = CHUNK_SIZE*CELL_RESOLUTION;
 
 
-    u8 world_r, world_c;
-    i32 ch_width = CHUNK_SIZE*CELL_RESOLUTION;
-    i32 ch_origin = ch_width/2;
-
-    SDL_Rect chunk_box;
-    chunk_box.w = chunk_box.h = ch_width;
+    SDL_Rect current_ch;
+    current_ch.w = current_ch.h = chunk.width;
     
     hexcode_u color;
-
-    i32 ch_origin_y, ch_origin_x;
-
+    render_frame_t render;
+    window_t *window = &gui.window;
+    
+    render.width = RENDER_DISTANCE*chunk.width;
+    
+    
+    
 
     while(modes.RUNNING){
 
-        get_dim(gui.sdl2.window, &gui.dim);
+        get_dim(gui.sdl2.window, window);
 
-        clear_screen(gui.sdl2.renderer);
+        clear_screen_wrap(gui.sdl2.renderer);
 
         pthread_mutex_lock(&origin_lock);
 
-        ch_origin_y = gui.dim.h/2 - RENDER_DISTANCE*ch_origin;
-        ch_origin_x = gui.dim.w/2 - RENDER_DISTANCE*ch_origin;
+        render.pos.y = window->cen.y - render.width/2;
+        render.pos.x = window->cen.x - render.width/2;
 
 
-        for(world_r=0; world_r<RENDER_DISTANCE; world_r++){
+        for(render.idx.r=0; render.idx.r<RENDER_DISTANCE; render.idx.r++){
 
-            chunk_box.y = ch_origin_y + world_r*ch_width;
+            current_ch.y = render.pos.y + render.idx.r*chunk.width;
 
-            for(world_c=0; world_c<RENDER_DISTANCE; world_c++){
-                chunk_box.x = ch_origin_x + world_c*ch_width;
+            for(render.idx.c=0; render.idx.c<RENDER_DISTANCE; render.idx.c++){
+                
+                current_ch.x = render.pos.x + render.idx.c*chunk.width;
 
-                if(world.array[world_r][world_c].defined){
+                if(world.array[render.idx.r][render.idx.c].defined){
 
-                    draw_chunk(&gui, world_r, world_c, ch_origin_y, ch_origin_x);
+                    /*  on this gui, draw this chunk at this position.
+                        pretty clean if I do say so myself. */
+                    draw_chunk(&gui, render.idx, render.pos);
                     
                 }
 
                 if(debug.chunk_borders){
                     color.code = 0xFF0000;
-                    draw_rect(gui.sdl2.renderer, &chunk_box, color);
+                    draw_rect_wrap(gui.sdl2.renderer, &current_ch, color);
                 }
             }
         }

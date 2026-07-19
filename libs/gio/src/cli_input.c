@@ -25,11 +25,20 @@ char get_input(void){
     char c;
 
     tcgetattr(STDIN_FILENO, &old_term);
+
     new_term = old_term;
     new_term.c_lflag &= ~(ICANON | ECHO);
+    new_term.c_cc[VMIN] = 1;
+    new_term.c_cc[VTIME] = 0;
+
     tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
-    read(STDIN_FILENO, &c, 1);
+
+    ssize_t n = read(STDIN_FILENO, &c, 1);
+
     tcsetattr(STDIN_FILENO, TCSANOW, &old_term);
 
-    return c;
+    if (n == 1)
+        return c;
+
+    return '\0';
 }

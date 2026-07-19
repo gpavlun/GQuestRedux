@@ -247,15 +247,15 @@ void load_world(void){
             chunk_file = fopen(path, "rb");
 
             if(chunk_file){
-                world.world_array[world_y][world_x].chunk = malloc(sizeof(chunk_t));
-                world.world_array[world_y][world_x].x_pos = chunk_x;
-                world.world_array[world_y][world_x].y_pos = chunk_y;
-                if(fread(world.world_array[world_y][world_x].chunk, sizeof(chunk_t), 1, chunk_file)!=1) 
+                world.array[world_y][world_x].chunk = malloc(sizeof(chunk_t));
+                world.array[world_y][world_x].x_pos = chunk_x;
+                world.array[world_y][world_x].y_pos = chunk_y;
+                if(fread(world.array[world_y][world_x].chunk, sizeof(chunk_t), 1, chunk_file)!=1) 
                     logging.error(500,"Couldn't read data!");
-                world.world_array[world_y][world_x].defined = 1;
+                world.array[world_y][world_x].defined = 1;
                 fclose(chunk_file);
             }else{
-                world.world_array[world_y][world_x].defined = 0;
+                world.array[world_y][world_x].defined = 0;
             }
         }        
     }
@@ -266,7 +266,7 @@ void load_world(void){
 void init_world(){
     int world_x,world_y;
     for(world_y=0;world_y<RENDER_DISTANCE;world_y++) for(world_x=0;world_x<RENDER_DISTANCE;world_x++){
-        world.world_array[world_y][world_x].chunk = malloc(sizeof(chunk_t));
+        world.array[world_y][world_x].chunk = malloc(sizeof(chunk_t));
     }
 }
 
@@ -288,16 +288,16 @@ int start_game(void) {
     SDL_Window *window = init_window();
     if(window)  
             logging.info("Window initialized");
-    else    logging.error(NO_RETRUN, "Window failed");
+    else    logging.error(NO_RETURN, "Window failed");
        
     SDL_Renderer* renderer = init_renderer(window);
     if(renderer)
             logging.info("Renderer initialized");
-    else    logging.error(NO_RETRUN, "Renderer failed");
+    else    logging.error(NO_RETURN, "Renderer failed");
 
     pthread_t event_thread;
     if(pthread_create(&event_thread, NULL, event_handler, NULL))
-            logging.error(NO_RETRUN, "Event thread failed");        
+            logging.error(NO_RETURN, "Event thread failed");        
     else    logging.info("Event thread initialized");
 
 
@@ -393,7 +393,7 @@ int start_game(void) {
             for(chunk_x=0; chunk_x<RENDER_DISTANCE; chunk_x++){
                 chunk_box.x = (window_w/2 + world_offset_x) - RENDER_DISTANCE*CHUNK_SIZE*CELL_RESOLUTION/2 + chunk_x*CHUNK_SIZE*CELL_RESOLUTION;
 
-                if(world.world_array[chunk_y][chunk_x].defined){
+                if(world.array[chunk_y][chunk_x].defined){
                     
                     for(cell_y=0; cell_y<CHUNK_SIZE; cell_y++){
                         
@@ -402,7 +402,7 @@ int start_game(void) {
                         for(cell_x=0; cell_x<CHUNK_SIZE; cell_x++){
 
                             cell_box.x = (window_w/2 + world_offset_x) - RENDER_DISTANCE*CHUNK_SIZE*CELL_RESOLUTION/2 + chunk_x*CHUNK_SIZE*CELL_RESOLUTION + cell_x*CELL_RESOLUTION;
-                            cell = world.world_array[chunk_y][chunk_x].chunk->cell_array[cell_y][cell_x];
+                            cell = world.array[chunk_y][chunk_x].chunk->cell_array[cell_y][cell_x];
 
                             switch(cell.terrain.type){
                                 case(none_tt):{
