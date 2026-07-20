@@ -1,4 +1,4 @@
-Project layout:
+#Project layout:
 ../.  
 ├── CMakeLists.txt  
 ├── documentation  
@@ -83,7 +83,7 @@ Project layout:
   
 21 directories, 60 files  
   
-Lines of code by file:  
+#Lines of code by file:  
   175 ../libs/gcurses/demo.c  
   257 ../libs/gcurses/include/gcurses.h  
   562 ../libs/gcurses/src/gcurses.c  
