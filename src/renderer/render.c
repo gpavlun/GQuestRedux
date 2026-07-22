@@ -355,9 +355,10 @@ void draw_mesh_wireframe(gui_engine_t *gui, mesh_t mesh) { //, float theta
     screen_x = pitched.x / pitched.z;
     screen_y = pitched.y / pitched.z;
 
-    // verts_vis[i].w = verts_vis[i].h = (int)(1 * focal / rotated.z);
-    // verts_vis[i].x = window->cen.x + (int)(screen_x * focal);
-    // verts_vis[i].y = window->cen.y - (int)(screen_y * focal);
+    // will draw the vertices if desired
+    //  verts_vis[i].w = verts_vis[i].h = (int)(1 * focal / rotated.z);
+    //  verts_vis[i].x = window->cen.x + (int)(screen_x * focal);
+    //  verts_vis[i].y = window->cen.y - (int)(screen_y * focal);
 
     // SDL_RenderFillRect(gui->sdl2.renderer, &verts_vis[i]);
 
