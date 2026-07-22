@@ -4,443 +4,421 @@ Also it was made by chat. Yes I am that lazy.
 
 
 
+Engine Project Summary (Updated)
+Project Overview
 
+The project started as a terminal pseudo-isometric tile game, but the architecture was rebuilt into a true 3D engine rather than extending the old grid-based system.
 
+The engine is written in C with SDL2 handling window creation and basic drawing. The goal is to build the rendering and simulation systems from first principles rather than immediately relying on graphics APIs.
 
+The long-term goal is a game somewhere between:
 
+Skyrim-style natural environments
+Minecraft-style procedural worlds
+Valheim-style survival/simulation systems
 
+The focus is not only visual rendering, but also coherent systems: physics, procedural terrain, world streaming, and simulation.
 
+Core Engine Philosophy
 
+The project follows a few consistent principles:
 
+Understand the math before abstracting it.
+Build systems incrementally.
+Avoid introducing complexity before it is needed.
+Prefer physically motivated systems over arbitrary game logic.
 
+Examples:
 
-Absolutely. Here's the summary I would give another instance. I've tried to capture not just what we've discussed, but the philosophy behind the engine, because that has become pretty consistent over the course of this conversation.
+Forces instead of directly setting velocity.
+Real coordinate systems instead of tile movement.
+Manual projection instead of immediately using OpenGL.
+Simple meshes before terrain generation.
+Physics System
 
-Engine Project Summary
-Project Background
+The engine moved from discrete movement to continuous world coordinates.
 
-The project began as a terminal (TUI) pseudo-isometric tile-based game. The engine originally simulated movement on a discrete grid and rendered ASCII/tile graphics.
+The player now exists in 3D space with:
 
-The decision was made to rebuild the project into a true 3D engine rather than continue modifying the tile engine, because adapting the old architecture was creating more problems than it solved.
+position
+velocity
+acceleration
+applied forces
+mass
 
-The engine is written completely in C with SDL2 used for windowing and rendering. The goal is to build the engine from scratch rather than relying on OpenGL abstractions immediately. The emphasis is on understanding the underlying mathematics and architecture.
+The intended physics pipeline:
 
-Long-Term Vision
-
-The desired game is essentially somewhere between:
-
-Skyrim
-Minecraft
-Valheim
-
-Specifically:
-
-Beautiful natural outdoor environments similar to Skyrim.
-Fully three-dimensional terrain with caves and overhangs (not heightmap-limited).
-Large procedural world.
-Simulation-heavy systems.
-Real physics where practical.
-
-The terrain system is intended to eventually support caves and arbitrary topology rather than simply storing terrain as a height field.
-
-Terrain Philosophy
-
-Initially we discussed traditional terrain representations.
-
-Heightmaps were rejected because:
-
-Cannot represent caves.
-Cannot represent overhangs.
-Terrain becomes fundamentally 2.5D.
-
-Instead we discussed a completely different representation.
-
-The idea is not to store every voxel.
-
-Instead:
-
-Only store information on surfaces.
-Empty interior space contains no data.
-Terrain becomes a graph of surface nodes.
-
-Each node stores:
-
+Input
+ |
+ v
+Force
+ |
+ v
+Acceleration
+ |
+ v
+Velocity
+ |
+ v
 Position
-Surface normal (orientation)
-Connectivity to neighboring nodes
-
-The renderer would reconstruct a smooth mesh from these nodes.
-
-Advantages:
-
-Very memory efficient.
-Supports caves naturally.
-Supports arbitrary topology.
-Fits procedural generation.
-Surface graph can be streamed by chunk.
-
-Generation remains an unsolved problem, but storage appears promising.
-
-Physics Philosophy
-
-Movement is no longer tile-based.
-
-Everything now exists in continuous world coordinates.
-
-Player currently stores:
-
-typedef struct
-{
-    vec3_t pos;
-    vec3_t vel;
-    vec3_t acc;
-
-    vec3_t applied_force;
-
-    float mass;
-
-} player_t;
 
 
-Coordinates are:
+The update model:
+
+drag force
++
+player force
++
+gravity
+
+=
+
+net force
+
+F = ma
+
+velocity += acceleration * dt
+
+position += velocity * dt
+
+
+Drag is currently:
+
+Fdrag = -k * velocity
+
+
+The coefficient is tuned for gameplay rather than strict physical accuracy.
+
+Important realization:
+Removing movement input does not naturally feel like stopping because humans apply braking forces. A future character controller may automatically generate counter-force when the desired velocity is zero.
+
+World Coordinates
+
+The engine uses:
 
 X = left/right
 Y = up/down
 Z = forward/back
 
-This convention was intentionally changed from +X forward to +Z forward because it better matches common 3D graphics conventions.
 
-Physics Update
+This was chosen because it aligns better with common 3D graphics conventions.
 
-Current update flow is approximately:
+Movement input is currently still world-relative. The next major improvement is converting input forces into camera-relative movement.
 
-Compute drag.
-drag = -k * velocity
+Terrain Direction
 
+Traditional heightmaps were rejected because they are fundamentally 2.5D.
 
-Add applied player force.
+Problems:
 
-Add gravity.
+no caves
+no overhangs
+no arbitrary topology
 
-Compute net force.
+The long-term terrain idea is a surface-based representation:
 
-Compute acceleration.
+Instead of storing every voxel:
 
-a = F / m
+terrain volume
 
-Integrate velocity.
-v += a * dt
 
-Integrate position.
-p += v * dt
+store:
 
-Force Philosophy
+surface graph
 
-The player no longer directly manipulates velocity.
 
-Instead:
+Nodes contain:
 
-Input produces force.
+position
+surface normal
+neighbor connections
 
-Force produces acceleration.
+The renderer reconstructs geometry from the surface representation.
 
-Acceleration produces velocity.
+Benefits:
 
-Velocity produces position.
+supports caves
+supports overhangs
+memory efficient
+streamable by chunks
 
-This allows movement to emerge naturally rather than being artificially scripted.
+Generation remains an open problem.
 
-Drag
+Rendering Progress
 
-Currently drag is linear.
+The renderer is currently built manually with SDL2.
 
-Fdrag = -k v
+The first milestone was achieved:
 
+A 3D point can now become a projected screen position.
 
-The drag coefficient is intentionally tuned for gameplay rather than representing true air resistance.
+The basic projection:
 
-It effectively models:
+relative position:
 
-Foot friction
-Body control
-Internal energy losses
-General resistance to movement
+object - camera
 
-Increasing both:
 
-player force
-drag coefficient
+screen:
 
-while keeping their ratio similar gives:
+x = camera_x / camera_z
+y = camera_y / camera_z
 
-faster acceleration
-faster stopping
-same terminal velocity
 
-This produced significantly better-feeling controls.
+Then:
 
-Braking Discussion
+pixel_x = center_x + x*focal
+pixel_y = center_y - y*focal
 
-An important realization:
 
-Real humans do not stop by simply removing forward force.
+Objects behind the camera are discarded.
 
-Humans subconsciously apply braking forces.
+This produced working perspective:
 
-Therefore:
+objects move correctly
+objects scale with distance
+camera-relative positioning works
+Camera Rotation
 
-Physics is correct.
+The camera now supports yaw and pitch.
 
-Human expectations are different.
+The pipeline became:
 
-Future character controller may automatically apply braking force when desired velocity is zero.
+world coordinates
 
-Gravity
+      |
+      v
 
-Originally gravity was jokingly implemented using Newton's universal gravitation equation involving planetary mass.
+camera-relative coordinates
 
-Eventually the intent is:
+      |
+      v
 
-Planet definition stores:
+yaw rotation
 
-planetary mass
-radius
+      |
+      v
 
-Gravity can therefore vary by world.
+pitch rotation
 
-For now constant gravity is acceptable.
+      |
+      v
 
-Rendering
+perspective projection
 
-The renderer currently uses SDL2.
+      |
+      v
 
-No OpenGL yet.
+screen coordinates
 
-Rendering is intentionally being built manually to understand perspective mathematics.
 
-First Renderer
+Yaw:
 
-Instead of jumping directly to meshes:
+x' = x cos(theta) - z sin(theta)
 
-A single rectangle is projected into perspective.
+z' = x sin(theta) + z cos(theta)
 
-Player is fixed looking down +Z.
 
-Camera is attached to player.
+Pitch:
 
-Projection currently performs:
+y' = y cos(phi) - z sin(phi)
 
-Relative position:
+z' = y sin(phi) + z cos(phi)
 
-relative = object - player
 
+The camera now moves through a true 3D space.
 
-Perspective:
+Mesh System
 
-screen_x = relative.x / relative.z
+The renderer moved from drawing rectangles to indexed meshes.
 
-screen_y = relative.y / relative.z
+A mesh contains:
 
+vertices
+edges
+triangles
 
-Scaling:
+Vertices are stored once.
 
-size = object_size * focal / relative.z
+Triangles reference vertex indices.
 
+Example:
 
-Objects behind camera:
+vertices:
+0
+1
+2
+3
 
-relative.z <= 0
+triangle:
+0,1,2
 
 
-are discarded.
+This is the basis for real 3D models.
 
-The projected rectangle is drawn using SDL_RenderFillRect.
+Wireframe Rendering
 
-Milestone Achieved
+The engine can now:
 
-Multiple projected rectangles now render correctly.
+transform mesh vertices
+project them
+draw edges between vertices
 
-As the player moves:
+This was the first moment the engine became a real 3D renderer.
 
-Objects move correctly across the screen.
-Objects scale with distance.
-Perspective behaves naturally.
+Triangle Rasterization
 
-This is considered the first true milestone of the renderer.
+The next major step was filling triangles.
 
-Immediate Rendering Goals
+The process:
 
-Next likely milestones:
+triangle vertices
 
-Multiple objects
-Wireframe cube
-Vertex-based rendering
-Filled triangles
-Camera rotation
-Eventually terrain meshes
+      |
+      v
 
-Textures and lighting are intentionally postponed.
+find screen bounding box
 
-World Architecture
+      |
+      v
 
-We discussed that rendering is fundamentally a filtering problem.
+test every pixel
 
-The world should not be one giant object list.
+      |
+      v
 
-Instead:
+edge function determines inside/outside
 
-World
 
-↓
+The edge function:
 
-Streaming
+(x-a.x)*(b.y-a.y)
+-
+(y-a.y)*(b.x-a.x)
 
-↓
 
-Loaded Chunks
+A major debugging issue was discovered:
 
-↓
+Screen-space points were stored as unsigned integers.
 
-Visible Objects
+This broke negative coordinates because:
 
-↓
+-10
 
-Renderer
 
+became:
 
-Each frame roughly performs:
+4294967286
 
-Player position
 
-↓
+The fix:
 
-Determine loaded chunks
+Screen coordinates must use signed types.
 
-↓
+Current Renderer Status
 
-Gather nearby objects
+Working:
 
-↓
+✅ 3D world coordinates
+✅ Camera-relative rendering
+✅ Perspective projection
+✅ Camera yaw/pitch
+✅ Indexed meshes
+✅ Wireframe rendering
+✅ Filled triangle rasterization
 
-Visibility tests
+Current limitation:
 
-↓
+Large planes such as terrain disappear when vertices cross behind the camera.
 
-LOD
+The reason:
 
-↓
+The renderer currently does:
 
-Render
+vertex behind camera?
+discard vertex
 
-Chunk Philosophy
 
-Chunks remain useful.
+A real renderer instead performs:
 
-However:
+camera-space triangle
 
-Chunks are storage units.
+      |
+      v
 
-Not rendering units.
+near-plane clipping
 
-Eventually each chunk may own:
+      |
+      v
 
-terrain graph
-generated mesh
-object list
+projection
 
-Chunks stream independently.
 
-Engine Philosophy
+This will be added later.
 
-The engine is slowly separating into independent systems.
+Current Rendering Pipeline
 
-Input
+The engine is approaching this structure:
 
-↓
+Mesh
+ |
+ v
+Object Transform
+ |
+ v
+World Coordinates
+ |
+ v
+Camera Transform
+ |
+ v
+Clipping
+ |
+ v
+Projection
+ |
+ v
+Rasterization
+ |
+ v
+Pixels
 
-Physics
+Next Logical Steps
 
-↓
+Recommended order:
 
-World
+Clean renderer functions
 
-↓
+separate projection from drawing
+separate mesh data from rendering
 
-Renderer
+Add object transforms
 
+local mesh coordinates
+world position
+rotation
 
-Later likely becomes:
+Add depth buffering
 
-World Storage
+allow overlapping geometry
+enable real objects like towers
 
-↓
+Add camera clipping
 
-Simulation
+fix terrain disappearing near camera
 
-↓
+Add basic lighting
 
-Rendering
+Move toward terrain meshes and streaming
 
+Overall State
 
-Storage should not dictate rendering.
+The project has crossed an important boundary. It started as a tile-based experiment and now has the foundations of a real 3D engine:
 
-Rendering should simply consume visible geometry.
+continuous physics
+real camera space
+perspective projection
+mesh geometry
+triangle rasterization
 
-Development Philosophy
-
-A recurring theme throughout development has been:
-
-Understand before abstracting.
-
-Examples:
-
-No heavy math library.
-No OpenGL yet.
-No matrices until necessary.
-No quaternions until rotation actually exists.
-No terrain mesh generation until perspective rendering works.
-
-The goal is to build each layer only after understanding the previous one.
-
-Current Status
-
-Current engine now has:
-
-✔ Continuous floating-point physics
-
-✔ Force-based movement
-
-✔ Mass
-
-✔ Drag
-
-✔ Gravity
-
-✔ Time-step integration
-
-✔ 3D world coordinates
-
-✔ Perspective projection
-
-✔ Camera attached to player
-
-✔ Multiple projected objects
-
-Everything is still rendered through SDL rectangles, but the mathematics are now genuinely three-dimensional.
-
-Likely Next Discussion Topics
-
-In roughly this order:
-
-Clean up the renderer.
-Introduce vertices instead of billboard rectangles.
-Draw wireframe geometry.
-Rasterize triangles.
-Camera yaw/pitch.
-Basic terrain meshes.
-Chunk streaming.
-Surface-graph terrain generation.
-Physics collisions against generated terrain.
-General Design Philosophy
-
-The overall goal is not to make the fastest engine possible or to copy an existing engine. The goal is to build an engine where the systems are coherent and grounded in understandable principles. Throughout development, there has been a preference for simple, physically motivated models (forces, acceleration, perspective projection) over arbitrary game logic, while still being willing to tune parameters for responsiveness and enjoyable gameplay. The engine is being built incrementally, with each new subsystem understood on its own before introducing the next layer of complexity.
+The next challenges are no longer "how do I make 3D math work?" but the actual problems of building a renderer: visibility, object transforms, depth, terrain, and scale.

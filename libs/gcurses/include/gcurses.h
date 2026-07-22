@@ -245,7 +245,7 @@ int init_tui(term_w_t *terminal);
 
 
 
-
+void gcurses_test(void);
 
 
 
