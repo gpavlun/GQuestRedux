@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL_events.h>
 #include <math.h>
 #include <pthread.h>
 #include <stdint.h>
@@ -185,6 +186,7 @@ void *editor_event_handler(void *args) {
   player.mass = 80;
   player.max_force = 2500;
 
+  u8 mousemode = 0;
   while (modes.RUNNING) {
 
     current_movement = SDL_GetPerformanceCounter();
@@ -217,9 +219,22 @@ void *editor_event_handler(void *args) {
 
         theta += event.motion.xrel * 0.01f;
         phi -= event.motion.yrel * 0.01f;
+        if (phi > 1.5)
+          phi = 1.5;
+        else if (phi < -1.5)
+          phi = -1.5;
 
         $
       }
+      case (SDL_MOUSEBUTTONUP): {
+        if (mousemode)
+          SDL_SetRelativeMouseMode(SDL_FALSE);
+        else
+          SDL_SetRelativeMouseMode(SDL_TRUE);
+        mousemode = !mousemode;
+        $
+      }
+
       default: {
         $
       }
@@ -544,24 +559,25 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh) {
           max_y = window->dim.h - 1;
         }
         // draw outlines
-        /* mesh.color.code = 0xFFFFFF;
-         set_color(gui->sdl2.renderer, mesh.color);
-         SDL_RenderDrawLine(gui->sdl2.renderer, points1[0].x, points1[0].y,
-                            points1[1].x, points1[1].y);
+        // mesh.color.code = 0xFFFFFF;
+        // set_color(gui->sdl2.renderer, mesh.color);
+        SDL_RenderDrawLine(gui->sdl2.renderer, points1[0].x, points1[0].y,
+                           points1[1].x, points1[1].y);
 
-         SDL_RenderDrawLine(gui->sdl2.renderer, points1[1].x, points1[1].y,
-                            points1[2].x, points1[2].y);
+        SDL_RenderDrawLine(gui->sdl2.renderer, points1[1].x, points1[1].y,
+                           points1[2].x, points1[2].y);
 
-         SDL_RenderDrawLine(gui->sdl2.renderer, points1[2].x, points1[2].y,
-                            points1[0].x, points1[0].y);
+        SDL_RenderDrawLine(gui->sdl2.renderer, points1[2].x, points1[2].y,
+                           points1[0].x, points1[0].y);
 
-         if (j) {
-           mesh.color.code = 0x00FF00;
-         } else {
-           mesh.color.code = 0xFF0000;
-         }
-         set_color(gui->sdl2.renderer, mesh.color);
-         */
+        /*if (j) {
+          mesh.color.code = 0x00FF00;
+        } else {
+          mesh.color.code = 0xFF0000;
+        }
+        set_color(gui->sdl2.renderer, mesh.color);
+        */
+        /*
         float e1, e2, e3;
         for (int y = min_y; y <= max_y; y++) {
           for (int x = min_x; x <= max_x; x++) {
@@ -574,6 +590,7 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh) {
             }
           }
         }
+        */
       }
     }
   }
