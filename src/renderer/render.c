@@ -216,14 +216,14 @@ void *editor_event_handler(void *args) {
         $
       }
       case (SDL_MOUSEMOTION): {
-
-        theta += event.motion.xrel * 0.01f;
-        phi -= event.motion.yrel * 0.01f;
-        if (phi > 1.5)
-          phi = 1.5;
-        else if (phi < -1.5)
-          phi = -1.5;
-
+        if (mousemode) {
+          theta += event.motion.xrel * 0.01f;
+          phi -= event.motion.yrel * 0.01f;
+          if (phi > 1.5)
+            phi = 1.5;
+          else if (phi < -1.5)
+            phi = -1.5;
+        }
         $
       }
       case (SDL_MOUSEBUTTONUP): {
