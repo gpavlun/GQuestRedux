@@ -56,7 +56,9 @@ def player_data {
   vec3_t pos;
   vec3_t vel;
   vec3_t acc;
+  vec3_t desired_velocity;
   vec3_t applied_force;
+  vec3_t net_force;
   float max_force;
   float mass;
 }player_t;
@@ -115,25 +117,57 @@ def inputs {
 #define planitary_diam 12756000
 #define gravitational_const 0.000000000067408
 #define cheat_grav 9.8
+#define friction_coeff .8
 
 #define sensitivity 0.5
 
 float theta;
 float phi;
 
+double phys_clamp(double value, double min, double max){
+  if(value>max) return max;
+  if(value<min) return min;
+  return value;
+}
+
 void game_logic(float dt) {
 
-  vec3_t drag_force;
-  drag_force.x = -(DRAG_CONSTANT * player.vel.x);
-  drag_force.z = -(DRAG_CONSTANT * player.vel.z);
+  //vec3_t drag_force;
+  //drag_force.x = -(DRAG_CONSTANT * player.vel.x);
+  //drag_force.z = -(DRAG_CONSTANT * player.vel.z);
+
+  float world_x;
+  float world_z;
+
+  world_x = player.desired_velocity.x * cos(theta) + player.desired_velocity.z * sin(theta);
+  world_z = -player.desired_velocity.x * sin(theta) + player.desired_velocity.z * cos(theta);
+
+
+  player.applied_force.x = player.max_force * (world_x - player.vel.x);
+  player.applied_force.z = player.max_force * (world_z - player.vel.z);
+
+
+
 
   double gravity_force;
-  gravity_force = -cheat_grav * player.mass;
+  gravity_force = player.mass * -cheat_grav;
+  double normal_force;
+  if (player.pos.y <= 2) {
+    player.pos.y = 2;
+    
+    if (player.vel.y < 0)  player.vel.y = 0;
+    normal_force = player.mass * cheat_grav;
+  }else{
+    normal_force = 0;
+  }  
+  
+  double friction_force; 
+  friction_force = friction_coeff * normal_force;
 
   vec3_t net_force;
-  net_force.x = player.applied_force.x + drag_force.x;
-  net_force.z = player.applied_force.z + drag_force.z;
-  net_force.y = player.applied_force.y + gravity_force;
+  net_force.x = phys_clamp(player.applied_force.x, -friction_force, friction_force);// + drag_force.x;
+  net_force.z = phys_clamp(player.applied_force.z, -friction_force, friction_force);// + drag_force.z;
+  net_force.y = player.applied_force.y + gravity_force + normal_force;
 
   player.acc.x = net_force.x / player.mass;
   player.acc.z = net_force.z / player.mass;
@@ -145,18 +179,13 @@ void game_logic(float dt) {
 
   player.pos.x += player.vel.x * dt;
   player.pos.z += player.vel.z * dt;
-
   player.pos.y += player.vel.y * dt;
-  if (player.pos.y < 2) {
-    player.pos.y = 2;
 
-    if (player.vel.y < 0)  player.vel.y = 0;
-  }
 }
-
+#define walkspeed 6
 void multipress(inputs_t key){
-
-  player.applied_force.x = player.applied_force.y = player.applied_force.z = 0;
+  player.desired_velocity.x = player.desired_velocity.z = 0;
+  player.applied_force.y = 0;
   float input_x = 0, input_z = 0;
 
   if(key.w){
@@ -175,16 +204,14 @@ void multipress(inputs_t key){
     input_x += 1;
   }
 
-  if(key.space) player.applied_force.y = player.max_force;
+  if(key.space){
+    player.applied_force.y = player.max_force;
+  }
 
-  float world_x;
-  float world_z;
-
-  world_x = input_x * cos(theta) + input_z * sin(theta);
-  world_z = -input_x * sin(theta) + input_z * cos(theta);
-
-  player.applied_force.x = world_x * player.max_force;
-  player.applied_force.z = world_z * player.max_force;
+  player.desired_velocity.x = input_x * walkspeed;
+  player.desired_velocity.z = input_z * walkspeed;
+//   player.desired_velocity.x *= walkspeed;
+//   player.desired_velocity.z *= walkspeed;
 }
 
 
@@ -199,7 +226,7 @@ void *editor_event_handler(void *args){
   double dt;
 
   player.mass = 80;
-  player.max_force = 1200;
+  player.max_force = 500;
 
   u8 mousemode = 0;
 
@@ -762,12 +789,23 @@ void *tui(void *temp) {
     terminal.horz_strdisp(str);
 
     str.r = 5;
+    sprintf(source, "    desired velocity : (%.2f N, %.2fN, %.2fN)",
+            player.desired_velocity.x, player.desired_velocity.y,
+            player.desired_velocity.z);
+    terminal.horz_strdisp(str);
+
+    str.r = 6;
     sprintf(source, "    applied force : (%.2f N, %.2fN, %.2fN)",
             player.applied_force.x, player.applied_force.y,
             player.applied_force.z);
     terminal.horz_strdisp(str);
 
-    str.r = 6;
+    str.r = 7;
+    sprintf(source, "    net force : (%.2f N, %.2fN, %.2fN)",
+            player.net_force.x, player.net_force.y,
+            player.net_force.z);
+    terminal.horz_strdisp(str);
+    str.r = 8;
     sprintf(source, "theta %.2f :: phi %.2f", theta, phi);
     terminal.horz_strdisp(str);
 
