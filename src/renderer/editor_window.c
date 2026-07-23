@@ -8,14 +8,17 @@
 int get_dim(SDL_Window *window, window_t *win){
     int new_width;
     int new_height;
-    int result = 0;
+
     SDL_GetWindowSize(window, &new_width, &new_height);
 
-    win->dim.w = new_width;
-    win->dim.h = new_height;
+    if(new_width!=win->dim.w || new_height!=win->dim.h){
+        win->dim.w = new_width;
+        win->dim.h = new_height;
 
-    win->cen.x = new_width/2;
-    win->cen.y = new_height/2;
+        win->cen.x = new_width/2;
+        win->cen.y = new_height/2;
+        return 1;
+    }
     return 0;  
 }
 int get_mouse(mouse_t *mouse){

@@ -1,3 +1,4 @@
+// clang-format off
 #include <SDL2/SDL.h>
 #include <SDL_events.h>
 #include <math.h>
@@ -14,6 +15,7 @@
 #include <logging.h>
 
 #include "editor.h"
+#include "render.h"
 
 typedef int64_t i64;
 typedef int32_t i32;
@@ -41,42 +43,51 @@ int origin_chunk_y;
 uint32_t selected_terrain;
 uint8_t painting;
 
-def shared_data { float dist; }
-data_t;
+def shared_data { 
+  float dist; 
+}data_t;
 data_t sh;
 
-def pos_data {
-  float x;
-  float y;
-  float z;
+def vector_3val_data {
+  float x, y, z;
 }
-pos_t;
+vec3_t;
 def player_data {
-  pos_t pos;
-  pos_t vel;
-  pos_t acc;
-  pos_t applied_force;
+  vec3_t pos;
+  vec3_t vel;
+  vec3_t acc;
+  vec3_t applied_force;
   float max_force;
   float mass;
-}
-player_t;
+}player_t;
+player_t player;
+
 
 def object_data {
-  pos_t pos;
-  pos_t rel;
+  vec3_t pos;
+  vec3_t rel;
   dimen_t dim;
-}
-object_t;
-
-player_t player;
+}object_t;
 object_t object_glob;
 
-def vertice_data { float x, y, z; }
-vert_t;
-def edge_data { u32 A, B; }
-edge_t;
-def triangle_data { u16 a, b, c; }
-triangle_t;
+def vertice_data{ 
+  float x, y, z; 
+}vert_t;
+
+def edge_data{ 
+  u32 A, B; 
+}edge_t;
+
+def triangle_data{ 
+  u16 a, b, c; 
+}triangle_t;
+
+def {
+  u8 wire_frame: 1;
+  u8 triangles: 1;
+  u8 vertices: 1;
+}mesh_opts;
+
 def mesh_data {
   u16 nedges;
   edge_t *edges;
@@ -85,8 +96,8 @@ def mesh_data {
   u16 ntrangs;
   triangle_t *trangs;
   hexcode_u color;
-}
-mesh_t;
+  mesh_opts opts;
+}mesh_t;
 
 def inputs {
   u8 w : 1;
@@ -94,8 +105,10 @@ def inputs {
   u8 s : 1;
   u8 d : 1;
   u8 space : 1;
-}
-inputs_t;
+}inputs_t;
+
+
+
 
 #define DRAG_CONSTANT 200
 #define planetary_mass 10000000000000000000000000
@@ -110,14 +123,14 @@ float phi;
 
 void game_logic(float dt) {
 
-  pos_t drag_force;
+  vec3_t drag_force;
   drag_force.x = -(DRAG_CONSTANT * player.vel.x);
   drag_force.z = -(DRAG_CONSTANT * player.vel.z);
 
   double gravity_force;
   gravity_force = -cheat_grav * player.mass;
 
-  pos_t net_force;
+  vec3_t net_force;
   net_force.x = player.applied_force.x + drag_force.x;
   net_force.z = player.applied_force.z + drag_force.z;
   net_force.y = player.applied_force.y + gravity_force;
@@ -134,34 +147,36 @@ void game_logic(float dt) {
   player.pos.z += player.vel.z * dt;
 
   player.pos.y += player.vel.y * dt;
-  if (player.pos.y < 0) {
-    player.pos.y = 0;
+  if (player.pos.y < 2) {
+    player.pos.y = 2;
 
-    if (player.vel.y < 0)
-      player.vel.y = 0;
+    if (player.vel.y < 0)  player.vel.y = 0;
   }
 }
 
-void multipress(inputs_t key) {
+void multipress(inputs_t key){
 
   player.applied_force.x = player.applied_force.y = player.applied_force.z = 0;
   float input_x = 0, input_z = 0;
 
-  if (key.w) {
+  if(key.w){
     input_z += 1;
   }
-  if (key.s) {
+
+  if(key.s){
     input_z -= 1;
   }
-  if (key.a) {
+
+  if(key.a){
     input_x -= 1;
   }
-  if (key.d) {
+
+  if(key.d){
     input_x += 1;
   }
-  if (key.space) {
-    player.applied_force.y = player.max_force;
-  }
+
+  if(key.space) player.applied_force.y = player.max_force;
+
   float world_x;
   float world_z;
 
@@ -172,7 +187,8 @@ void multipress(inputs_t key) {
   player.applied_force.z = world_z * player.max_force;
 }
 
-void *editor_event_handler(void *args) {
+
+void *editor_event_handler(void *args){
   gui_engine_t *gui = (gui_engine_t *)args;
   SDL_Event event;
   const uint8_t *keyscan = SDL_GetKeyboardState(NULL);
@@ -180,64 +196,44 @@ void *editor_event_handler(void *args) {
   u64 last_movement = SDL_GetPerformanceCounter();
 
   u64 current_movement;
-
   double dt;
 
   player.mass = 80;
-  player.max_force = 2500;
+  player.max_force = 1200;
 
   u8 mousemode = 0;
-  while (modes.RUNNING) {
 
+  while(modes.RUNNING){
     current_movement = SDL_GetPerformanceCounter();
     dt = (double)(current_movement - last_movement) /
          (double)SDL_GetPerformanceFrequency();
 
-    while (SDL_PollEvent(&event)) {
-
-      switch (event.type) {
-      case (SDL_QUIT): {
-
-        modes.RUNNING = 0;
-
-        $
-      }
-      case (SDL_KEYUP): {
-
-        switch (event.key.keysym.sym) {
-        case (SDLK_ESCAPE): { // window ctrls
+    while(SDL_PollEvent(&event)){
+      switch(event.type){
+        case(SDL_QUIT):{
+          
           modes.RUNNING = 0;
-          $
-        }
-        default: {
-          $
-        }
-        }
-        $
-      }
-      case (SDL_MOUSEMOTION): {
-        if (mousemode) {
-          theta += event.motion.xrel * 0.01f;
-          phi -= event.motion.yrel * 0.01f;
-          if (phi > 1.5)
-            phi = 1.5;
-          else if (phi < -1.5)
-            phi = -1.5;
-        }
-        $
-      }
-      case (SDL_MOUSEBUTTONUP): {
-        if (mousemode)
-          SDL_SetRelativeMouseMode(SDL_FALSE);
-        else
-          SDL_SetRelativeMouseMode(SDL_TRUE);
-        mousemode = !mousemode;
-        $
-      }
 
-      default: {
-        $
-      }
+        $}case(SDL_KEYUP):{
+          switch(event.key.keysym.sym){
+            case(SDLK_ESCAPE):{
+              modes.RUNNING = 0;
+            $}default:{$}
+          }
+        $}case(SDL_MOUSEMOTION):{
+          if(mousemode){
+            theta += event.motion.xrel * 0.01f;
+            phi -= event.motion.yrel * 0.01f;
+
+            if(phi>1.5) phi = 1.5;
+            else if(phi<-1.5) phi = -1.5;
+          }
+        $}case(SDL_MOUSEBUTTONUP):{
+          if(mousemode) SDL_SetRelativeMouseMode(SDL_FALSE);
+          else SDL_SetRelativeMouseMode(SDL_TRUE);
+
+          mousemode = !mousemode;
+        $}default:{$}
       }
 
       inputs.w = keyscan[SDL_SCANCODE_W];
@@ -245,6 +241,7 @@ void *editor_event_handler(void *args) {
       inputs.s = keyscan[SDL_SCANCODE_S];
       inputs.d = keyscan[SDL_SCANCODE_D];
       inputs.space = keyscan[SDL_SCANCODE_SPACE];
+
       multipress(inputs);
     }
 
@@ -256,132 +253,44 @@ void *editor_event_handler(void *args) {
   pthread_exit(0);
 }
 
-void draw_dis(gui_engine_t *gui, object_t object) {
-  window_t *window = &gui->window;
-  pos_t relative;
-  SDL_Rect shape;
 
-  hexcode_u color;
-
-  shape.x = window->cen.x;
-  shape.y = window->cen.y;
-  shape.w = object.dim.w;
-  shape.h = object.dim.h;
-  float focal = 400;
-
-  relative.x = object.pos.x - player.pos.x;
-  relative.y = object.pos.y - player.pos.y;
-  relative.z = object.pos.z - player.pos.z;
-
-  if (relative.z <= 0.01f)
-    return;
-
-  float screen_x = relative.x / relative.z;
-  float screen_y = relative.y / relative.z;
-
-  shape.w = (int)(object.dim.w * focal / relative.z);
-  shape.h = (int)(object.dim.h * focal / relative.z);
-
-  shape.x = window->cen.x + (int)(screen_x * focal) - shape.w / 2;
-  shape.y = window->cen.y - (int)(screen_y * focal) - shape.h / 2;
-
-  sh.dist = sqrt(pow(object.pos.x - player.pos.x, 2) +
-                 pow(object.pos.y - player.pos.y, 2) +
-                 pow(object.pos.z - player.pos.z, 2));
-
-  color.code = 0xFFFFFF;
-  set_color(gui->sdl2.renderer, color);
-  SDL_RenderFillRect(gui->sdl2.renderer, &shape);
-
-  color.code = 0x0000FF;
-  set_color(gui->sdl2.renderer, color);
-  SDL_RenderDrawRect(gui->sdl2.renderer, &shape);
+def point_data {
+  int x, y;
 }
+point_t;
+
 def vis_point_data {
   int x, y;
   u8 visible;
 }
-point_t;
+vpoint_t;
 
 int max(int a, int b, int c) {
-  if (a > b && a > c)
+  if (a>b && a>c)
     return a;
-  if (b > a && b > c)
+  if (b>a && b>c)
     return b;
   return c;
 }
 
 int min(int a, int b, int c) {
-  if (a < b && a < c)
+  if (a<b && a<c)
     return a;
-  if (b < a && b < c)
+  if (b<a && b<c)
     return b;
   return c;
 }
 
-void draw_mesh_wireframe(gui_engine_t *gui, mesh_t mesh) { //, float theta
-  window_t *window = &gui->window;
-  pos_t relative;
-  pos_t rotated;
-  pos_t pitched;
-  float focal = 400;
-  float screen_x, screen_y;
 
-  hexcode_u color;
-  color.code = 0xFF0000;
-  set_color(gui->sdl2.renderer, color);
 
-  // SDL_Rect verts_vis[mesh.nverts];
-  point_t points[mesh.nverts];
-  for (int i = 0; i < mesh.nverts; i++) {
-    relative.x = mesh.verts[i].x - player.pos.x;
-    relative.y = mesh.verts[i].y - player.pos.y;
-    relative.z = mesh.verts[i].z - player.pos.z;
-
-    rotated.x = relative.x * cos(theta) - relative.z * sin(theta);
-    rotated.y = relative.y;
-    rotated.z = relative.x * sin(theta) + relative.z * cos(theta);
-
-    pitched.x = rotated.x;
-    pitched.y = rotated.y * cos(phi) - rotated.z * sin(phi);
-    pitched.z = rotated.y * sin(phi) + rotated.z * cos(phi);
-
-    if (pitched.z <= 0.01f) {
-      points[i].visible = 0;
-      continue;
-    }
-    points[i].visible = 1;
-
-    screen_x = pitched.x / pitched.z;
-    screen_y = pitched.y / pitched.z;
-
-    // will draw the vertices if desired
-    //  verts_vis[i].w = verts_vis[i].h = (int)(1 * focal / rotated.z);
-    //  verts_vis[i].x = window->cen.x + (int)(screen_x * focal);
-    //  verts_vis[i].y = window->cen.y - (int)(screen_y * focal);
-
-    // SDL_RenderFillRect(gui->sdl2.renderer, &verts_vis[i]);
-
-    points[i].x = window->cen.x + (int)(screen_x * focal);
-    points[i].y = window->cen.y - (int)(screen_y * focal);
-  }
-
-  for (int i = 0; i < mesh.nedges; i++) {
-    if (points[mesh.edges[i].A].visible && points[mesh.edges[i].B].visible) {
-      SDL_RenderDrawLine(gui->sdl2.renderer, points[mesh.edges[i].A].x,
-                         points[mesh.edges[i].A].y, points[mesh.edges[i].B].x,
-                         points[mesh.edges[i].B].y);
-    }
-  }
-}
 float edge(point_t a, point_t b, float x, float y) {
   return (x - a.x) * (b.y - a.y) - (y - a.y) * (b.x - a.x);
 }
 
-pos_t find_intersect(pos_t a, pos_t b) {
+vec3_t find_intersect(vec3_t a, vec3_t b) {
   float t = (0.1f - a.z) / (b.z - a.z);
 
-  pos_t out;
+  vec3_t out;
 
   out.x = a.x + (b.x - a.x) * t;
   out.y = a.y + (b.y - a.y) * t;
@@ -391,53 +300,115 @@ pos_t find_intersect(pos_t a, pos_t b) {
 }
 
 def tremp_t_dat {
-  pos_t a, b, c;
+  vec3_t a, b, c;
   u8 valid;
 }
 tri_t;
-void clip_one(tri_t unclipped, tri_t *trangs) {
-  // clips point a off of a triangle
-  pos_t v1, v2;
-  v1 = find_intersect(unclipped.a, unclipped.b);
-  v2 = find_intersect(unclipped.a, unclipped.c);
+void clip_one(vec3_t a, vec3_t b, vec3_t c, tri_t *trangs) {
+  // clips point 'a' off of a triangle
+  vec3_t v1, v2;
+  v1 = find_intersect(a, b);
+  v2 = find_intersect(a, c);
   trangs[0].a = v1;
-  trangs[0].b = unclipped.c;
+  trangs[0].b = c;
   trangs[0].c = v2;
   trangs[0].valid = 1;
 
   trangs[1].a = v1;
-  trangs[1].b = unclipped.b;
-  trangs[1].c = unclipped.c;
+  trangs[1].b = b;
+  trangs[1].c = c;
   trangs[1].valid = 1;
 }
 
-void clip_two(tri_t unclipped, tri_t *trangs) {
-  // clips point a and b off of a triangle
-  pos_t v1, v2;
-  v1 = find_intersect(unclipped.a, unclipped.c);
-  v2 = find_intersect(unclipped.b, unclipped.c);
+void clip_two(vec3_t a, vec3_t b, vec3_t c, tri_t *trangs){
+  // clips point 'a' and 'b' off of a triangle
+  vec3_t v1, v2;
+  v1 = find_intersect(a, c);
+  v2 = find_intersect(b, c);
   trangs[0].a = v1;
-  trangs[0].b = unclipped.c;
+  trangs[0].b = c;
   trangs[0].c = v2;
   trangs[0].valid = 1;
 
   trangs[1].valid = 0;
 }
+void clear_buffer(framebuffer_t *fb, uint32_t color){
+    for(int i=0; i<fb->width*fb->height; i++){
+        fb->pixels[i] = color;
+    }
+}
+void put_pixel(framebuffer_t *fb, int x, int y, uint32_t color){
+    if(x<0 || x>=fb->width ||
+       y<0 || y>=fb->height)
+        return;
+    fb->pixels[y * fb->width + x] = color;
+}
+void draw_line_buffer(framebuffer_t *fb, int x0, int y0, int x1, int y1, u32 color){
+  int dx, dy, sx, sy, err, e2;
 
-void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh) {
+  dx = abs(x1 - x0);
+  dy = abs(y1 - y0);
+
+  if(x0 < x1) sx = 1;
+  else sx = -1;
+
+  if(y0 < y1) sy = 1;
+  else sy = -1;
+
+  err = dx - dy;
+
+  while(1){
+    put_pixel(fb, x0, y0, color);
+
+    if(x0 == x1 && y0 == y1) break;
+    
+    e2 = 2 * err;
+    
+    if(e2 > -dy){
+      err -= dy;
+      x0 += sx;
+    }
+    if(e2 < dx){
+      err += dx;
+      y0 += sy;
+    }
+  }
+}
+void draw_rect_buffer(framebuffer_t *fb, SDL_Rect rect, u32 color){
+  int x, y, start_x, start_y, end_x, end_y;
+
+  start_x = rect.x;
+  start_y = rect.y;
+  end_x = rect.x + rect.w;
+  end_y = rect.y + rect.h;
+
+  if(start_x < 0) start_x = 0;
+  if(start_y < 0) start_y = 0;
+  if(end_x > fb->width) end_x = fb->width;
+  if(end_y > fb->height)end_y = fb->height;
+
+  for(y = start_y; y < end_y; y++){
+    for(x = start_x; x < end_x; x++){
+      put_pixel(fb, x, y, color);
+    }
+  }
+}
+
+void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
   window_t *window = &gui->window;
-  pos_t relative;
-  pos_t rotated;
-  pos_t pitched;
+  vec3_t relative;
+  vec3_t rotated;
+  vec3_t pitched;
   float focal = 400;
 
   float screen_x, screen_y;
-  set_color(gui->sdl2.renderer, mesh.color);
-  point_t points[mesh.nverts];
-  pos_t trans_vert[mesh.nverts];
-  point_t points1[3];
+  
+  vec3_t trans_vert[mesh.nverts];
+  point_t points[3];
 
-  for (int i = 0; i < mesh.nverts; i++) {
+  int i, j, y, x;
+
+  for(i=0; i<mesh.nverts; i++){
     relative.x = mesh.verts[i].x - player.pos.x;
     relative.y = mesh.verts[i].y - player.pos.y;
     relative.z = mesh.verts[i].z - player.pos.z;
@@ -454,144 +425,192 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh) {
     trans_vert[i].y = pitched.y;
     trans_vert[i].z = pitched.z;
   }
-#define NEAR 0.1f
-  for (int i = 0; i < mesh.ntrangs; i++) {
 
-    tri_t unclipped;
-    tri_t trangs[2] = {0};
+  #define NEAR 0.1f
 
-    u8 inA = trans_vert[mesh.trangs[i].a].z >= NEAR;
-    u8 inB = trans_vert[mesh.trangs[i].b].z >= NEAR;
-    u8 inC = trans_vert[mesh.trangs[i].c].z >= NEAR;
+  float e1, e2, e3;
+  float area;
+  int inside;
+  i8 inA, inB, inC;
+  
 
-    int inside = (int)inA + (int)inB + (int)inC;
-
-    switch (inside) {
-    case 0:
-      // all outside
-      continue;
-
-    case 3:
-      // all inside
-      trangs[0].a = trans_vert[mesh.trangs[i].a];
-      trangs[0].b = trans_vert[mesh.trangs[i].b];
-      trangs[0].c = trans_vert[mesh.trangs[i].c];
-      trangs[0].valid = 1;
-      goto render;
-
-    case 2:
-      // one outside
-      if (!inA) { /* A outside */
-        unclipped.a = trans_vert[mesh.trangs[i].a];
-        unclipped.b = trans_vert[mesh.trangs[i].b];
-        unclipped.c = trans_vert[mesh.trangs[i].c];
-        clip_one(unclipped, trangs);
-      } else if (!inB) { /* B outside */
-        unclipped.a = trans_vert[mesh.trangs[i].b];
-        unclipped.b = trans_vert[mesh.trangs[i].c];
-        unclipped.c = trans_vert[mesh.trangs[i].a];
-        clip_one(unclipped, trangs);
-      } else { /* C outside */
-        unclipped.a = trans_vert[mesh.trangs[i].c];
-        unclipped.b = trans_vert[mesh.trangs[i].a];
-        unclipped.c = trans_vert[mesh.trangs[i].b];
-        clip_one(unclipped, trangs);
+  if(!mesh.ntrangs && mesh.opts.wire_frame){
+    set_color(gui->sdl2.renderer, mesh.color);
+    vpoint_t vpoints[mesh.nverts];
+    SDL_Rect verts_vis[mesh.nverts];
+    for(i=0; i<mesh.nverts; i++){
+      if(trans_vert[i].z<=0.01f){
+        vpoints[i].visible = 0;
+        continue;
       }
-      break;
+      vpoints[i].visible = 1;
 
-    case 1:
-      // one inside
-      if (inA) { /* only A inside */
-        unclipped.a = trans_vert[mesh.trangs[i].b];
-        unclipped.b = trans_vert[mesh.trangs[i].c];
-        unclipped.c = trans_vert[mesh.trangs[i].a];
-        clip_two(unclipped, trangs);
-      } else if (inB) { /* only B inside */
-        unclipped.a = trans_vert[mesh.trangs[i].c];
-        unclipped.b = trans_vert[mesh.trangs[i].a];
-        unclipped.c = trans_vert[mesh.trangs[i].b];
-        clip_two(unclipped, trangs);
-      } else { /* only C inside */
-        unclipped.a = trans_vert[mesh.trangs[i].a];
-        unclipped.b = trans_vert[mesh.trangs[i].b];
-        unclipped.c = trans_vert[mesh.trangs[i].c];
-        clip_two(unclipped, trangs);
+      screen_x = trans_vert[i].x / trans_vert[i].z;
+      screen_y = trans_vert[i].y / trans_vert[i].z;
+      if(mesh.opts.vertices){
+        verts_vis[i].w = verts_vis[i].h = (int)(.25 * focal / trans_vert[i].z);
+        verts_vis[i].x = window->cen.x + (int)(screen_x * focal) - verts_vis[i].w/2;
+        verts_vis[i].y = window->cen.y - (int)(screen_y * focal) - verts_vis[i].h/2;
+        draw_rect_buffer(gui->window.fb, verts_vis[i], 0xff000000 | mesh.color.code);      
       }
-      break;
+
+      vpoints[i].x = window->cen.x + (int)(screen_x * focal);
+      vpoints[i].y = window->cen.y - (int)(screen_y * focal);
     }
+
+    for(i=0; i<mesh.nedges; i++){
+      if(vpoints[mesh.edges[i].A].visible && vpoints[mesh.edges[i].B].visible){
+          draw_line_buffer(gui->window.fb,
+                           vpoints[mesh.edges[i].A].x,
+                           vpoints[mesh.edges[i].A].y,
+                           vpoints[mesh.edges[i].B].x,
+                           vpoints[mesh.edges[i].B].y,
+                           0xff000000 | mesh.color.code);
+      }
+    }
+    return;
+  }
+
+
+  tri_t trangs[2] = {0};
+  for(i=0; i<mesh.ntrangs; i++){
+    inA = trans_vert[mesh.trangs[i].a].z>=NEAR;
+    inB = trans_vert[mesh.trangs[i].b].z>=NEAR;
+    inC = trans_vert[mesh.trangs[i].c].z>=NEAR;
+
+    inside = (int)inA + (int)inB + (int)inC;
+    switch(inside){
+      case 0:
+        // all outside
+        continue;
+
+      case 3:
+        // all inside
+        trangs[0].a = trans_vert[mesh.trangs[i].a];
+        trangs[0].b = trans_vert[mesh.trangs[i].b];
+        trangs[0].c = trans_vert[mesh.trangs[i].c];
+        trangs[0].valid = 1;
+        trangs[1].valid = 0;
+        goto render;
+
+      case 2:// one outside
+        if(!inA){ /* A outside */
+          clip_one(trans_vert[mesh.trangs[i].a],
+                   trans_vert[mesh.trangs[i].b],
+                   trans_vert[mesh.trangs[i].c],
+                   trangs);
+        }else if(!inB){ /* B outside */
+          clip_one(trans_vert[mesh.trangs[i].b],
+                   trans_vert[mesh.trangs[i].c],
+                   trans_vert[mesh.trangs[i].a],
+                   trangs);
+        }else{ /* C outside */
+          clip_one(trans_vert[mesh.trangs[i].c],
+                   trans_vert[mesh.trangs[i].a],
+                   trans_vert[mesh.trangs[i].b],
+                   trangs);
+        }
+        break;
+
+      case 1:// two outside
+        if(inA){ /* B and C outside */
+          clip_two(trans_vert[mesh.trangs[i].b],
+                   trans_vert[mesh.trangs[i].c],
+                   trans_vert[mesh.trangs[i].a],
+                   trangs);
+        }else if(inB){ /* A and C outside */
+          clip_two(trans_vert[mesh.trangs[i].c],
+                   trans_vert[mesh.trangs[i].a],
+                   trans_vert[mesh.trangs[i].b],
+                   trangs);
+        }else{ /* A and B outside */
+          clip_two(trans_vert[mesh.trangs[i].a],
+                   trans_vert[mesh.trangs[i].b],
+                   trans_vert[mesh.trangs[i].c],
+                   trangs);
+        }
+        break;
+    }
+
   render:
 
-    for (int j = 0; j < 2; j++) {
-
-      if (trangs[j].valid) {
+    for(j=0; j<2; j++){
+      if(trangs[j].valid){
         screen_x = trangs[j].a.x / trangs[j].a.z;
         screen_y = trangs[j].a.y / trangs[j].a.z;
-        points1[0].x = window->cen.x + (int)(screen_x * focal);
-        points1[0].y = window->cen.y - (int)(screen_y * focal);
+        points[0].x = window->cen.x + (int)(screen_x * focal);
+        points[0].y = window->cen.y - (int)(screen_y * focal);
+
 
         screen_x = trangs[j].b.x / trangs[j].b.z;
         screen_y = trangs[j].b.y / trangs[j].b.z;
-        points1[1].x = window->cen.x + (int)(screen_x * focal);
-        points1[1].y = window->cen.y - (int)(screen_y * focal);
+        points[1].x = window->cen.x + (int)(screen_x * focal);
+        points[1].y = window->cen.y - (int)(screen_y * focal);
 
         screen_x = trangs[j].c.x / trangs[j].c.z;
         screen_y = trangs[j].c.y / trangs[j].c.z;
-        points1[2].x = window->cen.x + (int)(screen_x * focal);
-        points1[2].y = window->cen.y - (int)(screen_y * focal);
+        points[2].x = window->cen.x + (int)(screen_x * focal);
+        points[2].y = window->cen.y - (int)(screen_y * focal);
 
-        int min_x = min(points1[0].x, points1[1].x, points1[2].x);
-        int max_x = max(points1[0].x, points1[1].x, points1[2].x);
-        int min_y = min(points1[0].y, points1[1].y, points1[2].y);
-        int max_y = max(points1[0].y, points1[1].y, points1[2].y);
+        int min_x = min(points[0].x, points[1].x, points[2].x);
+        int max_x = max(points[0].x, points[1].x, points[2].x);
+        int min_y = min(points[0].y, points[1].y, points[2].y);
+        int max_y = max(points[0].y, points[1].y, points[2].y);
 
-        if (min_x < 0) {
-          min_x = 0;
-        }
-
-        if (min_y < 0) {
-          min_y = 0;
-        }
-
-        if (max_x >= window->dim.w) {
-          max_x = window->dim.w - 1;
-        }
-
-        if (max_y >= window->dim.h) {
-          max_y = window->dim.h - 1;
-        }
-        // draw outlines
-        // mesh.color.code = 0xFFFFFF;
-        // set_color(gui->sdl2.renderer, mesh.color);
-        SDL_RenderDrawLine(gui->sdl2.renderer, points1[0].x, points1[0].y,
-                           points1[1].x, points1[1].y);
-
-        SDL_RenderDrawLine(gui->sdl2.renderer, points1[1].x, points1[1].y,
-                           points1[2].x, points1[2].y);
-
-        SDL_RenderDrawLine(gui->sdl2.renderer, points1[2].x, points1[2].y,
-                           points1[0].x, points1[0].y);
-
-        /*if (j) {
-          mesh.color.code = 0x00FF00;
-        } else {
-          mesh.color.code = 0xFF0000;
-        }
+        if(min_x<0) min_x = 0;
+        if(min_y<0) min_y = 0;
+        if(max_x>=window->dim.w) max_x = window->dim.w - 1;
+        if(max_y>=window->dim.h) max_y = window->dim.h - 1;
+        
         set_color(gui->sdl2.renderer, mesh.color);
-        */
-        /*
-        float e1, e2, e3;
-        for (int y = min_y; y <= max_y; y++) {
-          for (int x = min_x; x <= max_x; x++) {
-            e1 = edge(points1[0], points1[1], x, y);
-            e2 = edge(points1[1], points1[2], x, y);
-            e3 = edge(points1[2], points1[0], x, y);
-            if ((e1 >= 0 && e2 >= 0 && e3 >= 0) ||
-                (e1 <= 0 && e2 <= 0 && e3 <= 0)) {
-              SDL_RenderDrawPoint(gui->sdl2.renderer, x, y);
+        if(mesh.opts.wire_frame){
+          draw_line_buffer(gui->window.fb,
+                           points[1].x,
+                           points[1].y,
+                           points[0].x,
+                           points[0].y,
+                          0xff000000 | mesh.color.code);
+          draw_line_buffer(gui->window.fb,
+                           points[2].x,
+                           points[2].y,
+                           points[1].x,
+                           points[1].y,
+                           0xff000000 | mesh.color.code);
+          draw_line_buffer(gui->window.fb,
+                           points[2].x,
+                           points[2].y,
+                           points[0].x,
+                           points[0].y,
+                           0xff000000 | mesh.color.code);
+        }
+
+        if(mesh.opts.triangles){
+
+          area = edge(points[0], points[1], points[2].x, points[2].y);
+
+          if(area<0){
+              point_t tmp = points[1];
+              points[1] = points[2];
+              points[2] = tmp;
+
+              area = -area;
+          }
+
+          if(area == 0) continue;
+
+          for(y = min_y; y<=max_y; y++){
+            for(x = min_x; x<=max_x; x++){
+              e1 = edge(points[0], points[1], x, y);
+              e2 = edge(points[1], points[2], x, y);
+              e3 = edge(points[2], points[0], x, y);
+
+              if((e1>=0 && e2>=0 && e3>=0) ||
+                (e1<=0 && e2<=0 && e3<=0)){
+                put_pixel(gui->window.fb, x, y, 0xff000000 | mesh.color.code);
+              }
             }
           }
         }
-        */
       }
     }
   }
@@ -599,157 +618,74 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh) {
 
 void start_render(void) {
 
+  modes.RUNNING = 1;
+
   gui_engine_t gui = gui_engine_init();
   init_events(&gui);
+  window_t *window = &gui.window;
+  
 
-  modes.RUNNING = 1;
+  // the concept here is to have a buffer to store
+  // the pixels in before writing them to the screen
+  framebuffer_t fb;
+  fb.width = window->dim.w;
+  fb.height = window->dim.h;
+  fb.pixels = malloc(fb.width * fb.height * sizeof(u32));
+  gui.window.fb = &fb;
+
+  SDL_Texture *screen_texture;
+  screen_texture = SDL_CreateTexture(gui.sdl2.renderer,
+                                     SDL_PIXELFORMAT_ARGB8888,
+                                     SDL_TEXTUREACCESS_STREAMING,
+                                     fb.width,
+                                     fb.height);
 
   hexcode_u color;
   render_frame_t render;
-  window_t *window = &gui.window;
+
 
   player.pos.x = 0;
-  player.pos.y = 0;
+  player.pos.y = 2;
+  player.pos.z = 0;
 
-  object_t object1;
-  object1.pos.x = 0;
-  object1.pos.y = 0;
-  object1.pos.z = 50;
-  object1.dim.w = 10;
-  object1.dim.h = 20;
+  // mesh construction defined in header
+  cubiod_
+  ground_
 
-  mesh_t mesh1;
-  mesh1.nverts = 8;
-  mesh1.verts = malloc(sizeof(vert_t) * mesh1.nverts);
 
-  mesh1.verts[0].x = 0;
-  mesh1.verts[0].y = -10;
-  mesh1.verts[0].z = 50;
 
-  mesh1.verts[1].x = 20;
-  mesh1.verts[1].y = -10;
-  mesh1.verts[1].z = 80;
 
-  mesh1.verts[2].x = 40;
-  mesh1.verts[2].y = -10;
-  mesh1.verts[2].z = 50;
 
-  mesh1.verts[3].x = 20;
-  mesh1.verts[3].y = -10;
-  mesh1.verts[3].z = 30;
-
-  mesh1.verts[4].x = 0;
-  mesh1.verts[4].y = 10;
-  mesh1.verts[4].z = 50;
-
-  mesh1.verts[5].x = 20;
-  mesh1.verts[5].y = 10;
-  mesh1.verts[5].z = 80;
-
-  mesh1.verts[6].x = 40;
-  mesh1.verts[6].y = 10;
-  mesh1.verts[6].z = 50;
-
-  mesh1.verts[7].x = 20;
-  mesh1.verts[7].y = 10;
-  mesh1.verts[7].z = 30;
-
-  mesh1.nedges = 12;
-  mesh1.edges = malloc(sizeof(edge_t) * mesh1.nedges);
-
-  mesh1.edges[0].A = 0;
-  mesh1.edges[0].B = 1;
-
-  mesh1.edges[1].A = 1;
-  mesh1.edges[1].B = 2;
-
-  mesh1.edges[2].A = 2;
-  mesh1.edges[2].B = 3;
-
-  mesh1.edges[3].A = 3;
-  mesh1.edges[3].B = 0;
-
-  mesh1.edges[4].A = 4;
-  mesh1.edges[4].B = 5;
-
-  mesh1.edges[5].A = 5;
-  mesh1.edges[5].B = 6;
-
-  mesh1.edges[6].A = 6;
-  mesh1.edges[6].B = 7;
-
-  mesh1.edges[7].A = 7;
-  mesh1.edges[7].B = 4;
-
-  mesh1.edges[8].A = 0;
-  mesh1.edges[8].B = 4;
-
-  mesh1.edges[9].A = 1;
-  mesh1.edges[9].B = 5;
-
-  mesh1.edges[10].A = 2;
-  mesh1.edges[10].B = 6;
-
-  mesh1.edges[11].A = 3;
-  mesh1.edges[11].B = 7;
-
-  mesh_t ground;
-  ground.nverts = 4;
-  ground.verts = malloc(sizeof(vert_t) * ground.nverts);
-
-  ground.verts[0].x = -100;
-  ground.verts[0].y = -10;
-  ground.verts[0].z = -100;
-
-  ground.verts[1].x = -100;
-  ground.verts[1].y = -10;
-  ground.verts[1].z = 100;
-
-  ground.verts[2].x = 100;
-  ground.verts[2].y = -10;
-  ground.verts[2].z = -100;
-
-  ground.verts[3].x = 100;
-  ground.verts[3].y = -10;
-  ground.verts[3].z = 100;
-
-  ground.nedges = 4;
-  ground.edges = malloc(sizeof(edge_t) * ground.nedges);
-
-  ground.edges[0].A = 0;
-  ground.edges[0].B = 1;
-
-  ground.edges[1].A = 1;
-  ground.edges[1].B = 2;
-
-  ground.edges[2].A = 2;
-  ground.edges[2].B = 3;
-
-  ground.edges[3].A = 3;
-  ground.edges[3].B = 0;
-
-  ground.ntrangs = 2;
-  ground.trangs = malloc(sizeof(triangle_t) * ground.nedges);
-
-  ground.trangs[0].a = 0;
-  ground.trangs[0].b = 1;
-  ground.trangs[0].c = 2;
-
-  ground.trangs[1].a = 1;
-  ground.trangs[1].b = 3;
-  ground.trangs[1].c = 2;
-
-  ground.color.code = 0x00cc00;
 
   while (modes.RUNNING) {
 
-    get_dim(gui.sdl2.window, window);
+    if(get_dim(gui.sdl2.window, window)){
+      fb.width = window->dim.w;
+      fb.height = window->dim.h;
+      free(fb.pixels);
+      fb.pixels = malloc(fb.width * fb.height * sizeof(u32));
+      SDL_DestroyTexture(screen_texture);
+      screen_texture = SDL_CreateTexture(gui.sdl2.renderer,
+                                        SDL_PIXELFORMAT_ARGB8888,
+                                        SDL_TEXTUREACCESS_STREAMING,
+                                        fb.width,
+                                        fb.height);
+    }
 
-    clear_screen_wrap(gui.sdl2.renderer);
+    clear_buffer(&fb, 0xff7cafc2);
+    //clear_screen_wrap(gui.sdl2.renderer);
 
     draw_mesh_triangle(&gui, ground);
-    draw_mesh_wireframe(&gui, mesh1);
+    draw_mesh_triangle(&gui, cuboid);
 
+    SDL_UpdateTexture(screen_texture,
+                      NULL,
+                      fb.pixels,
+                      fb.width * sizeof(u32));
+    SDL_RenderCopy(gui.sdl2.renderer,
+                   screen_texture,
+                   NULL,
+                   NULL);
     SDL_RenderPresent(gui.sdl2.renderer);
     usleep(event_rate);
   }
@@ -825,8 +761,8 @@ void *tui(void *temp) {
     usleep(10000);
   }
 
-  terminal.clear();
-  terminal.present();
+  //terminal.clear();
+  //terminal.present();
   terminal.io_block(1);
   terminal.cursor(1);
   move_cursor(&terminal, terminal.nrows, 0);

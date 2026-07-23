@@ -12,7 +12,8 @@ void set_color(SDL_Renderer *renderer, hexcode_u color){
 }
 void clear_screen_wrap(SDL_Renderer *renderer){
     hexcode_u color;
-    color.code = 0x1E1E1E;
+    // default color.code = 0x1E1E1E;
+    color.code = 0x7cafc2;
     set_color(renderer, color);
     SDL_RenderClear(renderer);    
 }

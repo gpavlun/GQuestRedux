@@ -57,10 +57,15 @@ typedef struct chunk_reference_data{
 
 }ch_ref_t;
 
-
+typedef struct {
+    int width;
+    int height;
+    uint32_t *pixels;
+}framebuffer_t;
 typedef struct window_data{
     dimen_t dim;
     coord_t cen;
+    framebuffer_t *fb;
 }window_t;
 
 typedef struct gui_engine_data{
