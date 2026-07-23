@@ -266,19 +266,15 @@ def vis_point_data {
 vpoint_t;
 
 int max(int a, int b, int c) {
-  if (a>b && a>c)
-    return a;
-  if (b>a && b>c)
-    return b;
-  return c;
+    if(a>=b && a>=c) return a;
+    if(b>=a && b>=c) return b;
+    return c;
 }
 
-int min(int a, int b, int c) {
-  if (a<b && a<c)
-    return a;
-  if (b<a && b<c)
-    return b;
-  return c;
+int min(int a, int b, int c){
+    if(a<=b && a<=c) return a;
+    if(b<=a && b<=c) return b;
+    return c;
 }
 
 
@@ -360,9 +356,8 @@ void draw_line_buffer(framebuffer_t *fb, int x0, int y0, int x1, int y1, u32 col
   while(1){
     put_pixel(fb, x0, y0, color);
 
-    if(x0 == x1 && y0 == y1) break;
-    
-    e2 = 2 * err;
+    if(x0 == x1 && y0 == y1) return;
+    e2 = err<<1;
     
     if(e2 > -dy){
       err -= dy;
@@ -393,7 +388,26 @@ void draw_rect_buffer(framebuffer_t *fb, SDL_Rect rect, u32 color){
     }
   }
 }
+void draw_vert_buffer(framebuffer_t *fb, point_t points[3], u32 color){
+  int x, y, start_x, start_y, end_x, end_y;
+  for(int i=0;i<3;i++){
+    start_x = points[i].x;
+    start_y = points[i].y;
+    end_x = start_x + 5;
+    end_y = start_y + 5;
 
+    if(start_x < 0) start_x = 0;
+    if(start_y < 0) start_y = 0;
+    if(end_x > fb->width) end_x = fb->width;
+    if(end_y > fb->height)end_y = fb->height;
+
+    for(y = start_y; y < end_y; y++){
+      for(x = start_x; x < end_x; x++){
+        put_pixel(fb, x, y, color);
+      }
+    }
+  }
+}
 void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
   window_t *window = &gui->window;
   vec3_t relative;
@@ -423,7 +437,7 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
 
     trans_vert[i].x = pitched.x;
     trans_vert[i].y = pitched.y;
-    trans_vert[i].z = pitched.z;
+    trans_vert[i].z = pitched.z;  
   }
 
   #define NEAR 0.1f
@@ -434,7 +448,7 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
   i8 inA, inB, inC;
   
 
-  if(!mesh.ntrangs && mesh.opts.wire_frame){
+  if(mesh.opts.wire_frame || mesh.opts.vertices){
     set_color(gui->sdl2.renderer, mesh.color);
     vpoint_t vpoints[mesh.nverts];
     SDL_Rect verts_vis[mesh.nverts];
@@ -451,24 +465,25 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
         verts_vis[i].w = verts_vis[i].h = (int)(.25 * focal / trans_vert[i].z);
         verts_vis[i].x = window->cen.x + (int)(screen_x * focal) - verts_vis[i].w/2;
         verts_vis[i].y = window->cen.y - (int)(screen_y * focal) - verts_vis[i].h/2;
-        draw_rect_buffer(gui->window.fb, verts_vis[i], 0xff000000 | mesh.color.code);      
+        draw_rect_buffer(gui->window.fb, verts_vis[i], 0xffff0000);      
       }
 
       vpoints[i].x = window->cen.x + (int)(screen_x * focal);
       vpoints[i].y = window->cen.y - (int)(screen_y * focal);
     }
-
-    for(i=0; i<mesh.nedges; i++){
-      if(vpoints[mesh.edges[i].A].visible && vpoints[mesh.edges[i].B].visible){
-          draw_line_buffer(gui->window.fb,
-                           vpoints[mesh.edges[i].A].x,
-                           vpoints[mesh.edges[i].A].y,
-                           vpoints[mesh.edges[i].B].x,
-                           vpoints[mesh.edges[i].B].y,
-                           0xff000000 | mesh.color.code);
+    if(!mesh.ntrangs && mesh.opts.wire_frame){
+      for(i=0; i<mesh.nedges; i++){
+            if(vpoints[mesh.edges[i].A].visible && vpoints[mesh.edges[i].B].visible){
+                draw_line_buffer(gui->window.fb,
+                                vpoints[mesh.edges[i].A].x,
+                                vpoints[mesh.edges[i].A].y,
+                                vpoints[mesh.edges[i].B].x,
+                                vpoints[mesh.edges[i].B].y,
+                                0xff000000 | mesh.color.code);
+        }
       }
+      return;
     }
-    return;
   }
 
 
@@ -541,7 +556,6 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
         points[0].x = window->cen.x + (int)(screen_x * focal);
         points[0].y = window->cen.y - (int)(screen_y * focal);
 
-
         screen_x = trangs[j].b.x / trangs[j].b.z;
         screen_y = trangs[j].b.y / trangs[j].b.z;
         points[1].x = window->cen.x + (int)(screen_x * focal);
@@ -560,32 +574,35 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
         if(min_x<0) min_x = 0;
         if(min_y<0) min_y = 0;
         if(max_x>=window->dim.w) max_x = window->dim.w - 1;
-        if(max_y>=window->dim.h) max_y = window->dim.h - 1;
-        
+        if(max_y>=window->dim.h) max_y = window->dim.h - 1;      
+
         set_color(gui->sdl2.renderer, mesh.color);
+        
+  
+        
+        
         if(mesh.opts.wire_frame){
           draw_line_buffer(gui->window.fb,
                            points[1].x,
                            points[1].y,
                            points[0].x,
                            points[0].y,
-                          0xff000000 | mesh.color.code);
+                           0xffff0000);
           draw_line_buffer(gui->window.fb,
                            points[2].x,
                            points[2].y,
                            points[1].x,
                            points[1].y,
-                           0xff000000 | mesh.color.code);
+                           0xffff0000);
           draw_line_buffer(gui->window.fb,
                            points[2].x,
                            points[2].y,
                            points[0].x,
                            points[0].y,
-                           0xff000000 | mesh.color.code);
+                           0xffff0000);
         }
 
         if(mesh.opts.triangles){
-
           area = edge(points[0], points[1], points[2].x, points[2].y);
 
           if(area<0){
@@ -594,12 +611,12 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
               points[2] = tmp;
 
               area = -area;
-          }
-
-          if(area == 0) continue;
+          }       
+          if(area == 0) continue; 
 
           for(y = min_y; y<=max_y; y++){
             for(x = min_x; x<=max_x; x++){
+                           
               e1 = edge(points[0], points[1], x, y);
               e2 = edge(points[1], points[2], x, y);
               e3 = edge(points[2], points[0], x, y);
@@ -651,7 +668,7 @@ void start_render(void) {
   // mesh construction defined in header
   cubiod_
   ground_
-
+  tower_
 
 
 
@@ -677,7 +694,9 @@ void start_render(void) {
 
     draw_mesh_triangle(&gui, ground);
     draw_mesh_triangle(&gui, cuboid);
-
+    draw_mesh_triangle(&gui, tower);
+    
+    fb.pixels[fb.height/2 * fb.width + fb.width/2] = 0xFF00FF00;
     SDL_UpdateTexture(screen_texture,
                       NULL,
                       fb.pixels,
