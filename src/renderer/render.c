@@ -229,7 +229,7 @@ void game_logic(float dt){
         
         if(player.pos.y < 2.0f){
           player.pos.y = 2.0f;
-          if(player.vel.y > 0) player.vel.y = 0;
+          if(player.vel.y < 0) player.vel.y = 0;
           if(player.acc.y > 0) player.acc.y = 0;
         } 
         normal_force = player.mass * cheat_grav;
