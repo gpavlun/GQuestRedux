@@ -37,11 +37,6 @@ debug_t debug;
 world_t world;
 pthread_mutex_t origin_lock;
 
-int origin_chunk_x;
-int origin_chunk_y;
-
-uint32_t selected_terrain;
-uint8_t painting;
 
 def shared_data { 
   float dist; 
@@ -61,16 +56,10 @@ def player_data {
   vec3_t net_force;
   float max_force;
   float mass;
+  u8 flying;
 }player_t;
 player_t player;
 
-
-def object_data {
-  vec3_t pos;
-  vec3_t rel;
-  dimen_t dim;
-}object_t;
-object_t object_glob;
 
 def vertice_data{ 
   float x, y, z; 
@@ -82,6 +71,7 @@ def edge_data{
 
 def triangle_data{ 
   u16 a, b, c; 
+  hexcode_u color;
 }triangle_t;
 
 def {
@@ -97,7 +87,6 @@ def mesh_data {
   vert_t *verts;
   u16 ntrangs;
   triangle_t *trangs;
-  hexcode_u color;
   mesh_opts opts;
 }mesh_t;
 
@@ -107,6 +96,7 @@ def inputs {
   u8 s : 1;
   u8 d : 1;
   u8 space : 1;
+  u8 shift : 1;
 }inputs_t;
 
 
@@ -129,8 +119,95 @@ double phys_clamp(double value, double min, double max){
   if(value<min) return min;
   return value;
 }
+void game_logic(float dt){
+    float c = cos(theta);
+    float s = sin(theta);
 
-void game_logic(float dt) {
+    vec3_t desired_world;
+    desired_world.x = player.desired_velocity.x * c +
+                      player.desired_velocity.z * s;
+    desired_world.z = -player.desired_velocity.x * s +
+                       player.desired_velocity.z * c;
+    desired_world.y = player.desired_velocity.y;
+
+
+    player.applied_force.x = player.max_force *
+              (desired_world.x - player.vel.x);
+    player.applied_force.z = player.max_force *
+              (desired_world.z - player.vel.z);
+
+    float force_len = sqrt(
+        player.applied_force.x * player.applied_force.x +
+        player.applied_force.z * player.applied_force.z
+    );
+
+    if(force_len > player.max_force){
+        float scale = player.max_force / force_len;
+        player.applied_force.x *= scale;
+        player.applied_force.z *= scale;
+    }
+
+    float gravity_force = player.mass * -cheat_grav;
+    float normal_force = 0.0f;
+
+    // Changing flight to carry y momentum may be a route in the future
+    if(player.flying){
+        player.applied_force.y = player.max_force * (desired_world.y - player.vel.y);
+
+        // float force_y = fabs(player.applied_force.y);
+        // if(force_y>player.max_force){
+        //     player.applied_force.y = (player.applied_force.y / force_y) * player.max_force;
+        // }
+
+        normal_force = player.mass * cheat_grav;
+    }else{
+        player.applied_force.y = 0;
+        if(player.pos.y <= 2){
+            if(player.vel.y < 0) player.vel.y = 0;
+            if(player.pos.y < 0) player.pos.y = 0;
+            normal_force = player.mass * cheat_grav;
+        }
+    }
+
+    float friction_force = friction_coeff * normal_force;
+
+    vec3_t net_force;
+    net_force.x = player.applied_force.x;
+    net_force.z = player.applied_force.z;
+
+    float horizontal_force = sqrt(
+        net_force.x * net_force.x +
+        net_force.z * net_force.z
+    );
+
+    if(horizontal_force > friction_force){
+        float scale = friction_force / horizontal_force;
+        net_force.x *= scale;
+        net_force.z *= scale;
+    }
+
+
+    if(player.flying){
+        net_force.y = player.applied_force.y;
+    }else{
+        net_force.y = gravity_force + normal_force;
+    }
+
+    player.acc.x = net_force.x / player.mass;
+    player.acc.y = net_force.y / player.mass;
+    player.acc.z = net_force.z / player.mass;
+
+    player.vel.x += player.acc.x * dt;
+    player.vel.y += player.acc.y * dt;
+    player.vel.z += player.acc.z * dt;
+
+    player.pos.x += player.vel.x * dt;
+    player.pos.y += player.vel.y * dt;
+    player.pos.z += player.vel.z * dt;
+
+    player.net_force = net_force;
+}
+void game_logic_t(float dt) {
 
   //vec3_t drag_force;
   //drag_force.x = -(DRAG_CONSTANT * player.vel.x);
@@ -142,24 +219,30 @@ void game_logic(float dt) {
   world_x = player.desired_velocity.x * cos(theta) + player.desired_velocity.z * sin(theta);
   world_z = -player.desired_velocity.x * sin(theta) + player.desired_velocity.z * cos(theta);
 
+  float pd_force_x = player.max_force * (world_x - player.vel.x);
+  float pd_force_z = player.max_force * (world_z - player.vel.z);
 
-  player.applied_force.x = player.max_force * (world_x - player.vel.x);
-  player.applied_force.z = player.max_force * (world_z - player.vel.z);
-
-
-
+  player.applied_force.x = phys_clamp(pd_force_x, -player.max_force, player.max_force);
+  player.applied_force.z = phys_clamp(pd_force_z, -player.max_force, player.max_force);
 
   double gravity_force;
   gravity_force = player.mass * -cheat_grav;
   double normal_force;
-  if (player.pos.y <= 2) {
-    player.pos.y = 2;
-    
-    if (player.vel.y < 0)  player.vel.y = 0;
+
+  if(player.flying){
+    float pd_force_y = player.max_force * (player.desired_velocity.y - player.vel.y);
+    player.applied_force.y = phys_clamp(pd_force_y, -player.max_force, player.max_force);
     normal_force = player.mass * cheat_grav;
   }else{
-    normal_force = 0;
-  }  
+    if(player.pos.y <= 2){
+      if (player.vel.y < 0)  player.vel.y = 0;
+      normal_force = player.mass * cheat_grav;
+    }else{
+      normal_force = 0;
+    }
+  }
+
+
   
   double friction_force; 
   friction_force = friction_coeff * normal_force;
@@ -167,8 +250,14 @@ void game_logic(float dt) {
   vec3_t net_force;
   net_force.x = phys_clamp(player.applied_force.x, -friction_force, friction_force);// + drag_force.x;
   net_force.z = phys_clamp(player.applied_force.z, -friction_force, friction_force);// + drag_force.z;
-  net_force.y = player.applied_force.y + gravity_force + normal_force;
+  
+  if(player.flying){
+    net_force.y = phys_clamp(player.applied_force.y, -friction_force, friction_force);
+  }else{
+    net_force.y = player.applied_force.y + gravity_force + normal_force;
 
+  }
+  
   player.acc.x = net_force.x / player.mass;
   player.acc.z = net_force.z / player.mass;
   player.acc.y = net_force.y / player.mass;
@@ -181,13 +270,16 @@ void game_logic(float dt) {
   player.pos.z += player.vel.z * dt;
   player.pos.y += player.vel.y * dt;
 
+  
 }
+#define jump_interval 200
 #define walkspeed 6
 void multipress(inputs_t key){
-  player.desired_velocity.x = player.desired_velocity.z = 0;
-  player.applied_force.y = 0;
-  float input_x = 0, input_z = 0;
-
+  player.desired_velocity.x = player.desired_velocity.y = player.desired_velocity.z = 0;
+  if(!player.flying) player.applied_force.y = 0;
+  float input_x = 0, input_y = 0, input_z = 0;
+  static u64 last_jump;
+  u64 now;
   if(key.w){
     input_z += 1;
   }
@@ -203,15 +295,35 @@ void multipress(inputs_t key){
   if(key.d){
     input_x += 1;
   }
-
+  
   if(key.space){
-    player.applied_force.y = player.max_force;
+    input_y += 1;
+  }
+  if(key.shift){
+    input_y -= 1;
   }
 
+  if(input_y){
+    now = SDL_GetTicks64();
+    if(input_y>0 && now - last_jump < jump_interval && now - last_jump > jump_interval/3){
+      player.flying = !player.flying;
+      if(player.flying)player.vel.y = 0;
+    }
+    if(!player.flying && player.pos.y<=2){
+      player.vel.y = walkspeed;
+    }
+    if(player.flying){
+      player.desired_velocity.y = input_y * walkspeed;
+    }
+    last_jump = now;
+  }
+  float len = sqrt(input_x * input_x + input_z * input_z);
+  if(len>0){
+    input_x /= len;
+    input_z /= len;   
+  }
   player.desired_velocity.x = input_x * walkspeed;
   player.desired_velocity.z = input_z * walkspeed;
-//   player.desired_velocity.x *= walkspeed;
-//   player.desired_velocity.z *= walkspeed;
 }
 
 
@@ -219,19 +331,21 @@ void *editor_event_handler(void *args){
   gui_engine_t *gui = (gui_engine_t *)args;
   SDL_Event event;
   const uint8_t *keyscan = SDL_GetKeyboardState(NULL);
-  inputs_t inputs;
+  inputs_t inputs = {0};
   u64 last_movement = SDL_GetPerformanceCounter();
 
   u64 current_movement;
   double dt;
 
   player.mass = 80;
-  player.max_force = 500;
-
+  player.max_force = 2745;
+  int test = 0;
+  player.flying = 0;
   u8 mousemode = 0;
 
   while(modes.RUNNING){
     current_movement = SDL_GetPerformanceCounter();
+    inputs.space = 0;
     dt = (double)(current_movement - last_movement) /
          (double)SDL_GetPerformanceFrequency();
 
@@ -247,6 +361,15 @@ void *editor_event_handler(void *args){
               modes.RUNNING = 0;
             $}default:{$}
           }
+        $}case(SDL_KEYDOWN):{
+          switch(event.key.keysym.sym){
+            case(SDLK_SPACE):{
+              if(!player.flying && !event.key.repeat){
+                inputs.space = 1;
+              }
+            $}default:{$}
+          }
+
         $}case(SDL_MOUSEMOTION):{
           if(mousemode){
             theta += event.motion.xrel * 0.01f;
@@ -267,12 +390,16 @@ void *editor_event_handler(void *args){
       inputs.a = keyscan[SDL_SCANCODE_A];
       inputs.s = keyscan[SDL_SCANCODE_S];
       inputs.d = keyscan[SDL_SCANCODE_D];
-      inputs.space = keyscan[SDL_SCANCODE_SPACE];
-
-      multipress(inputs);
+      
+      if(player.flying){
+        inputs.shift = keyscan[SDL_SCANCODE_LSHIFT];
+        inputs.space = keyscan[SDL_SCANCODE_SPACE];
+      }
+      
     }
-
+    multipress(inputs);
     game_logic(dt);
+
     last_movement = current_movement;
     usleep(event_rate);
   }
@@ -447,6 +574,8 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
   vec3_t trans_vert[mesh.nverts];
   point_t points[3];
 
+  hexcode_u selected_color;
+
   int i, j, y, x;
 
   for(i=0; i<mesh.nverts; i++){
@@ -476,7 +605,6 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
   
 
   if(mesh.opts.wire_frame || mesh.opts.vertices){
-    set_color(gui->sdl2.renderer, mesh.color);
     vpoint_t vpoints[mesh.nverts];
     SDL_Rect verts_vis[mesh.nverts];
     for(i=0; i<mesh.nverts; i++){
@@ -506,7 +634,7 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
                                 vpoints[mesh.edges[i].A].y,
                                 vpoints[mesh.edges[i].B].x,
                                 vpoints[mesh.edges[i].B].y,
-                                0xff000000 | mesh.color.code);
+                                0xffff0000);
         }
       }
       return;
@@ -602,12 +730,7 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
         if(min_y<0) min_y = 0;
         if(max_x>=window->dim.w) max_x = window->dim.w - 1;
         if(max_y>=window->dim.h) max_y = window->dim.h - 1;      
-
-        set_color(gui->sdl2.renderer, mesh.color);
-        
-  
-        
-        
+      
         if(mesh.opts.wire_frame){
           draw_line_buffer(gui->window.fb,
                            points[1].x,
@@ -631,7 +754,9 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
 
         if(mesh.opts.triangles){
           area = edge(points[0], points[1], points[2].x, points[2].y);
-
+          //if(selected_color.code != mesh.trangs[i].color.code){
+          //  selected_color = mesh.trangs[i].color.code;
+          //}
           if(area<0){
               point_t tmp = points[1];
               points[1] = points[2];
@@ -650,7 +775,7 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
 
               if((e1>=0 && e2>=0 && e3>=0) ||
                 (e1<=0 && e2<=0 && e3<=0)){
-                put_pixel(gui->window.fb, x, y, 0xff000000 | mesh.color.code);
+                put_pixel(gui->window.fb, x, y, 0xff000000 | mesh.trangs[i].color.code);
               }
             }
           }
@@ -788,28 +913,39 @@ void *tui(void *temp) {
             player.acc.y, player.acc.z);
     terminal.horz_strdisp(str);
 
-    str.r = 5;
+    str.r = 6;
     sprintf(source, "    desired velocity : (%.2f N, %.2fN, %.2fN)",
             player.desired_velocity.x, player.desired_velocity.y,
             player.desired_velocity.z);
     terminal.horz_strdisp(str);
 
-    str.r = 6;
+    str.r = 7;
     sprintf(source, "    applied force : (%.2f N, %.2fN, %.2fN)",
             player.applied_force.x, player.applied_force.y,
             player.applied_force.z);
     terminal.horz_strdisp(str);
 
-    str.r = 7;
+    str.r = 8;
     sprintf(source, "    net force : (%.2f N, %.2fN, %.2fN)",
             player.net_force.x, player.net_force.y,
             player.net_force.z);
     terminal.horz_strdisp(str);
-    str.r = 8;
-    sprintf(source, "theta %.2f :: phi %.2f", theta, phi);
+    str.r = 9;
+    sprintf(source, "    flying : %s",
+            player.flying?"true":"false");
+    terminal.horz_strdisp(str);    
+
+
+
+    str.r = 11;
+    sprintf(source, "camera");
+    terminal.horz_strdisp(str);    
+    
+    str.r = 12;
+    sprintf(source, "    theta %.2f :: phi %.2f", theta, phi);
     terminal.horz_strdisp(str);
 
-    str.r = 10;
+    str.r = 14;
     sprintf(source, "error message: %s", glob_error);
     terminal.horz_strdisp(str);
 

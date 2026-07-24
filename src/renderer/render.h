@@ -1,6 +1,9 @@
 #ifndef RENDER_H
 #define RENDER_H
 
+#define true 1
+#define false 0
+
 #define cubiod_                                         \
 mesh_t cuboid = {0};                                    \
   cuboid.nverts = 8;                                    \
@@ -77,9 +80,8 @@ mesh_t cuboid = {0};                                    \
   cuboid.edges[11].A = 3;                               \
   cuboid.edges[11].B = 7;                               \
                                                         \
-  cuboid.opts.wire_frame = 1;                           \
-  cuboid.opts.vertices = 1;                             \
-  cuboid.color.code = 0xFF0000;                     
+  cuboid.opts.wire_frame = true;                        \
+  cuboid.opts.vertices = true;                             
 
 
 
@@ -131,19 +133,21 @@ mesh_t cuboid = {0};                                    \
   ground.trangs[0].a = 0;                               \
   ground.trangs[0].b = 1;                               \
   ground.trangs[0].c = 2;                               \
+  ground.trangs[0].color.code = 0x002D04;               \
                                                         \
   ground.trangs[1].a = 1;                               \
   ground.trangs[1].b = 3;                               \
   ground.trangs[1].c = 2;                               \
+  ground.trangs[1].color.code = 0x002D04;               \
                                                         \
-  ground.opts.triangles = 1;                            \
-  ground.color.code = 0x002D04;
+  ground.opts.triangles = true;                            
+  
 
 
 
 #define tower_                                          \
   mesh_t tower = {0};                                   \
-  tower.nverts = 33;                                     \
+  tower.nverts = 33;                                    \
   tower.verts = malloc(sizeof(vert_t) * tower.nverts);  \
                                                         \
   tower.verts[0].x = -18;                               \
@@ -210,13 +214,13 @@ mesh_t cuboid = {0};                                    \
   tower.verts[15].y = 15;                               \
   tower.verts[15].z = -22;                              \
                                                         \
-  tower.verts[16].x = -18;                               \
-  tower.verts[16].y = 15;                                \
-  tower.verts[16].z = -26;                               \
+  tower.verts[16].x = -18;                              \
+  tower.verts[16].y = 15;                               \
+  tower.verts[16].z = -26;                              \
                                                         \
-  tower.verts[17].x = -22;                               \
-  tower.verts[17].y = 15;                                \
-  tower.verts[17].z = -26;                               \
+  tower.verts[17].x = -22;                              \
+  tower.verts[17].y = 15;                               \
+  tower.verts[17].z = -26;                              \
                                                         \
   tower.verts[18].x = -26;                              \
   tower.verts[18].y = 15;                               \
@@ -242,13 +246,13 @@ mesh_t cuboid = {0};                                    \
   tower.verts[23].y = 15;                               \
   tower.verts[23].z = -22;                              \
                                                         \
-  tower.verts[24].x = -18;                               \
-  tower.verts[24].y = 16;                                \
-  tower.verts[24].z = -26;                               \
+  tower.verts[24].x = -18;                              \
+  tower.verts[24].y = 16;                               \
+  tower.verts[24].z = -26;                              \
                                                         \
-  tower.verts[25].x = -22;                               \
-  tower.verts[25].y = 16;                                \
-  tower.verts[25].z = -26;                               \
+  tower.verts[25].x = -22;                              \
+  tower.verts[25].y = 16;                               \
+  tower.verts[25].z = -26;                              \
                                                         \
   tower.verts[26].x = -26;                              \
   tower.verts[26].y = 16;                               \
@@ -280,236 +284,242 @@ mesh_t cuboid = {0};                                    \
                                                         \
   tower.ntrangs = 56;                                   \
   tower.trangs = malloc(sizeof(triangle_t)*tower.ntrangs);\
-  int iki = 0;\
+  int iki = 0;                                          \
+  tower.trangs[iki].a = 8;                              \
+  tower.trangs[iki].b = 9;                              \
+  tower.trangs[iki].c = 32;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 9;                              \
+  tower.trangs[iki].b = 10;                             \
+  tower.trangs[iki].c = 32;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 10;                             \
+  tower.trangs[iki].b = 11;                             \
+  tower.trangs[iki].c = 32;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 11;                             \
+  tower.trangs[iki].b = 12;                             \
+  tower.trangs[iki].c = 32;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 12;                             \
+  tower.trangs[iki].b = 13;                             \
+  tower.trangs[iki].c = 32;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 13;                             \
+  tower.trangs[iki].b = 14;                             \
+  tower.trangs[iki].c = 32;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 14;                             \
+  tower.trangs[iki].b = 15;                             \
+  tower.trangs[iki].c = 32;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 15;                             \
+  tower.trangs[iki].b = 8;                              \
+  tower.trangs[iki].c = 32;                             \
+  iki++;                                                \
                                                         \
-  tower.trangs[iki].a = 0;                               \
-  tower.trangs[iki].b = 1;                               \
-  tower.trangs[iki].c = 9;                               \
-  iki++;                                                      \
-  tower.trangs[1].a = 1;                               \
-  tower.trangs[1].b = 2;                               \
-  tower.trangs[1].c = 10;                              \
-  iki++;                                                       \
-  tower.trangs[2].a = 2;                               \
-  tower.trangs[2].b = 3;                               \
-  tower.trangs[2].c = 11;                              \
-  iki++;                                                       \
-  tower.trangs[3].a = 3;                               \
-  tower.trangs[3].b = 4;                               \
-  tower.trangs[3].c = 12;                              \
-  iki++;                                                       \
-  tower.trangs[4].a = 4;                               \
-  tower.trangs[4].b = 5;                               \
-  tower.trangs[4].c = 13;                              \
-  iki++;                                                       \
-  tower.trangs[5].a = 5;                               \
-  tower.trangs[5].b = 6;                               \
-  tower.trangs[5].c = 14;                              \
-  iki++;                                                       \
-  tower.trangs[6].a = 6;                               \
-  tower.trangs[6].b = 7;                               \
-  tower.trangs[6].c = 15;                              \
-  iki++;                                                       \
-  tower.trangs[7].a = 7;                               \
-  tower.trangs[7].b = 0;                               \
-  tower.trangs[7].c = 8;                               \
-  iki++;                                                     \
-  tower.trangs[8].a = 9;                               \
-  tower.trangs[8].b = 8;                               \
-  tower.trangs[8].c = 0;                               \
-  iki++;                                                       \
-  tower.trangs[9].a = 10;                               \
-  tower.trangs[9].b = 9;                               \
-  tower.trangs[9].c = 1;                              \
-  iki++;                                                       \
-  tower.trangs[10].a = 11;                               \
-  tower.trangs[10].b = 10;                               \
-  tower.trangs[10].c = 2;                              \
-  iki++;                                                       \
-  tower.trangs[11].a = 12;                               \
-  tower.trangs[11].b = 11;                               \
-  tower.trangs[11].c = 3;                              \
-  iki++;                                                       \
-  tower.trangs[12].a = 13;                               \
-  tower.trangs[12].b = 12;                               \
-  tower.trangs[12].c = 4;                              \
-  iki++;                                                       \
-  tower.trangs[13].a = 14;                               \
-  tower.trangs[13].b = 13;                               \
-  tower.trangs[13].c = 5;                              \
-  iki++;                                                       \
-  tower.trangs[14].a = 15;                               \
-  tower.trangs[14].b = 14;                               \
-  tower.trangs[14].c = 6;                              \
-  iki++;                                                       \
-  tower.trangs[15].a = 8;                               \
-  tower.trangs[15].b = 15;                               \
-  tower.trangs[15].c = 7;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 17;                               \
-  tower.trangs[iki].b = 9;                               \
-  tower.trangs[iki].c = 8;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 18;                               \
-  tower.trangs[iki].b = 10;                               \
-  tower.trangs[iki].c = 9;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 19;                               \
-  tower.trangs[iki].b = 11;                               \
-  tower.trangs[iki].c = 10;                               \
-  iki++; \
-  tower.trangs[iki].a = 20;                               \
-  tower.trangs[iki].b = 12;                               \
-  tower.trangs[iki].c = 11;                               \
-  iki++; \
-  tower.trangs[iki].a = 21;                               \
-  tower.trangs[iki].b = 13;                               \
-  tower.trangs[iki].c = 12;                               \
-  iki++; \
-  tower.trangs[iki].a = 22;                               \
-  tower.trangs[iki].b = 14;                               \
-  tower.trangs[iki].c = 13;                               \
-  iki++; \
-  tower.trangs[iki].a = 23;                               \
-  tower.trangs[iki].b = 15;                               \
-  tower.trangs[iki].c = 14;                               \
-  iki++; \
-  tower.trangs[iki].a = 16;                               \
-  tower.trangs[iki].b = 8;                               \
-  tower.trangs[iki].c = 15;                               \
-  iki++;                                                  \
-  tower.trangs[iki].a = 17;                               \
-  tower.trangs[iki].b = 8;                               \
-  tower.trangs[iki].c = 16;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 18;                               \
-  tower.trangs[iki].b = 9;                               \
-  tower.trangs[iki].c = 17;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 19;                               \
-  tower.trangs[iki].b = 10;                               \
-  tower.trangs[iki].c = 18;                               \
-  iki++; \
-  tower.trangs[iki].a = 20;                               \
-  tower.trangs[iki].b = 11;                               \
-  tower.trangs[iki].c = 19;                               \
-  iki++; \
-  tower.trangs[iki].a = 21;                               \
-  tower.trangs[iki].b = 12;                               \
-  tower.trangs[iki].c = 20;                               \
-  iki++; \
-  tower.trangs[iki].a = 22;                               \
-  tower.trangs[iki].b = 13;                               \
-  tower.trangs[iki].c = 21;                               \
-  iki++; \
-  tower.trangs[iki].a = 23;                               \
-  tower.trangs[iki].b = 14;                               \
-  tower.trangs[iki].c = 22;                               \
-  iki++; \
-  tower.trangs[iki].a = 16;                               \
-  tower.trangs[iki].b = 15;                               \
-  tower.trangs[iki].c = 23;                               \
-  iki++;                                                  \
-  tower.trangs[iki].a = 17;                               \
-  tower.trangs[iki].b = 25;                               \
-  tower.trangs[iki].c = 16;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 18;                               \
-  tower.trangs[iki].b = 26;                               \
-  tower.trangs[iki].c = 17;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 19;                               \
-  tower.trangs[iki].b = 27;                               \
-  tower.trangs[iki].c = 18;                               \
-  iki++; \
-  tower.trangs[iki].a = 20;                               \
-  tower.trangs[iki].b = 28;                               \
-  tower.trangs[iki].c = 19;                               \
-  iki++; \
-  tower.trangs[iki].a = 21;                               \
-  tower.trangs[iki].b = 29;                               \
-  tower.trangs[iki].c = 20;                               \
-  iki++; \
-  tower.trangs[iki].a = 22;                               \
-  tower.trangs[iki].b = 30;                               \
-  tower.trangs[iki].c = 21;                               \
-  iki++; \
-  tower.trangs[iki].a = 23;                               \
-  tower.trangs[iki].b = 31;                               \
-  tower.trangs[iki].c = 22;                               \
-  iki++; \
-  tower.trangs[iki].a = 16;                               \
-  tower.trangs[iki].b = 24;                               \
-  tower.trangs[iki].c = 23;                               \
-  iki++;\
-  tower.trangs[iki].a = 25;                               \
-  tower.trangs[iki].b = 24;                               \
-  tower.trangs[iki].c = 16;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 26;                               \
-  tower.trangs[iki].b = 25;                               \
-  tower.trangs[iki].c = 17;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 27;                               \
-  tower.trangs[iki].b = 26;                               \
-  tower.trangs[iki].c = 18;                               \
-  iki++; \
-  tower.trangs[iki].a = 28;                               \
-  tower.trangs[iki].b = 27;                               \
-  tower.trangs[iki].c = 19;                               \
-  iki++; \
-  tower.trangs[iki].a = 29;                               \
-  tower.trangs[iki].b = 28;                               \
-  tower.trangs[iki].c = 20;                               \
-  iki++; \
-  tower.trangs[iki].a = 30;                               \
-  tower.trangs[iki].b = 29;                               \
-  tower.trangs[iki].c = 21;                               \
-  iki++; \
-  tower.trangs[iki].a = 31;                               \
-  tower.trangs[iki].b = 30;                               \
-  tower.trangs[iki].c = 22;                               \
-  iki++; \
-  tower.trangs[iki].a = 24;                               \
-  tower.trangs[iki].b = 31;                               \
-  tower.trangs[iki].c = 23;                               \
-  iki++;\
-  tower.trangs[iki].a = 8;                               \
-  tower.trangs[iki].b = 9;                               \
-  tower.trangs[iki].c = 32;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 9;                               \
-  tower.trangs[iki].b = 10;                               \
-  tower.trangs[iki].c = 32;                               \
-  iki++;                                                       \
-  tower.trangs[iki].a = 10;                               \
-  tower.trangs[iki].b = 11;                               \
-  tower.trangs[iki].c = 32;                               \
-  iki++; \
-  tower.trangs[iki].a = 11;                               \
-  tower.trangs[iki].b = 12;                               \
-  tower.trangs[iki].c = 32;                               \
-  iki++; \
-  tower.trangs[iki].a = 12;                               \
-  tower.trangs[iki].b = 13;                               \
-  tower.trangs[iki].c = 32;                               \
-  iki++; \
-  tower.trangs[iki].a = 13;                               \
-  tower.trangs[iki].b = 14;                               \
-  tower.trangs[iki].c = 32;                               \
-  iki++; \
-  tower.trangs[iki].a = 14;                               \
-  tower.trangs[iki].b = 15;                               \
-  tower.trangs[iki].c = 32;                               \
-  iki++; \
-  tower.trangs[iki].a = 15;                               \
-  tower.trangs[iki].b = 8;                               \
-  tower.trangs[iki].c = 32;                               \
-  iki++;\
-  tower.opts.triangles = 1;                             \
-  tower.opts.wire_frame = 1;                             \
-  tower.opts.vertices = 1;                             \
-  tower.color.code = 0x3E3838;
+  tower.trangs[iki].a = 0;                              \
+  tower.trangs[iki].b = 1;                              \
+  tower.trangs[iki].c = 9;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 1;                              \
+  tower.trangs[iki].b = 2;                              \
+  tower.trangs[iki].c = 10;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 2;                              \
+  tower.trangs[iki].b = 3;                              \
+  tower.trangs[iki].c = 11;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 3;                              \
+  tower.trangs[iki].b = 4;                              \
+  tower.trangs[iki].c = 12;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 4;                              \
+  tower.trangs[iki].b = 5;                              \
+  tower.trangs[iki].c = 13;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 5;                              \
+  tower.trangs[iki].b = 6;                              \
+  tower.trangs[iki].c = 14;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 6;                              \
+  tower.trangs[iki].b = 7;                              \
+  tower.trangs[iki].c = 15;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 7;                              \
+  tower.trangs[iki].b = 0;                              \
+  tower.trangs[iki].c = 8;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 9;                              \
+  tower.trangs[iki].b = 8;                              \
+  tower.trangs[iki].c = 0;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 10;                             \
+  tower.trangs[iki].b = 9;                              \
+  tower.trangs[iki].c = 1;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 11;                             \
+  tower.trangs[iki].b = 10;                             \
+  tower.trangs[iki].c = 2;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 12;                             \
+  tower.trangs[iki].b = 11;                             \
+  tower.trangs[iki].c = 3;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 13;                             \
+  tower.trangs[iki].b = 12;                             \
+  tower.trangs[iki].c = 4;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 14;                             \
+  tower.trangs[iki].b = 13;                             \
+  tower.trangs[iki].c = 5;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 15;                             \
+  tower.trangs[iki].b = 14;                             \
+  tower.trangs[iki].c = 6;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 8;                              \
+  tower.trangs[iki].b = 15;                             \
+  tower.trangs[iki].c = 7;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 17;                             \
+  tower.trangs[iki].b = 9;                              \
+  tower.trangs[iki].c = 8;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 18;                             \
+  tower.trangs[iki].b = 10;                             \
+  tower.trangs[iki].c = 9;                              \
+  iki++;                                                \
+  tower.trangs[iki].a = 19;                             \
+  tower.trangs[iki].b = 11;                             \
+  tower.trangs[iki].c = 10;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 20;                             \
+  tower.trangs[iki].b = 12;                             \
+  tower.trangs[iki].c = 11;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 21;                             \
+  tower.trangs[iki].b = 13;                             \
+  tower.trangs[iki].c = 12;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 22;                             \
+  tower.trangs[iki].b = 14;                             \
+  tower.trangs[iki].c = 13;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 23;                             \
+  tower.trangs[iki].b = 15;                             \
+  tower.trangs[iki].c = 14;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 16;                             \
+  tower.trangs[iki].b = 8;                              \
+  tower.trangs[iki].c = 15;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 17;                             \
+  tower.trangs[iki].b = 8;                              \
+  tower.trangs[iki].c = 16;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 18;                             \
+  tower.trangs[iki].b = 9;                              \
+  tower.trangs[iki].c = 17;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 19;                             \
+  tower.trangs[iki].b = 10;                             \
+  tower.trangs[iki].c = 18;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 20;                             \
+  tower.trangs[iki].b = 11;                             \
+  tower.trangs[iki].c = 19;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 21;                             \
+  tower.trangs[iki].b = 12;                             \
+  tower.trangs[iki].c = 20;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 22;                             \
+  tower.trangs[iki].b = 13;                             \
+  tower.trangs[iki].c = 21;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 23;                             \
+  tower.trangs[iki].b = 14;                             \
+  tower.trangs[iki].c = 22;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 16;                             \
+  tower.trangs[iki].b = 15;                             \
+  tower.trangs[iki].c = 23;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 17;                             \
+  tower.trangs[iki].b = 25;                             \
+  tower.trangs[iki].c = 16;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 18;                             \
+  tower.trangs[iki].b = 26;                             \
+  tower.trangs[iki].c = 17;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 19;                             \
+  tower.trangs[iki].b = 27;                             \
+  tower.trangs[iki].c = 18;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 20;                             \
+  tower.trangs[iki].b = 28;                             \
+  tower.trangs[iki].c = 19;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 21;                             \
+  tower.trangs[iki].b = 29;                             \
+  tower.trangs[iki].c = 20;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 22;                             \
+  tower.trangs[iki].b = 30;                             \
+  tower.trangs[iki].c = 21;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 23;                             \
+  tower.trangs[iki].b = 31;                             \
+  tower.trangs[iki].c = 22;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 16;                             \
+  tower.trangs[iki].b = 24;                             \
+  tower.trangs[iki].c = 23;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 25;                             \
+  tower.trangs[iki].b = 24;                             \
+  tower.trangs[iki].c = 16;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 26;                             \
+  tower.trangs[iki].b = 25;                             \
+  tower.trangs[iki].c = 17;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 27;                             \
+  tower.trangs[iki].b = 26;                             \
+  tower.trangs[iki].c = 18;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 28;                             \
+  tower.trangs[iki].b = 27;                             \
+  tower.trangs[iki].c = 19;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 29;                             \
+  tower.trangs[iki].b = 28;                             \
+  tower.trangs[iki].c = 20;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 30;                             \
+  tower.trangs[iki].b = 29;                             \
+  tower.trangs[iki].c = 21;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 31;                             \
+  tower.trangs[iki].b = 30;                             \
+  tower.trangs[iki].c = 22;                             \
+  iki++;                                                \
+  tower.trangs[iki].a = 24;                             \
+  tower.trangs[iki].b = 31;                             \
+  tower.trangs[iki].c = 23;                             \
+  iki++;                                                \
+                                                        \
+  for (int lol = 0; lol < iki; lol++)                   \
+    tower.trangs[lol].color.code = 0x3E3838;            \
+                                                        \
+  for (int i = 0; i < 8; i++)                           \
+    tower.trangs[i].color.code = 0x6B4423;              \
+                                                        \
+  tower.opts.triangles  = 1;                            \
+  tower.opts.wire_frame = 0;                            \
+  tower.opts.vertices   = 0;
 
 
 
