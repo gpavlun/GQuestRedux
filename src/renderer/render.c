@@ -56,6 +56,8 @@ def player_data {
   vec3_t net_force;
   float max_force;
   float mass;
+  float normal_vel;
+  float normal_acc;
   u8 flying;
 }player_t;
 player_t player;
@@ -107,7 +109,7 @@ def inputs {
 #define planitary_diam 12756000
 #define gravitational_const 0.000000000067408
 #define cheat_grav 9.8
-#define friction_coeff .8
+#define friction_coeff 1.6
 
 #define sensitivity 0.5
 
@@ -118,6 +120,76 @@ double phys_clamp(double value, double min, double max){
   if(value>max) return max;
   if(value<min) return min;
   return value;
+}
+void flying_game_logic(float dt){
+    float c = cos(theta);
+    float s = sin(theta);
+
+    vec3_t desired_world;
+    desired_world.x = player.desired_velocity.x * c +
+                      player.desired_velocity.z * s;
+    desired_world.y = player.desired_velocity.y;
+    desired_world.z = -player.desired_velocity.x * s +
+                       player.desired_velocity.z * c;
+    
+
+
+    player.applied_force.x = player.max_force *
+              (desired_world.x - player.vel.x);
+    player.applied_force.y = player.max_force *
+              (desired_world.y - player.vel.y);    
+    player.applied_force.z = player.max_force *
+              (desired_world.z - player.vel.z);
+
+    float force_len = sqrt(
+        player.applied_force.x * player.applied_force.x +
+        player.applied_force.y * player.applied_force.y +
+        player.applied_force.z * player.applied_force.z 
+    );
+
+    if(force_len > player.max_force){
+        float scale = player.max_force / force_len;
+        player.applied_force.x *= scale;
+        player.applied_force.y *= scale;
+        player.applied_force.z *= scale;
+    }
+
+    float gravity_force = player.mass * -cheat_grav;
+    float normal_force = 0.0f;
+    float friction_force;
+
+    normal_force = player.mass * cheat_grav;
+    friction_force = 3 * friction_coeff * normal_force;
+
+    vec3_t net_force;
+    net_force.x = player.applied_force.x;
+    net_force.y = player.applied_force.y;
+    net_force.z = player.applied_force.z;
+    float d3_force = sqrt(
+        net_force.x * net_force.x +
+        net_force.y * net_force.y +
+        net_force.z * net_force.z
+    );
+    if(d3_force > friction_force){
+      float scale = friction_force / d3_force;
+      net_force.x *= scale;
+      net_force.y *= scale;
+      net_force.z *= scale;
+    }
+
+    player.acc.x = net_force.x / player.mass;
+    player.acc.y = net_force.y / player.mass;
+    player.acc.z = net_force.z / player.mass;
+
+    player.vel.x += player.acc.x * dt;
+    player.vel.y += player.acc.y * dt;
+    player.vel.z += player.acc.z * dt;
+
+    player.pos.x += player.vel.x * dt;
+    player.pos.y += player.vel.y * dt;
+    player.pos.z += player.vel.z * dt;
+
+    player.net_force = net_force;
 }
 void game_logic(float dt){
     float c = cos(theta);
@@ -149,29 +221,26 @@ void game_logic(float dt){
 
     float gravity_force = player.mass * -cheat_grav;
     float normal_force = 0.0f;
+    float friction_force;
 
-    // Changing flight to carry y momentum may be a route in the future
-    if(player.flying){
-        player.applied_force.y = player.max_force * (desired_world.y - player.vel.y);
 
-        // float force_y = fabs(player.applied_force.y);
-        // if(force_y>player.max_force){
-        //     player.applied_force.y = (player.applied_force.y / force_y) * player.max_force;
-        // }
-
+    player.applied_force.y = 0;
+    if(player.pos.y <= 2.0f){
+        
+        if(player.pos.y < 2.0f){
+          player.pos.y = 2.0f;
+          if(player.vel.y > 0) player.vel.y = 0;
+          if(player.acc.y > 0) player.acc.y = 0;
+        } 
         normal_force = player.mass * cheat_grav;
-    }else{
-        player.applied_force.y = 0;
-        if(player.pos.y <= 2){
-            if(player.vel.y < 0) player.vel.y = 0;
-            if(player.pos.y < 0) player.pos.y = 0;
-            normal_force = player.mass * cheat_grav;
-        }
     }
+    friction_force = friction_coeff * normal_force;
 
-    float friction_force = friction_coeff * normal_force;
+    
 
     vec3_t net_force;
+
+    net_force.y = gravity_force + normal_force;
     net_force.x = player.applied_force.x;
     net_force.z = player.applied_force.z;
 
@@ -184,13 +253,6 @@ void game_logic(float dt){
         float scale = friction_force / horizontal_force;
         net_force.x *= scale;
         net_force.z *= scale;
-    }
-
-
-    if(player.flying){
-        net_force.y = player.applied_force.y;
-    }else{
-        net_force.y = gravity_force + normal_force;
     }
 
     player.acc.x = net_force.x / player.mass;
@@ -207,73 +269,10 @@ void game_logic(float dt){
 
     player.net_force = net_force;
 }
-void game_logic_t(float dt) {
 
-  //vec3_t drag_force;
-  //drag_force.x = -(DRAG_CONSTANT * player.vel.x);
-  //drag_force.z = -(DRAG_CONSTANT * player.vel.z);
-
-  float world_x;
-  float world_z;
-
-  world_x = player.desired_velocity.x * cos(theta) + player.desired_velocity.z * sin(theta);
-  world_z = -player.desired_velocity.x * sin(theta) + player.desired_velocity.z * cos(theta);
-
-  float pd_force_x = player.max_force * (world_x - player.vel.x);
-  float pd_force_z = player.max_force * (world_z - player.vel.z);
-
-  player.applied_force.x = phys_clamp(pd_force_x, -player.max_force, player.max_force);
-  player.applied_force.z = phys_clamp(pd_force_z, -player.max_force, player.max_force);
-
-  double gravity_force;
-  gravity_force = player.mass * -cheat_grav;
-  double normal_force;
-
-  if(player.flying){
-    float pd_force_y = player.max_force * (player.desired_velocity.y - player.vel.y);
-    player.applied_force.y = phys_clamp(pd_force_y, -player.max_force, player.max_force);
-    normal_force = player.mass * cheat_grav;
-  }else{
-    if(player.pos.y <= 2){
-      if (player.vel.y < 0)  player.vel.y = 0;
-      normal_force = player.mass * cheat_grav;
-    }else{
-      normal_force = 0;
-    }
-  }
-
-
-  
-  double friction_force; 
-  friction_force = friction_coeff * normal_force;
-
-  vec3_t net_force;
-  net_force.x = phys_clamp(player.applied_force.x, -friction_force, friction_force);// + drag_force.x;
-  net_force.z = phys_clamp(player.applied_force.z, -friction_force, friction_force);// + drag_force.z;
-  
-  if(player.flying){
-    net_force.y = phys_clamp(player.applied_force.y, -friction_force, friction_force);
-  }else{
-    net_force.y = player.applied_force.y + gravity_force + normal_force;
-
-  }
-  
-  player.acc.x = net_force.x / player.mass;
-  player.acc.z = net_force.z / player.mass;
-  player.acc.y = net_force.y / player.mass;
-
-  player.vel.x += player.acc.x * dt;
-  player.vel.z += player.acc.z * dt;
-  player.vel.y += player.acc.y * dt;
-
-  player.pos.x += player.vel.x * dt;
-  player.pos.z += player.vel.z * dt;
-  player.pos.y += player.vel.y * dt;
-
-  
-}
 #define jump_interval 200
 #define walkspeed 6
+#define strafespeed walkspeed/1.3
 void multipress(inputs_t key){
   player.desired_velocity.x = player.desired_velocity.y = player.desired_velocity.z = 0;
   if(!player.flying) player.applied_force.y = 0;
@@ -307,23 +306,44 @@ void multipress(inputs_t key){
     now = SDL_GetTicks64();
     if(input_y>0 && now - last_jump < jump_interval && now - last_jump > jump_interval/3){
       player.flying = !player.flying;
-      if(player.flying)player.vel.y = 0;
+      if(player.flying){
+        player.vel.x = 0;
+        player.vel.y = 0;
+        player.vel.z = 0;
+      }
     }
     if(!player.flying && player.pos.y<=2){
       player.vel.y = walkspeed;
     }
-    if(player.flying){
-      player.desired_velocity.y = input_y * walkspeed;
-    }
     last_jump = now;
   }
-  float len = sqrt(input_x * input_x + input_z * input_z);
-  if(len>0){
-    input_x /= len;
-    input_z /= len;   
+
+  float len;
+  if(player.flying){
+    len = sqrt(input_x * input_x + input_y * input_y + input_z * input_z);
+    if(len>0){
+      input_x /= len;
+      input_y /= len;
+      input_z /= len;   
+    }    
+  }else{
+    len = sqrt(input_x * input_x + input_z * input_z);
+    if(len>0){
+      input_x /= len;
+      input_z /= len;   
+    }  
   }
-  player.desired_velocity.x = input_x * walkspeed;
-  player.desired_velocity.z = input_z * walkspeed;
+
+
+
+  if(player.flying){
+    player.desired_velocity.x = input_x * walkspeed * 2;
+    player.desired_velocity.y = input_y * walkspeed * 2;
+    player.desired_velocity.z = input_z * walkspeed * 2;
+  }else{
+    player.desired_velocity.x = input_x * strafespeed;
+    player.desired_velocity.z = input_z *(  (input_z>0) ?walkspeed:strafespeed);
+  }
 }
 
 
@@ -345,7 +365,7 @@ void *editor_event_handler(void *args){
 
   while(modes.RUNNING){
     current_movement = SDL_GetPerformanceCounter();
-    inputs.space = 0;
+    if(!player.flying) inputs.space = 0;
     dt = (double)(current_movement - last_movement) /
          (double)SDL_GetPerformanceFrequency();
 
@@ -398,7 +418,12 @@ void *editor_event_handler(void *args){
       
     }
     multipress(inputs);
-    game_logic(dt);
+    if(player.flying){
+      flying_game_logic(dt);
+    }else{
+      game_logic(dt);
+    }
+    
 
     last_movement = current_movement;
     usleep(event_rate);
@@ -848,7 +873,9 @@ void start_render(void) {
     draw_mesh_triangle(&gui, cuboid);
     draw_mesh_triangle(&gui, tower);
     
-    fb.pixels[fb.height/2 * fb.width + fb.width/2] = 0xFF00FF00;
+    draw_line_buffer(&fb,fb.width/2-5,fb.height/2,fb.width/2+5 ,fb.height/2,0xFF00FF00);
+    draw_line_buffer(&fb,fb.width/2,fb.height/2-5,fb.width/2 ,fb.height/2+5,0xFF00FF00);
+    
     SDL_UpdateTexture(screen_texture,
                       NULL,
                       fb.pixels,
@@ -920,13 +947,13 @@ void *tui(void *temp) {
     terminal.horz_strdisp(str);
 
     str.r = 7;
-    sprintf(source, "    applied force : (%.2f N, %.2fN, %.2fN)",
+    sprintf(source, "    applied force    : (%.2f N, %.2fN, %.2fN)",
             player.applied_force.x, player.applied_force.y,
             player.applied_force.z);
     terminal.horz_strdisp(str);
 
     str.r = 8;
-    sprintf(source, "    net force : (%.2f N, %.2fN, %.2fN)",
+    sprintf(source, "    net force        : (%.2f N, %.2fN, %.2fN)",
             player.net_force.x, player.net_force.y,
             player.net_force.z);
     terminal.horz_strdisp(str);
