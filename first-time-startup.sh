@@ -25,15 +25,21 @@ command -v cmake >/dev/null || {
     exit 1
 }
 
+echo "[2/4] Checking dependencies..."
+
 command -v gcc >/dev/null || {
     echo "Error: gcc not installed"
     exit 1
 }
 
+echo "[3/4] Checking dependencies..."
+
 command -v pkg-config >/dev/null || {
     echo "Error: pkg-config not installed"
     exit 1
 }
+
+echo "[4/4] Checking dependencies..."
 
 pkg-config --exists sdl2 || {
     echo "Error: SDL2 development package not installed"
