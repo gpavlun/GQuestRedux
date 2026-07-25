@@ -46,6 +46,7 @@ pkg-config --exists sdl2 || {
     exit 1
 }
 
+echo "dependency checking complete"
 
 chmod +x ./scripts/*
 chmod +x ./launch.sh
