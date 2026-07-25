@@ -52,4 +52,13 @@ chmod +x ./scripts/*
 chmod +x ./launch.sh
 cmake -B build
 cmake --build build
+
+# give user option not to launch dev studio
+printf "Press q then Enter to quit, or any other key to continue: "
+read answer
+
+if [ "$answer" = "q" ]; then
+    exit 0
+fi
+
 ./launch.sh
