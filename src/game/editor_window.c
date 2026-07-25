@@ -3,30 +3,25 @@
 
 #include <gio.h>
 #include <logging.h>
-#include "../game/editor.h"
+#include "editor.h"
 
 int get_dim(SDL_Window *window, window_t *win){
     int new_width;
     int new_height;
-
+    int result = 0;
     SDL_GetWindowSize(window, &new_width, &new_height);
 
-    if(new_width!=win->dim.w || new_height!=win->dim.h){
-        win->dim.w = new_width;
-        win->dim.h = new_height;
+    win->dim.w = new_width;
+    win->dim.h = new_height;
 
-        win->cen.x = new_width/2;
-        win->cen.y = new_height/2;
-        return 1;
-    }
+    win->cen.x = new_width/2;
+    win->cen.y = new_height/2;
     return 0;  
 }
 int get_mouse(mouse_t *mouse){
-    SDL_GetMouseState(&mouse->x, &mouse->y);
-    return 0;  
+  SDL_GetMouseState(&mouse->x, &mouse->y);
+  return 0;
 }
-
-
 
 SDL_Window *init_editor_window(window_t win){
 
@@ -40,9 +35,8 @@ SDL_Window *init_editor_window(window_t win){
             SDL_WINDOW_RESIZABLE |
             SDL_WINDOW_SHOWN);
 
-    if(window)  
-            ;//logging.info("Window initialized");
-    else    logging.error(NO_RETURN, "Window failed");
+    if(!window)
+      logging.error(NO_RETURN, "Window failed");
 
     return window;
 }
@@ -55,9 +49,8 @@ SDL_Renderer *init_editor_renderer(SDL_Window *window){
             SDL_RENDERER_ACCELERATED |
             SDL_RENDERER_PRESENTVSYNC);
 
-    if(renderer)
-            ;//logging.info("Renderer initialized");
-    else    logging.error(NO_RETURN, "Renderer failed");
+    if(!renderer)
+      logging.error(NO_RETURN, "Renderer failed");
 
     return renderer;  
 }
@@ -77,8 +70,7 @@ sdl2_t sdl2init(window_t dimensions){
 
 gui_engine_t gui_engine_init(void){
     if(SDL_Init(SDL_INIT_VIDEO))            
-            logging.error(NO_RETURN, "SDL2 failed to init");      
-    else    ;//logging.info("SDL2 initialized");
+            logging.error(NO_RETURN, "SDL2 failed to init");
     
     gui_engine_t gui;
     get_mouse(&gui.mouse);
@@ -94,7 +86,5 @@ gui_engine_t gui_engine_init(void){
 void init_events(gui_engine_t *gui){
     pthread_t event_thread;
     if(pthread_create(&event_thread, NULL, editor_event_handler, gui))
-            logging.error(NO_RETURN, "Event thread failed");        
-    else    ;//logging.info("Event thread initialized");
-
+            logging.error(NO_RETURN, "Event thread failed");
 }

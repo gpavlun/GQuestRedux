@@ -1,8 +1,39 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#define true 1
-#define false 0
+#include "physics.h"
+#include "game.h"
+
+
+void start_render(void);
+
+def {
+  int x, y;
+}point_t;
+
+def {
+  int x, y;
+  u8 visible;
+}vpoint_t;
+
+def {
+  vec3_t a, b, c;
+  u8 valid;
+}tri_t;
+
+def {
+  size_t nedges;
+  edge_t *edges;
+  size_t nverts;
+  vert_t *verts;
+  size_t ntrangs;
+  triangle_t *trangs;
+  mesh_opts opts;
+}mesh_t;
+
+
+
+
 
 #define cubiod_                                         \
 mesh_t cuboid = {0};                                    \

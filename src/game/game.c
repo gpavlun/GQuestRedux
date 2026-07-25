@@ -1,20 +1,14 @@
-#include <SDL2/SDL.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <time.h>
-#include <stdint.h>
 #include <pthread.h>
 
-#include <gio.h>
-#include <logging.h>
-
 #include "game.h"
+#include "render.h"
+#include "terminal_interface.h"
 
+boolean_t modes;
+
+/*
 uint8_t RUNNING;
 pthread_mutex_t origin_lock;
-
-extern logging_t logging;
 
 struct debug_t{
     uint8_t keydown:1;
@@ -451,8 +445,31 @@ int start_game(void) {
     SDL_Quit();
     return 0;
 }
-
+*/
 int main(int argc, char **argv){
+
+
+    modes.RUNNING = 1;
+
+    pthread_t tui_thread;
+    pthread_create(&tui_thread, NULL, tui, NULL);
+
+    start_render();
+
+    modes.RUNNING = 0;
+    pthread_cancel(tui_thread);
+    pthread_join(tui_thread, NULL);
+    return 0;
+
+
+
+
+
+
+
+    /*
+
+
     if(argc>1){ 
         logging.detail("Starting game with args:");
         int i;
@@ -472,4 +489,5 @@ int main(int argc, char **argv){
     
     start_game();
     return 0;
+    */
 }

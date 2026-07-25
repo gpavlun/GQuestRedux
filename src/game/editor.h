@@ -3,7 +3,6 @@
 
 #include <gio.h>
 #include <SDL2/SDL.h>
-#include <sys/stat.h>
 
 #define event_rate 10000 //100x a sec
 
@@ -17,11 +16,7 @@ typedef uint32_t u32;
 typedef uint16_t u16;
 typedef uint8_t u8;
 
-typedef struct boolean_struct{
-    uint8_t RUNNING: 1;
-    uint8_t DYNAMIC: 1;
-}boolean_t;
-extern boolean_t modes;
+
 
 typedef struct debug_selector{
     uint8_t chunk_borders:1;

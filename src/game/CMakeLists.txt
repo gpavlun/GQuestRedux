@@ -1,4 +1,6 @@
-add_executable(game)
+add_executable(game
+        terminal_interface.c
+        terminal_interface.h)
 
 file(GLOB GAME_SOURCES CONFIGURE_DEPENDS
     *.c
@@ -14,6 +16,8 @@ target_link_libraries(game
         PkgConfig::SDL2
         GQuest::logging
         GQuest::gio
+        GQuest::gcurses
+        m
 )
 
 set_target_properties(game PROPERTIES
