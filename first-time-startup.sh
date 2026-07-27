@@ -14,31 +14,51 @@ echo "The commands are simple, assuming this script finishes,"
 echo "you would only need to run 'cmake --build build'"
 echo "The Devstudio handles all of that though! When in doubt, stay there."
 echo ""
-echo "If you have SDL2 installed, hit any key to continue."
+echo "Dependency list:"
+echo "1. cmake"
+echo "2. gcc"
+echo "3. cargo"
+echo "4. pkg-config"
+echo "5. sdl2"
+echo "6. tmux"
 read -n1
-echo "[1/4] Checking dependencies..."
+echo "[1/6] Checking dependencies..."
 command -v cmake >/dev/null || {
     echo "Error: cmake not installed"
     exit 1
 }
 
-echo "[2/4] Checking dependencies..."
+echo "[2/6] Checking dependencies..."
 
 command -v gcc >/dev/null || {
     echo "Error: gcc not installed"
     exit 1
 }
 
-echo "[3/4] Checking dependencies..."
+echo "[3/6] Checking dependencies..."
+
+command -v cargo >/dev/null || {
+    echo "Error: cargo not installed"
+    exit 1
+}
+
+echo "[4/6] Checking dependencies..."
 
 command -v pkg-config >/dev/null || {
     echo "Error: pkg-config not installed"
     exit 1
 }
 
-echo "[4/4] Checking dependencies..."
+echo "[5/6] Checking dependencies..."
 
 pkg-config --exists sdl2 || {
+    echo "Error: SDL2 development package not installed"
+    exit 1
+}
+
+echo "[6/6] Checking dependencies..."
+
+pkg-config -v tmux || {
     echo "Error: SDL2 development package not installed"
     exit 1
 }

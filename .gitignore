@@ -22,7 +22,7 @@ CTestTestfile.cmake
 *.so.*
 *.dll
 
-bin/
+# bin/
 **/target/
 
 
