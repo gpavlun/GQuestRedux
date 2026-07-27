@@ -1,5 +1,4 @@
 #! /bin/bash
-
 echo "Hello! You most likely will want to run everything from the dev-studio." 
 echo "That is how this is designed to be used, after all!"
 echo ""
@@ -17,32 +16,46 @@ echo "The Devstudio handles all of that though! When in doubt, stay there."
 echo ""
 echo "If you have SDL2 installed, hit any key to continue."
 read -n1
-
 echo "[1/4] Checking dependencies..."
-
 command -v cmake >/dev/null || {
     echo "Error: cmake not installed"
     exit 1
 }
+
+echo "[2/4] Checking dependencies..."
 
 command -v gcc >/dev/null || {
     echo "Error: gcc not installed"
     exit 1
 }
 
+echo "[3/4] Checking dependencies..."
+
 command -v pkg-config >/dev/null || {
     echo "Error: pkg-config not installed"
     exit 1
 }
+
+echo "[4/4] Checking dependencies..."
 
 pkg-config --exists sdl2 || {
     echo "Error: SDL2 development package not installed"
     exit 1
 }
 
+echo "dependency checking complete"
 
 chmod +x ./scripts/*
 chmod +x ./launch.sh
 cmake -B build
 cmake --build build
+
+# give user option not to launch dev studio
+printf "Press q then Enter to quit, or any other key to continue: "
+read answer
+
+if [ "$answer" = "q" ]; then
+    exit 0
+fi
+
 ./launch.sh
