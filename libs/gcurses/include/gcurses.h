@@ -80,7 +80,9 @@ void gc_set(gc_term_t *terminal, size_t row, size_t col, gc_cell_t cell);
 /* cursor / input */
 void gc_show_cursor(gc_term_t *terminal, bool setting);
 void gc_io_block(gc_term_t *terminal, bool setting);
+void gc_canon(gc_term_t *terminal, bool setting);
 void gc_echo(gc_term_t *terminal, bool setting);
+void gc_raw_input(gc_term_t *terminal);
 
 /* strings */
 size_t gc_horz_str_disp(gc_term_t *terminal, size_t row, size_t col, const char *string);

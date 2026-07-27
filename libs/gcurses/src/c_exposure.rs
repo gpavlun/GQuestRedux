@@ -120,6 +120,22 @@ pub extern "C" fn gc_echo(term: *mut term_window_t, setting: bool){
     
 }
 #[unsafe(no_mangle)]
+pub extern "C" fn gc_canon(term: *mut term_window_t, setting: bool){
+    if term.is_null() {
+        return;
+    }
+
+    let _ = term_window_t::canon(setting);    
+}
+#[unsafe(no_mangle)]
+pub extern "C" fn gc_raw_input(term: *mut term_window_t){
+    if term.is_null() {
+        return;
+    }
+
+    let _ = term_window_t::raw_input_mode();    
+}
+#[unsafe(no_mangle)]
 pub extern "C" fn gc_drop(term: *mut term_window_t) {
     if term.is_null() {
         return;

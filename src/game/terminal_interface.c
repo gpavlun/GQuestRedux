@@ -17,6 +17,9 @@ void *tui(void *arg) {
   terminal = gc_new();
   gc_io_block(terminal, 0);
   gc_show_cursor(terminal, 0);
+  gc_echo(terminal, 0);
+  gc_canon(terminal, 0);
+  
   gc_clear(terminal);
   gc_present(terminal);
 
@@ -26,6 +29,8 @@ void *tui(void *arg) {
 
 
   while (modes.RUNNING) {
+
+    gc_frame_resize(terminal);
 
     gc_clear(terminal);
 

@@ -337,6 +337,32 @@ impl term_window_t {
 
     }
 
+    pub fn raw_input_mode() -> Result<(), rustix::io::Errno> {
+        let input = stdin();
+        let fd = input.as_fd();
+
+        let mut term = termios::tcgetattr(fd)?;
+
+        // Disable canonical mode and echo
+        term.local_modes.remove(
+            termios::LocalModes::ICANON |
+            termios::LocalModes::ECHO
+        );
+
+        // Non-canonical read behavior:
+        // return immediately, even with no input
+        term.special_codes[termios::SpecialCodeIndex::VMIN] = 0;
+        term.special_codes[termios::SpecialCodeIndex::VTIME] = 0;
+
+        termios::tcsetattr(
+            fd,
+            termios::OptionalActions::Now,
+            &term
+        )?;
+
+        Ok(())
+    }    
+
     pub fn io_block(&self, setting: bool) -> StdResult<()> {
         let input = stdin();
         let flags = fcntl_getfl(input.as_fd())?;
@@ -348,6 +374,27 @@ impl term_window_t {
             fcntl_setfl(input.as_fd(),
                         flags | OFlags::NONBLOCK,)?;
         }
+        Ok(())
+    }
+
+    pub fn canon(setting: bool) -> StdResult<()> {
+        let input = stdin();
+        let fd = input.as_fd();
+
+        let mut term = termios::tcgetattr(fd)?;
+
+        if setting {
+            term.local_modes.insert(termios::LocalModes::ICANON);
+            term.special_codes[termios::SpecialCodeIndex::VMIN] = 1;
+            term.special_codes[termios::SpecialCodeIndex::VTIME] = 0;
+        } else {
+            term.local_modes.remove(termios::LocalModes::ICANON);
+            term.special_codes[termios::SpecialCodeIndex::VMIN] = 0;
+            term.special_codes[termios::SpecialCodeIndex::VTIME] = 1;
+        }
+
+        termios::tcsetattr(fd, termios::OptionalActions::Now, &term)?;
+
         Ok(())
     }
 

@@ -182,6 +182,8 @@ void boot_menu(void){
 
     gc_io_block(terminal, 0);
     gc_echo(terminal, 0);
+    gc_canon(terminal, 0);
+    
     gc_clear(terminal);
     gc_present(terminal);
     
@@ -196,10 +198,12 @@ void boot_menu(void){
 
     while(running){
 
-        running = handle_input(input, message, &selected);
+        input = get_input();
+
+        if(input) running = handle_input(input, message, &selected);
         draw_display(terminal, message, selected);
 
-        input = get_input();
+
         usleep(10000);
     }
 
