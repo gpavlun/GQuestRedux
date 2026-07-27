@@ -1,3 +1,3 @@
 #! /bin/bash
 
-exec x-terminal-emulator -e ./bin/game.grg
+tmux -L devstudio new-window -n Game ./bin/game.grg

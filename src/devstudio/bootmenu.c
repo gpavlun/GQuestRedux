@@ -17,69 +17,16 @@
 char options[nopts][optw]={
     "run game           ",
     "kill game          ",
-    "build+run game     ",
+    "build game     ",
     "run editor         ",
     "kill editor        ",
-    "build+run editor   ",
+    "build editor   ",
     "quit               "
 };
-int readpid(const char *path){
-    FILE *f;
-    pid_t pid;
 
-    while(1){
-        f = fopen(path, "r");
-
-        if(f){
-            if(fscanf(f, "%d", &pid)==1){
-                fclose(f);
-                return pid;
-            }
-            fclose(f);
-        }
-
-        usleep(10000);
-    }
-}
-void launch(launch_t *config){
-    sprintf(config->tmp_path,"./tmp/%s.pid",config->name);
-    int pid = fork();
-    if (!pid) {
-        execlp(config->app_term,
-            config->app_term,
-            "-e",
-            "./bin/launcher-wrapper",
-            config->tmp_path,
-            config->app_path,
-            NULL);
-
-        exit(1);
-    }
-    config->pid = readpid(config->tmp_path);
-}
-
-void get_status(launch_t *config){
-    FILE *f;
-    if(config->tmp_path&&config->tmp_path[0]){
-        f = fopen(config->tmp_path, "r");
-        if(f){
-            config->running = 1;
-            fclose(f);
-        }else{
-            config->running = 0;
-        }
-    }else{
-        config->running = 0;
-    }
-}
-
-int handle_input(char input, char *out, int *selected, launch_t *config[2]){
+int handle_input(char input, char *out, int *selected){
     FILE *output;
     char buff[1];    
-    
-    get_status(config[0]);
-    get_status(config[1]);
-
 
     if(input!=EOF && input!=0){
         start:
@@ -93,70 +40,40 @@ int handle_input(char input, char *out, int *selected, launch_t *config[2]){
                 if((*selected) < nopts-1) (*selected)++;
             $}case('1'):{
                 *selected = 0;
-                if(!config[0]->running){
-                    launch(config[0]);
-                    strcpy(out, "launched game");
-                }else{
-                    strcpy(out, "game is running");
-                }
+                system("./scripts/run-game.sh");
+                strcpy(out, "launched game");
             $}case('2'):{
                 *selected = 1;
-                if(config[0]->running){
-                    kill(config[0]->pid, SIGKILL);
-                    remove(config[0]->tmp_path);
-                    config[0]->tmp_path[0] = 0;
-                    strcpy(out, "killed game");
-                }else{
-                    strcpy(out, "game is not running");
-                }
+                system("tmux kill-window -t Game");
             $}case('3'):{
                 *selected = 2;
-                if(!config[0]->running){
-                    output = popen("./scripts/build-game.sh", "r");
-                    if(output && fread(buff, 1, 1, output) > 0){
-                        strcpy(out, "error building game");
-                        system("./scripts/build-game.sh 1");
-                    }else{
-                        launch(config[0]);
-                        strcpy(out, "launched game");
-                    }
-                    pclose(output);
+                output = popen("./scripts/build-game.sh", "r");
+                if(output && fread(buff, 1, 1, output) > 0){
+                    strcpy(out, "error building game");
+                    system("./scripts/build-game.sh 1");
                 }else{
-                    strcpy(out, "game is running");
+                    system("./scripts/run-game.sh");
+                    strcpy(out, "launched game");
                 }
+                pclose(output);
             $}case('4'):{
                 *selected = 3;
-                if(!config[1]->running){
-                    launch(config[1]);
-                    strcpy(out, "launched editor");
-                }else{
-                    strcpy(out, "editor is running");
-                }
+                system("./scripts/run-editor.sh");
+                strcpy(out, "launched editor");
             $}case('5'):{
                 *selected = 4;
-                if(config[1]->running){
-                    kill(config[1]->pid, SIGKILL);
-                    remove(config[1]->tmp_path);
-                    config[1]->tmp_path[0] = 0;
-                    strcpy(out, "killed editor");
-                }else{
-                    strcpy(out, "editor is not running");
-                }
+                system("tmux kill-window -t Editor");
             $}case('6'):{
                 *selected = 5;
-                if(!config[1]->running){
-                    output = popen("./scripts/build-editor.sh", "r");
-                    if(output && fread(buff, 1, 1, output) > 0){
-                        strcpy(out, "error building editor");
-                        system("./scripts/build-editor.sh 1");
-                    }else{
-                        launch(config[1]);
-                        strcpy(out, "launched editor");
-                    }
-                    pclose(output);
+                output = popen("./scripts/build-editor.sh", "r");
+                if(output && fread(buff, 1, 1, output) > 0){
+                    strcpy(out, "error building editor");
+                    system("./scripts/build-editor.sh 1");
                 }else{
-                    strcpy(out, "editor is running");
-                }         
+                    system("./scripts/run-editor.sh");
+                    strcpy(out, "launched editor");
+                }
+                pclose(output);
             $}case('7'):{
                 *selected = 6;
                 return 0;
@@ -177,7 +94,7 @@ void draw_display(gc_term_t *terminal, char *message,  int selected){
     gc_cell_t array[nopts][optw] = {0};
 
     gc_rect_t title_box = {0};
-    title_box.cell.fg_color = GC_GREEN;
+    title_box.cell.fg_color = GC_BLUE;
     title_box.cell.bg_color = GC_DEFAULT;
     gc_rect_t options_box = {0};
     options_box.cell.fg_color = GC_GREEN;
@@ -210,9 +127,10 @@ void draw_display(gc_term_t *terminal, char *message,  int selected){
         gc_horz_str_disp(terminal, title_box.height + 2, options_box.width + 1, str);
         str = "3. 1-9 are hotkeys for select";
         gc_horz_str_disp(terminal, title_box.height + 3, options_box.width + 1, str);
-        str = "4. esc or q to quick exit";
+        str = "4. F1-5 to select a window, or click the name in the toolbar";
         gc_horz_str_disp(terminal, title_box.height + 4, options_box.width + 1, str);
-
+        str = "5. esc or q to quick exit";
+        gc_horz_str_disp(terminal, title_box.height + 5, options_box.width + 1, str);
         body_box.height = gc_nrows(terminal) - title_box.height * 2;
         body_box.width = gc_ncols(terminal) - options_box.width;
         gc_draw_frame(terminal, title_box.height, options_box.width, body_box);
@@ -275,19 +193,10 @@ void boot_menu(void){
     int selected = 0;    
     int running = 1;    
     
-    launch_t *config[2];
-    config[0] = calloc(1, sizeof(launch_t));
-    config[1] = calloc(1, sizeof(launch_t));
-    FILE *file = fopen("launcher.conf", "r");
-    if(!file) logging.error(404, "launcher.conf not found!");
-    rewind(file);
-    if(parse_config(file, "GAME", config[0])) logging.error(500, "Game config malformed");
-    rewind(file);
-    if(parse_config(file, "EDITOR", config[1])) logging.error(500, "Editor config malformed");
 
     while(running){
 
-        running = handle_input(input, message, &selected, config);
+        running = handle_input(input, message, &selected);
         draw_display(terminal, message, selected);
 
         input = get_input();

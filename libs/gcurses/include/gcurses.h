@@ -8,6 +8,7 @@ structure of rust programs methods
 #define GQUEST_RUST_GCURSES_H
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
