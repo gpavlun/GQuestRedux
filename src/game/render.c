@@ -434,7 +434,6 @@ void start_render(void) {
     }
 
     clear_buffer(&fb, 0xff7cafc2);
-    //clear_screen_wrap(gui.sdl2.renderer);
 
     draw_mesh_triangle(&gui, ground);
     draw_mesh_triangle(&gui, cuboid);

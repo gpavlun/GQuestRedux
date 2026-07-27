@@ -21,11 +21,3 @@ set_target_properties(devstudio PROPERTIES
     OUTPUT_NAME "devstudio.grg"
     RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
-
-add_executable(launcher-wrapper
-    launcher-wrapper.c
-)
-
-set_target_properties(launcher-wrapper PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
-)
