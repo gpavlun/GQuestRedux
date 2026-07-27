@@ -172,137 +172,100 @@ int handle_input(char input, char *out, int *selected, launch_t *config[2]){
     return 1;
 }
 
-void draw_display(term_w_t *terminal, char *message,  int selected){
+void draw_display(gc_term_t *terminal, char *message,  int selected){
 
-    tile_t array[nopts][optw] = {0};
+    gc_cell_t array[nopts][optw] = {0};
 
-    tframe_t title_box;
-    init_tframe(&title_box);
-
-    
-
-    title_box.set.min_w(strlen("GQ DEVELOPER STUDIO") + 2);
-
-
-
-    title_box.set.h(3);
-    title_box.dim.tile.color = GCS_BLUE;
-
-    rect_t body_box;
-    body_box.tile.color = GCS_GREEN;
-    body_box.tile.bg_color = GCS_BG_DEFAULT;
-    rect_t ui_box;
-    ui_box.tile.color = GCS_YELLOW;
-    ui_box.tile.bg_color = GCS_BG_DEFAULT;
-    rect_t cmd_box;
-    cmd_box.tile.color = GCS_BLUE;
-    cmd_box.tile.bg_color = GCS_BG_DEFAULT;
+    gc_rect_t title_box = {0};
+    title_box.cell.fg_color = GC_GREEN;
+    title_box.cell.bg_color = GC_DEFAULT;
+    gc_rect_t options_box = {0};
+    options_box.cell.fg_color = GC_GREEN;
+    options_box.cell.bg_color = GC_DEFAULT;
+    gc_rect_t body_box = {0};
+    body_box.cell.fg_color = GC_YELLOW;
+    body_box.cell.bg_color = GC_DEFAULT;
+    gc_rect_t cmd_box = {0};
+    cmd_box.cell.fg_color = GC_BLUE;
+    cmd_box.cell.bg_color = GC_DEFAULT;
   
-    str_t str = {0};
-    fstr_t fstr = {0};
+    char *str;
+    gc_fstr_t fstr = {0};
 
-        terminal->frame_resize();
+        gc_frame_resize(terminal);
+        title_box.width = gc_ncols(terminal);
+        title_box.height = 3;
+        gc_draw_frame(terminal, 0 , 0, title_box);
+
+        str  = "GQ DEVELOPER STUDIO";
+        gc_horz_str_disp(terminal, 1,gc_ncols(terminal)/2 - strlen("GQ DEVELOPER STUDIO")/2, str);
+
+        options_box.width = 21;
+        options_box.height = gc_nrows(terminal) - title_box.height * 2;
+        gc_draw_frame(terminal, title_box.height, 0, options_box);
+
+        str = "1. w and s to select options";
+        gc_horz_str_disp(terminal, title_box.height + 1, options_box.width + 1, str);
+        str = "2. enter to run option";
+        gc_horz_str_disp(terminal, title_box.height + 2, options_box.width + 1, str);
+        str = "3. 1-9 are hotkeys for select";
+        gc_horz_str_disp(terminal, title_box.height + 3, options_box.width + 1, str);
+        str = "4. esc or q to quick exit";
+        gc_horz_str_disp(terminal, title_box.height + 4, options_box.width + 1, str);
+
+        body_box.height = gc_nrows(terminal) - title_box.height * 2;
+        body_box.width = gc_ncols(terminal) - options_box.width;
+        gc_draw_frame(terminal, title_box.height, options_box.width, body_box);
+
+        cmd_box.height = 3;
+        cmd_box.width = gc_ncols(terminal);
+        gc_draw_frame(terminal, title_box.height + options_box.height, 0, cmd_box);
+
+        str = ">";
+        gc_horz_str_disp(terminal, title_box.height + options_box.height + 1, 2, str);
         
-        title_box.set.w(terminal->ncols);
-        
-        terminal->draw_frame(title_box.dim);
+        str = "                      ";
+        gc_horz_str_disp(terminal, title_box.height + options_box.height + 1, 4, str);
+        str = message;
+        gc_horz_str_disp(terminal, title_box.height + options_box.height + 1, 4, str);
+        gc_move_cursor(terminal, title_box.height + options_box.height + 1, 4 + strlen(message));
 
-        
-        str.r = title_box.dim.r+1;
-        str.c = terminal->ncols/2 - strlen("GQ DEVELOPER STUDIO")/2;
-        str.source = "GQ DEVELOPER STUDIO";
-        terminal->horz_strdisp(str);
-        
-        body_box.c = title_box.dim.c;
-        body_box.r = title_box.dim.r+title_box.dim.h;
-        body_box.h = terminal->nrows-title_box.dim.h*2;
-        body_box.w = 21;
-
-        terminal->draw_frame(body_box);
-
-        ui_box.c = body_box.c+body_box.w;
-        ui_box.r = title_box.dim.r + title_box.dim.h;
-        ui_box.h = terminal->nrows - title_box.dim.h*2;
-        ui_box.w = terminal->ncols-body_box.w;
-        str.r = ui_box.r + 1;
-        str.c = ui_box.c + 1;
-        str.source = "1. w and s to select options";
-        terminal->horz_strdisp(str);
-        str.r = ui_box.r + 2;
-        str.c = ui_box.c + 1;
-        str.source = "2. enter to run option";
-        terminal->horz_strdisp(str);
-        str.r = ui_box.r + 3;
-        str.c = ui_box.c + 1;
-        str.source = "3. 1-9 are hotkeys for select";
-        terminal->horz_strdisp(str);
-        str.r = ui_box.r + 4;
-        str.c = ui_box.c + 1;
-        str.source = "4. esc or q to quick exit";
-        terminal->horz_strdisp(str);
-
-        terminal->draw_frame(ui_box);
-
-        cmd_box.c = 0;
-        cmd_box.r = body_box.r + body_box.h;
-        cmd_box.h = 3;
-        cmd_box.w = terminal->ncols;
-
-        terminal->draw_frame(cmd_box);
-        
-        str.r = cmd_box.r + 1;
-        str.c = cmd_box.c + 2;
-        str.source = ">";
-        terminal->horz_strdisp(str);
-
-        str.r = cmd_box.r + 1;    
-        str.c = cmd_box.c + 4;
-        
-        str.source = "                      ";
-        terminal->horz_strdisp(str);
-        str.source = message;
-        terminal->horz_strdisp(str);
-        move_cursor(terminal, cmd_box.r + 1, cmd_box.c + 4 + strlen(message));
-        
         int j, i;
         for (j=0; j<nopts; j++) {
 
             for (i=0; options[j][i] != '\0'; i++) {
 
                 if (selected == j) {
-                    array[j][i].bg_color = GCS_BG_WHITE;
-                    array[j][i].color = GCS_BLACK;
+                    array[j][i].bg_color = GC_WHITE;
+                    array[j][i].fg_color = GC_BLACK;
                 } else {
-                    array[j][i].bg_color = GCS_BG_DEFAULT;
-                    array[j][i].color = GCS_DEFAULT;
+                    array[j][i].bg_color = GC_DEFAULT;
+                    array[j][i].fg_color = GC_DEFAULT;
                 }
-                array[j][i].symbol[0] = options[j][i];
-                array[j][i].symbol[1] = '\0';
+                array[j][i].glyph = (unsigned char)options[j][i];
 
             }
 
-            array[j][i].bg_color = GCS_BG_BLACK;
-            array[j][i].color = GCS_WHITE;
-            array[j][i].symbol[0] = 0;
-
-            fstr.r = body_box.r+1+j;
-            fstr.c = body_box.c+1;
+            array[j][i].bg_color = GC_BLACK;
+            array[j][i].fg_color = GC_WHITE;
+            array[j][i].glyph = 0;
             fstr.source = array[j];
-            terminal->horz_tiledisp(fstr);        
+            gc_horz_fstr_disp(terminal, title_box.height + 1 + j, 1, fstr);
         }
-        terminal->present();
+        gc_present(terminal);
 
 }
 
 
 void boot_menu(void){
     
-    term_w_t terminal;
-    init_tui(&terminal);
+    gc_term_t *terminal;
+    terminal = gc_new();
 
-    terminal.io_block(0);
-    terminal.clear();
-    terminal.present();
+    gc_io_block(terminal, 0);
+    gc_echo(terminal, 0);
+    gc_clear(terminal);
+    gc_present(terminal);
     
     char input = EOF;
     char message[64];
@@ -325,18 +288,16 @@ void boot_menu(void){
     while(running){
 
         running = handle_input(input, message, &selected, config);
-        draw_display(&terminal, message, selected);
+        draw_display(terminal, message, selected);
 
         input = get_input();
         usleep(10000);
-    }    
+    }
 
-
-    terminal.clear();
-    terminal.present();
-    terminal.io_block(1);
-    terminal.cursor(1);
-    move_cursor(&terminal, terminal.nrows, 0);    
+    gc_move_cursor(terminal, gc_nrows(terminal), 0);
+    gc_clear(terminal);
+    gc_present(terminal);
+    gc_drop(terminal);
 }
 
 int main(void){

@@ -1,258 +1,118 @@
-#ifndef GCURSES_H
-#define GCURSES_H
-
-#include <stdio.h>
-#include <termios.h>
-
-#include "objects.h"
-
-
-extern char GCS_VAR_COLOR_BLACK[];
-extern char GCS_VAR_COLOR_RED[];
-extern char GCS_VAR_COLOR_GREEN[];
-extern char GCS_VAR_COLOR_YELLOW[];
-extern char GCS_VAR_COLOR_BLUE[];
-extern char GCS_VAR_COLOR_MAGENTA[];
-extern char GCS_VAR_COLOR_CYAN[];
-extern char GCS_VAR_COLOR_WHITE[];
-
-extern char GCS_VAR_COLOR_BRIGHT_BLACK[];
-extern char GCS_VAR_COLOR_BRIGHT_RED[];
-extern char GCS_VAR_COLOR_BRIGHT_GREEN[];
-extern char GCS_VAR_COLOR_BRIGHT_YELLOW[];
-extern char GCS_VAR_COLOR_BRIGHT_BLUE[];
-extern char GCS_VAR_COLOR_BRIGHT_MAGENTA[];
-extern char GCS_VAR_COLOR_BRIGHT_CYAN[];
-extern char GCS_VAR_COLOR_BRIGHT_WHITE[];
-
-extern char GCS_VAR_COLOR_DEFAULT[];
-extern char GCS_VAR_COLOR_RESET[];
-
-extern char GCS_VAR_BG_COLOR_BLACK[];
-extern char GCS_VAR_BG_COLOR_RED[];
-extern char GCS_VAR_BG_COLOR_GREEN[];
-extern char GCS_VAR_BG_COLOR_YELLOW[];
-extern char GCS_VAR_BG_COLOR_BLUE[];
-extern char GCS_VAR_BG_COLOR_MAGENTA[];
-extern char GCS_VAR_BG_COLOR_CYAN[];
-extern char GCS_VAR_BG_COLOR_WHITE[];
-
-extern char GCS_VAR_BG_COLOR_BRIGHT_BLACK[];
-extern char GCS_VAR_BG_COLOR_BRIGHT_RED[];
-extern char GCS_VAR_BG_COLOR_BRIGHT_GREEN[];
-extern char GCS_VAR_BG_COLOR_BRIGHT_YELLOW[];
-extern char GCS_VAR_BG_COLOR_BRIGHT_BLUE[];
-extern char GCS_VAR_BG_COLOR_BRIGHT_MAGENTA[];
-extern char GCS_VAR_BG_COLOR_BRIGHT_CYAN[];
-extern char GCS_VAR_BG_COLOR_BRIGHT_WHITE[];
-
-extern char GCS_VAR_BG_COLOR_DEFAULT[];
-extern char GCS_VAR_BG_COLOR_RESET[];
-
-
-#define GCS_BLACK              GCS_VAR_COLOR_BLACK
-#define GCS_RED                GCS_VAR_COLOR_RED
-#define GCS_GREEN              GCS_VAR_COLOR_GREEN
-#define GCS_YELLOW             GCS_VAR_COLOR_YELLOW
-#define GCS_BLUE               GCS_VAR_COLOR_BLUE
-#define GCS_MAGENTA            GCS_VAR_COLOR_MAGENTA
-#define GCS_CYAN               GCS_VAR_COLOR_CYAN
-#define GCS_WHITE              GCS_VAR_COLOR_WHITE
-
-#define GCS_BRIGHT_BLACK       GCS_VAR_COLOR_BRIGHT_BLACK
-#define GCS_BRIGHT_RED         GCS_VAR_COLOR_BRIGHT_RED
-#define GCS_BRIGHT_GREEN       GCS_VAR_COLOR_BRIGHT_GREEN
-#define GCS_BRIGHT_YELLOW      GCS_VAR_COLOR_BRIGHT_YELLOW
-#define GCS_BRIGHT_BLUE        GCS_VAR_COLOR_BRIGHT_BLUE
-#define GCS_BRIGHT_MAGENTA     GCS_VAR_COLOR_BRIGHT_MAGENTA
-#define GCS_BRIGHT_CYAN        GCS_VAR_COLOR_BRIGHT_CYAN
-#define GCS_BRIGHT_WHITE       GCS_VAR_COLOR_BRIGHT_WHITE
-
-#define GCS_DEFAULT            GCS_VAR_COLOR_DEFAULT
-#define GCS_RESET              GCS_VAR_COLOR_RESET
-
-#define GCS_BG_BLACK              GCS_VAR_BG_COLOR_BLACK
-#define GCS_BG_RED                GCS_VAR_BG_COLOR_RED
-#define GCS_BG_GREEN              GCS_VAR_BG_COLOR_GREEN
-#define GCS_BG_YELLOW             GCS_VAR_BG_COLOR_YELLOW
-#define GCS_BG_BLUE               GCS_VAR_BG_COLOR_BLUE
-#define GCS_BG_MAGENTA            GCS_VAR_BG_COLOR_MAGENTA
-#define GCS_BG_CYAN               GCS_VAR_BG_COLOR_CYAN
-#define GCS_BG_WHITE              GCS_VAR_BG_COLOR_WHITE
-
-#define GCS_BG_BRIGHT_BLACK       GCS_VAR_BG_COLOR_BRIGHT_BLACK
-#define GCS_BG_BRIGHT_RED         GCS_VAR_BG_COLOR_BRIGHT_RED
-#define GCS_BG_BRIGHT_GREEN       GCS_VAR_BG_COLOR_BRIGHT_GREEN
-#define GCS_BG_BRIGHT_YELLOW      GCS_VAR_BG_COLOR_BRIGHT_YELLOW
-#define GCS_BG_BRIGHT_BLUE        GCS_VAR_BG_COLOR_BRIGHT_BLUE
-#define GCS_BG_BRIGHT_MAGENTA     GCS_VAR_BG_COLOR_BRIGHT_MAGENTA
-#define GCS_BG_BRIGHT_CYAN        GCS_VAR_BG_COLOR_BRIGHT_CYAN
-#define GCS_BG_BRIGHT_WHITE       GCS_VAR_BG_COLOR_BRIGHT_WHITE
-
-#define GCS_BG_DEFAULT            GCS_VAR_BG_COLOR_DEFAULT
-#define GCS_BG_RESET              GCS_VAR_BG_COLOR_RESET
-
-
-
-#define cursor_origin() fputs("\033[H",    stdout);
-#define hide_cursor() fputs("\033[?25l", stdout);
-#define show_cursor() fputs("\033[?25h", stdout);
-
-
-
-
-typedef struct cursor_location{
-    int row;
-    int col;
-    int hidden;
-}cursor_t;
-typedef struct tile_data{
-    char symbol[5];
-    char *color;
-    char *bg_color;
-}tile_t;
-typedef struct rectangle{
-    int w; 
-    int h;
-    int r;
-    int c;
-    tile_t tile;
-}rect_t;
-typedef struct term_frame_set{
-    void (*w)(int value);
-    void (*h)(int value);
-    void (*max_w)(int value);
-    void (*max_h)(int value);
-    void (*min_w)(int value);
-    void (*min_h)(int value);
-    
-}tframe_set_t;
-typedef struct term_frame_constraints{
-    int max_w;
-    int min_w;
-    int max_h;
-    int min_h;
-}tframe_con_t;
-typedef struct term_frame_data{
-    rect_t dim;
-    tframe_set_t set;
-    tframe_con_t con;
-    void (*max_zz)(int value);
-}tframe_t;
-
-typedef struct term_window term_w_t;
-
-typedef struct formatted_str_data{
-    int r;
-    int c;
-    tile_t *source;
-}fstr_t;
-
-typedef struct str_data{
-    int r;
-    int c;
-    char *source;
-}str_t;
-
-
-struct term_window{
-    int nrows;
-    int ncols;
-    term_w_t *self;
-    tile_t *term_frame;
-    tile_t *prev_frame;
-
-    void (*clear)(void);
-
-    int (*io_block)(int setting);
-
-    void (*present)(void);
-
-    void (*cursor)(int status);
-
-    int (*horz_strdisp)(str_t string);
-
-    int (*vert_strdisp)(str_t string);
-
-    int (*horz_tiledisp)(fstr_t tile);
-
-    int (*vert_tiledisp)(fstr_t tile);
-
-    void (*draw_rect)(rect_t rectangle);
-
-    void (*draw_border)(rect_t rectangle);
-
-    void (*draw_frame)(rect_t rectangle);
-
-    void (*frame_resize)(void);
-
-    struct termios old_conf;
-    struct termios new_conf;
-
-    cursor_t cursor_data;
-};
-
-void move_cursor(term_w_t *terminal, int r, int c);
-
-int io_blocking_handler(term_w_t *terminal, int setting);
-
-void clear_screen(term_w_t *terminal);
-
-void present(term_w_t *terminal);
-
-void cursor_handler(term_w_t *terminal, int status);
-
-int horz_strdisp(term_w_t *terminal, str_t string);
-
-int vert_strdisp(term_w_t *terminal, str_t string);
-
-int horz_tiledisp(term_w_t *terminal, fstr_t tile);
-
-int vert_tiledisp(term_w_t *terminal, fstr_t tile);
-
-void draw_rect(term_w_t *terminal, rect_t rectangle);
-
-void draw_border(term_w_t *terminal, rect_t rectangle);
-
-void set_frame_tile(term_w_t *terminal,
-                    int r,
-                    int c,
-                    const char *symbol,
-                    char *color,
-                    char *bg_color);
-
-void draw_frame(term_w_t *terminal, rect_t rectangle);
-
-int detect_resize(term_w_t *terminal);
-
-void frame_resize(term_w_t *terminal);
-
-void set_frame_width(tframe_t *frame, int value);
-
-void set_frame_heigth(tframe_t *frame, int value);
-
-void set_frame_max_width(tframe_t *frame, int value);
-
-void set_frame_min_width(tframe_t *frame, int value);
-
-void set_frame_max_heigth(tframe_t *frame, int value);
-
-void set_frame_min_heigth(tframe_t *frame, int value);
-
-int init_tframe(tframe_t *frame);
-
-int init_tui(term_w_t *terminal);
-
-
-
-void gcurses_test(void);
-
-
-
-
-
-
-
-
-
+/*
+This is fun. Basically you give C the signature of the function from rust, but you do not allow them to actually access
+the function or structure internals. This prevents them from fucking shit up on their end or breaking the natural
+structure of rust programs methods
+*/
+
+#ifndef GQUEST_RUST_GCURSES_H
+#define GQUEST_RUST_GCURSES_H
+#include <stdbool.h>
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+
+
+
+typedef struct gc_term_t gc_term_t;
+typedef struct gc_frame_t gc_frame_t;
+
+typedef enum {
+  GC_DEFAULT = 0,
+  GC_BLACK = 1,
+  GC_RED = 2,
+  GC_GREEN = 3,
+  GC_YELLOW = 4,
+  GC_BLUE = 5,
+  GC_MAGENTA = 6,
+  GC_CYAN = 7,
+  GC_WHITE = 8
+} gc_color_t;
+
+
+typedef struct {
+  uint32_t glyph;
+  gc_color_t fg_color;
+  gc_color_t bg_color;
+} gc_cell_t;
+
+
+typedef struct {
+  size_t width;
+  size_t height;
+  gc_cell_t cell;
+} gc_rect_t;
+
+
+/*
+ * source must be a null-terminated array of gc_cell_t.
+ * The terminating cell must have glyph == 0.
+ */
+typedef struct {
+  const gc_cell_t *source;
+} gc_fstr_t;
+
+
+/* lifecycle */
+gc_term_t *gc_new(void);
+void gc_drop(gc_term_t *terminal);
+
+
+/* terminal information */
+size_t gc_nrows(const gc_term_t *terminal);
+size_t gc_ncols(const gc_term_t *terminal);
+
+
+/* frame operations */
+void gc_clear(gc_term_t *terminal);
+void gc_present(gc_term_t *terminal);
+void gc_move_cursor(gc_term_t *terminal, size_t row, size_t col);
+void gc_frame_resize(gc_term_t *terminal);
+
+
+/* direct cell access */
+void gc_set(gc_term_t *terminal, size_t row, size_t col, gc_cell_t cell);
+
+
+/* cursor / input */
+void gc_show_cursor(gc_term_t *terminal, bool setting);
+void gc_io_block(gc_term_t *terminal, bool setting);
+void gc_echo(gc_term_t *terminal, bool setting);
+
+/* strings */
+size_t gc_horz_str_disp(gc_term_t *terminal, size_t row, size_t col, const char *string);
+size_t gc_vert_str_disp(gc_term_t *terminal, size_t row, size_t col, const char *string);
+
+
+/* formatted strings */
+void gc_horz_fstr_disp(gc_term_t *terminal,size_t row,size_t col,gc_fstr_t string);
+void gc_vert_fstr_disp(gc_term_t *terminal,size_t row,size_t col,gc_fstr_t string);
+
+
+/* shapes */
+void gc_draw_rect(gc_term_t *terminal,size_t row,size_t col,gc_rect_t rect);
+void gc_draw_border(gc_term_t *terminal,size_t row,size_t col,gc_rect_t rect);
+void gc_draw_frame(gc_term_t *terminal,size_t row,size_t col,gc_rect_t rect);
+
+/* frames */
+gc_frame_t *gc_frame_new(void);
+void gc_frame_free(gc_frame_t* frame);
+size_t gc_frame_height(gc_frame_t* frame);
+size_t gc_frame_width(gc_frame_t* frame);
+void gc_set_frame_fg_color(gc_frame_t* frame, gc_color_t color);
+void gc_set_frame_bg_color(gc_frame_t* frame, gc_color_t color);
+void gc_frame_set_width(gc_frame_t* frame, size_t value);
+void gc_frame_set_height(gc_frame_t* frame, size_t value);
+void gc_frame_set_max_width(gc_frame_t* frame, size_t value);
+void gc_frame_set_min_width(gc_frame_t* frame, size_t value);
+void gc_frame_set_max_height(gc_frame_t* frame, size_t value);
+void gc_frame_set_min_height(gc_frame_t* frame, size_t value);
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif //GQUEST_RUST_GCURSES_H

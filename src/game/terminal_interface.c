@@ -3,7 +3,7 @@
 //
 
 
-#include <gcurses.h>
+#include <Cimpl_gcurses.h>
 #include <pthread.h>
 
 #include "terminal_interface.h"

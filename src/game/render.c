@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <gcurses.h>
+#include <Cimpl_gcurses.h>
 
 #include "editor.h"
 #include "render.h"
