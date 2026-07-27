@@ -25,27 +25,6 @@ macro_rules! show_cursor {
     };
 }
 
-
-struct restore {
-    old: termios::Termios,
-}
-impl restore{
-    fn new() -> StdResult<Self> {
-        Ok(Self {
-            old: termios::tcgetattr(stdin().as_fd())?,
-        })
-    }
-}
-impl Drop for restore {
-    fn drop(&mut self) {
-        let _ = termios::tcsetattr(
-            std::io::stdin().as_fd(),
-            termios::OptionalActions::Now,
-            &self.old,
-        );
-    }
-}
-
 pub struct fstr_t {
     pub source: Vec<cell_t>,
 }

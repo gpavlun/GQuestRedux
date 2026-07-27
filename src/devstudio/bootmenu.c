@@ -44,7 +44,7 @@ int handle_input(char input, char *out, int *selected){
                 strcpy(out, "launched game");
             $}case('2'):{
                 *selected = 1;
-                system("tmux kill-window -t Game");
+                system("tmux kill-window -t Game 2>/dev/null");
             $}case('3'):{
                 *selected = 2;
                 output = popen("./scripts/build-game.sh", "r");
@@ -62,7 +62,7 @@ int handle_input(char input, char *out, int *selected){
                 strcpy(out, "launched editor");
             $}case('5'):{
                 *selected = 4;
-                system("tmux kill-window -t Editor");
+                system("tmux kill-window -t Editor 2>/dev/null");
             $}case('6'):{
                 *selected = 5;
                 output = popen("./scripts/build-editor.sh", "r");

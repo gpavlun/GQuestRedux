@@ -116,9 +116,8 @@ pub extern "C" fn gc_echo(term: *mut term_window_t, setting: bool){
         return;
     }
 
-    unsafe {
-        let _ = term_window_t::echo(setting);
-    }
+    let _ = term_window_t::echo(setting);
+    
 }
 #[unsafe(no_mangle)]
 pub extern "C" fn gc_drop(term: *mut term_window_t) {
