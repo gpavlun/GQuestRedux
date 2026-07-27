@@ -13,15 +13,15 @@
 #include "dev.h"
 
 #define nopts 7
-#define optw 20
+#define optw 17
 char options[nopts][optw]={
-    "run game           ",
-    "kill game          ",
-    "build game     ",
-    "run editor         ",
-    "kill editor        ",
-    "build editor   ",
-    "quit               "
+    "run game        ",
+    "kill game       ",
+    "build game      ",
+    "run editor      ",
+    "kill editor     ",
+    "build editor    ",
+    "quit            "
 };
 
 int handle_input(char input, char *out, int *selected){
@@ -119,7 +119,7 @@ void draw_display(gc_term_t *terminal, char *message,  int selected){
     str  = "GQ DEVELOPER STUDIO";
     gc_horz_str_disp(terminal, 1, sat_sub(gc_ncols(terminal)/2, strlen("GQ DEVELOPER STUDIO")/2), str);
 
-    options_box.width = 21;
+    options_box.width = optw + 1;
     options_box.height = sat_sub(gc_nrows(terminal), title_box.height * 2);
     gc_draw_frame(terminal, title_box.height, 0, options_box);
 
@@ -131,6 +131,7 @@ void draw_display(gc_term_t *terminal, char *message,  int selected){
     gc_horz_str_disp(terminal, title_box.height + 3, options_box.width + 1, str);
     str = "4. F1-5 to select a window, or click the name in the toolbar";
     gc_horz_str_disp(terminal, title_box.height + 4, options_box.width + 1, str);
+    
     str = "5. esc or q to quick exit";
     gc_horz_str_disp(terminal, title_box.height + 5, options_box.width + 1, str);
     body_box.height = sat_sub(gc_nrows(terminal), title_box.height * 2);
