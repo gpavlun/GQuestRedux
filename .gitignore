@@ -23,6 +23,7 @@ CTestTestfile.cmake
 *.dll
 
 bin/
+**/target/
 
 
 # ==============================
