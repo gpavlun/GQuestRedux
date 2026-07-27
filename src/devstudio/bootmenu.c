@@ -88,7 +88,9 @@ int handle_input(char input, char *out, int *selected){
     }
     return 1;
 }
-
+size_t sat_sub(size_t a, size_t b){
+    return (a > b) ? (a - b) : 0;
+}
 void draw_display(gc_term_t *terminal, char *message,  int selected){
 
     gc_cell_t array[nopts][optw] = {0};
@@ -109,68 +111,68 @@ void draw_display(gc_term_t *terminal, char *message,  int selected){
     char *str;
     gc_fstr_t fstr = {0};
 
-        gc_frame_resize(terminal);
-        title_box.width = gc_ncols(terminal);
-        title_box.height = 3;
-        gc_draw_frame(terminal, 0 , 0, title_box);
+    gc_frame_resize(terminal);
+    title_box.width = gc_ncols(terminal);
+    title_box.height = 3;
+    gc_draw_frame(terminal, 0 , 0, title_box);
 
-        str  = "GQ DEVELOPER STUDIO";
-        gc_horz_str_disp(terminal, 1,gc_ncols(terminal)/2 - strlen("GQ DEVELOPER STUDIO")/2, str);
+    str  = "GQ DEVELOPER STUDIO";
+    gc_horz_str_disp(terminal, 1, sat_sub(gc_ncols(terminal)/2, strlen("GQ DEVELOPER STUDIO")/2), str);
 
-        options_box.width = 21;
-        options_box.height = gc_nrows(terminal) - title_box.height * 2;
-        gc_draw_frame(terminal, title_box.height, 0, options_box);
+    options_box.width = 21;
+    options_box.height = sat_sub(gc_nrows(terminal), title_box.height * 2);
+    gc_draw_frame(terminal, title_box.height, 0, options_box);
 
-        str = "1. w and s to select options";
-        gc_horz_str_disp(terminal, title_box.height + 1, options_box.width + 1, str);
-        str = "2. enter to run option";
-        gc_horz_str_disp(terminal, title_box.height + 2, options_box.width + 1, str);
-        str = "3. 1-9 are hotkeys for select";
-        gc_horz_str_disp(terminal, title_box.height + 3, options_box.width + 1, str);
-        str = "4. F1-5 to select a window, or click the name in the toolbar";
-        gc_horz_str_disp(terminal, title_box.height + 4, options_box.width + 1, str);
-        str = "5. esc or q to quick exit";
-        gc_horz_str_disp(terminal, title_box.height + 5, options_box.width + 1, str);
-        body_box.height = gc_nrows(terminal) - title_box.height * 2;
-        body_box.width = gc_ncols(terminal) - options_box.width;
-        gc_draw_frame(terminal, title_box.height, options_box.width, body_box);
+    str = "1. w and s to select options";
+    gc_horz_str_disp(terminal, title_box.height + 1, options_box.width + 1, str);
+    str = "2. enter to run option";
+    gc_horz_str_disp(terminal, title_box.height + 2, options_box.width + 1, str);
+    str = "3. 1-9 are hotkeys for select";
+    gc_horz_str_disp(terminal, title_box.height + 3, options_box.width + 1, str);
+    str = "4. F1-5 to select a window, or click the name in the toolbar";
+    gc_horz_str_disp(terminal, title_box.height + 4, options_box.width + 1, str);
+    str = "5. esc or q to quick exit";
+    gc_horz_str_disp(terminal, title_box.height + 5, options_box.width + 1, str);
+    body_box.height = sat_sub(gc_nrows(terminal), title_box.height * 2);
+    body_box.width = sat_sub(gc_ncols(terminal), options_box.width);
+    gc_draw_frame(terminal, title_box.height, options_box.width, body_box);
 
-        cmd_box.height = 3;
-        cmd_box.width = gc_ncols(terminal);
-        gc_draw_frame(terminal, title_box.height + options_box.height, 0, cmd_box);
+    cmd_box.height = 3;
+    cmd_box.width = gc_ncols(terminal);
+    gc_draw_frame(terminal, title_box.height + options_box.height, 0, cmd_box);
 
-        str = ">";
-        gc_horz_str_disp(terminal, title_box.height + options_box.height + 1, 2, str);
-        
-        str = "                      ";
-        gc_horz_str_disp(terminal, title_box.height + options_box.height + 1, 4, str);
-        str = message;
-        gc_horz_str_disp(terminal, title_box.height + options_box.height + 1, 4, str);
-        gc_move_cursor(terminal, title_box.height + options_box.height + 1, 4 + strlen(message));
+    str = ">";
+    gc_horz_str_disp(terminal, title_box.height + options_box.height + 1, 2, str);
+    
+    str = "                      ";
+    gc_horz_str_disp(terminal, title_box.height + options_box.height + 1, 4, str);
+    str = message;
+    gc_horz_str_disp(terminal, title_box.height + options_box.height + 1, 4, str);
+    gc_move_cursor(terminal, title_box.height + options_box.height + 1, 4 + strlen(message));
 
-        int j, i;
-        for (j=0; j<nopts; j++) {
+    int j, i;
+    for (j=0; j<nopts; j++) {
 
-            for (i=0; options[j][i] != '\0'; i++) {
+        for (i=0; options[j][i] != '\0'; i++) {
 
-                if (selected == j) {
-                    array[j][i].bg_color = GC_WHITE;
-                    array[j][i].fg_color = GC_BLACK;
-                } else {
-                    array[j][i].bg_color = GC_DEFAULT;
-                    array[j][i].fg_color = GC_DEFAULT;
-                }
-                array[j][i].glyph = (unsigned char)options[j][i];
-
+            if (selected == j) {
+                array[j][i].bg_color = GC_WHITE;
+                array[j][i].fg_color = GC_BLACK;
+            } else {
+                array[j][i].bg_color = GC_DEFAULT;
+                array[j][i].fg_color = GC_DEFAULT;
             }
+            array[j][i].glyph = (unsigned char)options[j][i];
 
-            array[j][i].bg_color = GC_BLACK;
-            array[j][i].fg_color = GC_WHITE;
-            array[j][i].glyph = 0;
-            fstr.source = array[j];
-            gc_horz_fstr_disp(terminal, title_box.height + 1 + j, 1, fstr);
         }
-        gc_present(terminal);
+
+        array[j][i].bg_color = GC_BLACK;
+        array[j][i].fg_color = GC_WHITE;
+        array[j][i].glyph = 0;
+        fstr.source = array[j];
+        gc_horz_fstr_disp(terminal, title_box.height + 1 + j, 1, fstr);
+    }
+    gc_present(terminal);
 
 }
 
@@ -203,8 +205,7 @@ void boot_menu(void){
         if(input) running = handle_input(input, message, &selected);
         draw_display(terminal, message, selected);
 
-
-        usleep(10000);
+        //usleep(10000);
     }
 
     gc_move_cursor(terminal, gc_nrows(terminal), 0);
