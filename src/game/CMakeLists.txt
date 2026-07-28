@@ -1,6 +1,4 @@
-add_executable(game
-        terminal_interface.c
-        terminal_interface.h)
+add_executable(game)
 
 file(GLOB GAME_SOURCES CONFIGURE_DEPENDS
     *.c

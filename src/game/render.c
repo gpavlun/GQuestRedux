@@ -7,8 +7,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <Cimpl_gcurses.h>
-
 #include "editor.h"
 #include "render.h"
 #include "game.h"

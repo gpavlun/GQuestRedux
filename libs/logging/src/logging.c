@@ -1,40 +1,49 @@
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "logging.h"
 
 logging_t logging = {
     .info = info,
     .data = data,
+    .warn = warn,
     .error = error,
     .detail = detail,
+    .assert = assert
 };
 
-void info(char *string){
+
+void assert(bool condition, char *message){
+    if(!condition){
+        time_t now = time(NULL);
+        struct tm *t = localtime(&now);
+        printf("[%02d:%02d:%02d] \x1b[31mASSERT!\x1b[0m\t> %s\n",
+            t->tm_hour,
+            t->tm_min,
+            t->tm_sec,
+            message);
+
+        exit(1);
+    }
+}
+
+void info(char *message){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
     printf("[%02d:%02d:%02d] \x1b[32mINFO:\x1b[0m\t> %s\n",
         t->tm_hour,
         t->tm_min,
         t->tm_sec,
-        string);
+        message);
 }
-void data(char *string, int number){
+void data(char *message, int number){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
     printf("[%02d:%02d:%02d] \x1b[34mDATA:\x1b[0m\t> %s %d\n",
         t->tm_hour,
         t->tm_min,
         t->tm_sec,
-        string, 
+        message, 
         number);
 }
-void error(int number, char *string){
+void error(int number, char *message){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
     printf("[%02d:%02d:%02d] \x1b[31mERROR CODE %d:\x1b[0m %s\n",
@@ -42,10 +51,18 @@ void error(int number, char *string){
         t->tm_min,
         t->tm_sec,
         number, 
-        string);
+        message);
     exit(number);
 }
-
+void warn(char *message){
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    printf("[%02d:%02d:%02d] \x1b[38;5;208mWARN:\x1b[0m %s\n",
+        t->tm_hour,
+        t->tm_min,
+        t->tm_sec,
+        message);
+}
 
 char *indent(const char *str){
     if(!str) return NULL;
