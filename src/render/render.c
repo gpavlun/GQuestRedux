@@ -427,31 +427,34 @@ void start_render(void) {
     // clear the buffer colors and depth
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // use the progam and vao for this object
+    // use the progam and vao for this object-type
     glUseProgram(program);
-
+    glBindVertexArray(vao);
     
     view = mat4_identity();
     view = mat4_mul(mat4_translate_camera(player.pos), view);
     view = mat4_mul(mat4_rotate_y(player.theta), view);
     view = mat4_mul(mat4_rotate_x(player.phi), view);
-    glUniformMatrix4fv(
-        view_loc,
-        1,
-        GL_FALSE,
-        view.i
-    );
+    glUniformMatrix4fv(view_loc, 1, GL_FALSE, view.i);
+    
 
 
-    glBindVertexArray(vao);
+    // define object location
+    vec3_t obs1 = {0, 0,-10};
+    model = mat4_translate_pos(obs1);
+    glUniformMatrix4fv(model_loc, 1, GL_FALSE, model.i);
 
     // draw the object
-    glDrawElements(
-        GL_TRIANGLES,
-        3,
-        GL_UNSIGNED_INT,
-        0
-    );
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+
+    // define object location
+    vec3_t obs2 = {5, 5,-10};
+    model = mat4_translate_pos(obs2);
+    glUniformMatrix4fv(model_loc, 1, GL_FALSE, model.i);
+
+    // draw the object
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+
 
     // check for errors
     gl_err = glGetError();
