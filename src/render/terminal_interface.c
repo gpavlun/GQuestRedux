@@ -92,6 +92,8 @@ void *tui(void *arg) {
   gc_echo(terminal, 1);
   gc_canon(terminal, 1);
   gc_move_cursor(terminal, gc_nrows(terminal), 0);
+
+  gc_drop(terminal);
   pthread_exit(0);
   return 0;
 }
