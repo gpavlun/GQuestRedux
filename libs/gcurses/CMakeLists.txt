@@ -1,26 +1,34 @@
-find_program(CARGO cargo REQUIRED)
+add_library(gcurses STATIC
+        include/gcurses.h)
 
-add_custom_target(gcurses_build ALL
-        COMMAND ${CARGO} build --release
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+file(GLOB GCURSES_SOURCES CONFIGURE_DEPENDS
+    src/*.c
 )
 
-add_library(gcurses STATIC IMPORTED GLOBAL)
-
-set_target_properties(gcurses PROPERTIES
-        IMPORTED_LOCATION
-        ${CMAKE_CURRENT_SOURCE_DIR}/target/release/libgcurses.a
-
-        INTERFACE_INCLUDE_DIRECTORIES
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+target_sources(gcurses
+    PRIVATE
+        ${GCURSES_SOURCES}
 )
 
-set_property(TARGET gcurses PROPERTY
-        INTERFACE_LINK_LIBRARIES
-        pthread
-        dl
+target_include_directories(gcurses
+    PUBLIC
+        include
 )
 
-add_dependencies(gcurses gcurses_build)
+target_link_libraries(gcurses
+    PUBLIC
+        GQuest::objects
+)
+
+option(BUILD_GCURSES_DEMO "Build gcurses demo" OFF)
+
+if(BUILD_GCURSES_DEMO)
+    add_executable(gcurses-demo demo.c)
+
+    target_link_libraries(gcurses-demo
+        PRIVATE
+            GQuest::gcurses
+    )
+endif()
 
 add_library(GQuest::gcurses ALIAS gcurses)

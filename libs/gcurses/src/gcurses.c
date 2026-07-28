@@ -7,7 +7,7 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 
-#include "Cimpl_gcurses.h"
+#include "gcurses.h"
 #include "objects.h"
 
 char GCS_VAR_COLOR_BLACK[]          = "\x1b[38;5;0m";
