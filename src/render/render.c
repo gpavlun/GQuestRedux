@@ -54,10 +54,10 @@ char *read_file(char *path){
 }
 
 
-float mat4_get(mat4 *m, int row, int col){
+static inline float mat4_get(mat4 *m, int row, int col){
     return m->i[col * 4 + row];
 }
-void mat4_set(mat4 *m, int row, int col, float value){
+static inline void mat4_set(mat4 *m, int row, int col, float value){
     m->i[col * 4 + row] = value;
 }
 mat4 mat4_mul(mat4 a, mat4 b){
