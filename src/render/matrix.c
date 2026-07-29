@@ -131,3 +131,28 @@ mat4 mat4_rotate_x(float phi){
 
     return result;
 }
+
+mat4 mat4_rotate_z(float psi){
+    mat4 m = mat4_identity();
+
+    float c = cosf(psi);
+    float s = sinf(psi);
+
+    m.i[0] =  c;
+    m.i[1] =  s;
+
+    m.i[4] = -s;
+    m.i[5] =  c;
+
+    return m;
+}
+
+mat4 mat4_scale(vec3 scale){
+    mat4 m = mat4_identity();
+
+    m.i[0]  = scale.x;
+    m.i[5]  = scale.y;
+    m.i[10] = scale.z;
+
+    return m;
+}

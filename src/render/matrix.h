@@ -33,5 +33,7 @@ mat4 mat4_translate_camera(vec3 pos);
 mat4 mat4_translate_pos(vec3 pos);
 mat4 mat4_rotate_y(float theta);
 mat4 mat4_rotate_x(float phi);
+mat4 mat4_rotate_z(float psi);
+mat4 mat4_scale(vec3 scale);
 
 #endif //MATRIX_H

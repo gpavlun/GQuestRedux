@@ -73,10 +73,12 @@ def {
     mesh_t mesh;
     shader_t shader;
 
-    vec3 pos;
-
     bool remodel;
     mat4 model;
+
+    vec3 pos;
+    vec3 rot;
+    vec3 scale;
 }render_object_t;
 
 void start_render(void);
@@ -100,20 +102,12 @@ void draw_object(render_object_t *object, camera_t *camera);
 \
   free(triangles);\
   triangles = malloc(sizeof(tri_t)*1);\
-  triangles[0] = (tri_t){ 0 , 1 , 2 };\
-\
-  render_object_t demo_tri;\
-  demo_tri.shader = init_shader("./src/render/basic.vert",\
-                                "./src/render/basic.frag");\
-  demo_tri.mesh   = init_mesh(3, vertices, 1, triangles);\
-\
-  demo_tri.pos    = (vec3){0, 3,-10};\
-                               \
-  demo_tri.remodel  = 1;\
+  triangles[0] = (tri_t){ 0 , 1 , 2 };
 
 
-
-
+  #define GRASS {0.33f, 0.7f}
+  #define STONE {0.3f, 0.999f}
+  #define WOOD {0.078f,0.647f}
 
 
   
@@ -121,10 +115,10 @@ void draw_object(render_object_t *object, camera_t *camera);
   \
   free(vertices);\
   vertices = malloc(sizeof(vertex_t)*4);\
-  vertices[0] = (vertex_t){{-32, 0 ,-32}, {0.33f, 0.7f}};\
-  vertices[1] = (vertex_t){{ 32, 0 ,-32}, {0.33f, 0.7f}};\
-  vertices[2] = (vertex_t){{ 32, 0 , 32}, {0.33f, 0.7f}};\
-  vertices[3] = (vertex_t){{-32, 0 , 32}, {0.33f, 0.7f}};\
+  vertices[0] = (vertex_t){{-32, 0 ,-32}, GRASS};\
+  vertices[1] = (vertex_t){{ 32, 0 ,-32}, GRASS};\
+  vertices[2] = (vertex_t){{ 32, 0 , 32}, GRASS};\
+  vertices[3] = (vertex_t){{-32, 0 , 32}, GRASS};\
 \
   free(triangles);\
   triangles = malloc(sizeof(tri_t)*2);\
@@ -137,6 +131,8 @@ void draw_object(render_object_t *object, camera_t *camera);
   ground.mesh   = init_mesh(4, vertices, 2, triangles);\
 \
   ground.pos    = (vec3){ 0 , 0 , 0 };\
+  ground.rot    = (vec3){ 0 , 0 , 0 };\
+  ground.scale    = (vec3){ 1 , 1 , 1 };\
                                \
   ground.remodel  = 1;\
 
@@ -144,50 +140,50 @@ void draw_object(render_object_t *object, camera_t *camera);
 
 
 
-#define tower_                                                        \
+  #define tower_                                                        \
                                                                      \
   free(vertices);                                                    \
   vertices = malloc(sizeof(vertex_t)*32);                            \
                                                                      \
   /* tower bottom ring */                                            \
-  vertices[0] = (vertex_t){{  2, 0, -5 },{0.3f, 0.999f}};             \
-  vertices[1] = (vertex_t){{ -2, 0, -5 },{0.3f, 0.999f}};             \
-  vertices[2] = (vertex_t){{ -5, 0, -2 },{0.3f, 0.999f}};             \
-  vertices[3] = (vertex_t){{ -5, 0,  2 },{0.3f, 0.999f}};             \
-  vertices[4] = (vertex_t){{ -2, 0,  5 },{0.3f, 0.999f}};             \
-  vertices[5] = (vertex_t){{  2, 0,  5 },{0.3f, 0.999f}};             \
-  vertices[6] = (vertex_t){{  5, 0,  2 },{0.3f, 0.999f}};             \
-  vertices[7] = (vertex_t){{  5, 0, -2 },{0.3f, 0.999f}};             \
+  vertices[0] = (vertex_t){{  2, 0, -5 },STONE};             \
+  vertices[1] = (vertex_t){{ -2, 0, -5 },STONE};             \
+  vertices[2] = (vertex_t){{ -5, 0, -2 },STONE};             \
+  vertices[3] = (vertex_t){{ -5, 0,  2 },STONE};             \
+  vertices[4] = (vertex_t){{ -2, 0,  5 },STONE};             \
+  vertices[5] = (vertex_t){{  2, 0,  5 },STONE};             \
+  vertices[6] = (vertex_t){{  5, 0,  2 },STONE};             \
+  vertices[7] = (vertex_t){{  5, 0, -2 },STONE};             \
                                                                      \
   /* tower top ring (also roof base later) */                         \
-  vertices[8]  = (vertex_t){{  2,15,-5 },{0.3f, 0.999f}};             \
-  vertices[9]  = (vertex_t){{ -2,15,-5 },{0.3f, 0.999f}};             \
-  vertices[10] = (vertex_t){{ -5,15,-2 },{0.3f, 0.999f}};             \
-  vertices[11] = (vertex_t){{ -5,15, 2 },{0.3f, 0.999f}};             \
-  vertices[12] = (vertex_t){{ -2,15, 5 },{0.3f, 0.999f}};             \
-  vertices[13] = (vertex_t){{  2,15, 5 },{0.3f, 0.999f}};             \
-  vertices[14] = (vertex_t){{  5,15, 2 },{0.3f, 0.999f}};             \
-  vertices[15] = (vertex_t){{  5,15,-2 },{0.3f, 0.999f}};             \
+  vertices[8]  = (vertex_t){{  2,15,-5 },STONE};             \
+  vertices[9]  = (vertex_t){{ -2,15,-5 },STONE};             \
+  vertices[10] = (vertex_t){{ -5,15,-2 },STONE};             \
+  vertices[11] = (vertex_t){{ -5,15, 2 },STONE};             \
+  vertices[12] = (vertex_t){{ -2,15, 5 },STONE};             \
+  vertices[13] = (vertex_t){{  2,15, 5 },STONE};             \
+  vertices[14] = (vertex_t){{  5,15, 2 },STONE};             \
+  vertices[15] = (vertex_t){{  5,15,-2 },STONE};             \
                                                                      \
   /* turret lower ring (overhang, same y as tower top) */             \
-  vertices[16] = (vertex_t){{  2,15,-6 },{0.3f, 0.999f}};             \
-  vertices[17] = (vertex_t){{ -2,15,-6 },{0.3f, 0.999f}};             \
-  vertices[18] = (vertex_t){{ -6,15,-2 },{0.3f, 0.999f}};             \
-  vertices[19] = (vertex_t){{ -6,15, 2 },{0.3f, 0.999f}};             \
-  vertices[20] = (vertex_t){{ -2,15, 6 },{0.3f, 0.999f}};             \
-  vertices[21] = (vertex_t){{  2,15, 6 },{0.3f, 0.999f}};             \
-  vertices[22] = (vertex_t){{  6,15, 2 },{0.3f, 0.999f}};             \
-  vertices[23] = (vertex_t){{  6,15,-2 },{0.3f, 0.999f}};             \
+  vertices[16] = (vertex_t){{  2,15,-6 },STONE};             \
+  vertices[17] = (vertex_t){{ -2,15,-6 },STONE};             \
+  vertices[18] = (vertex_t){{ -6,15,-2 },STONE};             \
+  vertices[19] = (vertex_t){{ -6,15, 2 },STONE};             \
+  vertices[20] = (vertex_t){{ -2,15, 6 },STONE};             \
+  vertices[21] = (vertex_t){{  2,15, 6 },STONE};             \
+  vertices[22] = (vertex_t){{  6,15, 2 },STONE};             \
+  vertices[23] = (vertex_t){{  6,15,-2 },STONE};             \
                                                                      \
   /* turret upper ring (same footprint, +1 y) */                      \
-  vertices[24] = (vertex_t){{  2,16,-6 },{0.3f, 0.999f}};             \
-  vertices[25] = (vertex_t){{ -2,16,-6 },{0.3f, 0.999f}};             \
-  vertices[26] = (vertex_t){{ -6,16,-2 },{0.3f, 0.999f}};             \
-  vertices[27] = (vertex_t){{ -6,16, 2 },{0.3f, 0.999f}};             \
-  vertices[28] = (vertex_t){{ -2,16, 6 },{0.3f, 0.999f}};             \
-  vertices[29] = (vertex_t){{  2,16, 6 },{0.3f, 0.999f}};             \
-  vertices[30] = (vertex_t){{  6,16, 2 },{0.3f, 0.999f}};             \
-  vertices[31] = (vertex_t){{  6,16,-2 },{0.3f, 0.999f}};             \
+  vertices[24] = (vertex_t){{  2,16,-6 },STONE};             \
+  vertices[25] = (vertex_t){{ -2,16,-6 },STONE};             \
+  vertices[26] = (vertex_t){{ -6,16,-2 },STONE};             \
+  vertices[27] = (vertex_t){{ -6,16, 2 },STONE};             \
+  vertices[28] = (vertex_t){{ -2,16, 6 },STONE};             \
+  vertices[29] = (vertex_t){{  2,16, 6 },STONE};             \
+  vertices[30] = (vertex_t){{  6,16, 2 },STONE};             \
+  vertices[31] = (vertex_t){{  6,16,-2 },STONE};             \
   free(triangles);                                                   \
   triangles = malloc(sizeof(tri_t)*48);                              \
                                                                      \
@@ -263,35 +259,30 @@ void draw_object(render_object_t *object, camera_t *camera);
   triangles[45] = (tri_t){22,31,30};                                 \
                                                                      \
   triangles[46] = (tri_t){23,16,24};                                 \
-  triangles[47] = (tri_t){23,24,31};                                 \
-                                                                     \
-  render_object_t tower;                                             \
-  tower.shader = init_shader("./src/render/basic.vert",              \
-                              "./src/render/basic.frag");            \
-                                                                     \
-  tower.mesh = init_mesh(32, vertices, 48, triangles);                \
-                                                                     \
-  tower.pos = (vec3){-20,0,-20};                                     \
-                                                                     \
-  tower.remodel = 1;
-  
+  triangles[47] = (tri_t){23,24,31};
+
+
+
+
+
+
 #define roof_                                                        \
                                                                      \
   free(vertices);                                                    \
   vertices = malloc(sizeof(vertex_t)*9);                             \
                                                                      \
   /* roof base ring - identical to tower top ring */                 \
-  vertices[0] = (vertex_t){{  2,15,-5 },{0.078f,0.647f}};              \
-  vertices[1] = (vertex_t){{ -2,15,-5 },{0.078f,0.647f}};              \
-  vertices[2] = (vertex_t){{ -5,15,-2 },{0.078f,0.647f}};              \
-  vertices[3] = (vertex_t){{ -5,15, 2 },{0.078f,0.647f}};              \
-  vertices[4] = (vertex_t){{ -2,15, 5 },{0.078f,0.647f}};              \
-  vertices[5] = (vertex_t){{  2,15, 5 },{0.078f,0.647f}};              \
-  vertices[6] = (vertex_t){{  5,15, 2 },{0.078f,0.647f}};              \
-  vertices[7] = (vertex_t){{  5,15,-2 },{0.078f,0.647f}};              \
+  vertices[0] = (vertex_t){{  2,0,-5 },WOOD};              \
+  vertices[1] = (vertex_t){{ -2,0,-5 },WOOD};              \
+  vertices[2] = (vertex_t){{ -5,0,-2 },WOOD};              \
+  vertices[3] = (vertex_t){{ -5,0, 2 },WOOD};              \
+  vertices[4] = (vertex_t){{ -2,0, 5 },WOOD};              \
+  vertices[5] = (vertex_t){{  2,0, 5 },WOOD};              \
+  vertices[6] = (vertex_t){{  5,0, 2 },WOOD};              \
+  vertices[7] = (vertex_t){{  5,0,-2 },WOOD};              \
                                                                      \
   /* roof peak */                                                    \
-  vertices[8] = (vertex_t){{0,25,0},{0.078f,0.647f}};                  \
+  vertices[8] = (vertex_t){{0,10,0},WOOD};                  \
                                                                      \
   free(triangles);                                                   \
   triangles = malloc(sizeof(tri_t)*8);                               \
@@ -303,17 +294,7 @@ void draw_object(render_object_t *object, camera_t *camera);
   triangles[4] = (tri_t){4,5,8};                                     \
   triangles[5] = (tri_t){5,6,8};                                     \
   triangles[6] = (tri_t){6,7,8};                                     \
-  triangles[7] = (tri_t){7,0,8};                                     \
-                                                                     \
-  render_object_t roof;                                              \
-  roof.shader = init_shader("./src/render/basic.vert",               \
-                             "./src/render/basic.frag");             \
-                                                                     \
-  roof.mesh = init_mesh(9, vertices, 8, triangles);                   \
-                                                                     \
-  roof.pos = (vec3){-20,0,-20};                                      \
-                                                                     \
-  roof.remodel = 1;
+  triangles[7] = (tri_t){7,0,8};
 
 
 #endif

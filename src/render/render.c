@@ -256,7 +256,15 @@ void update_model(render_object_t *object){
     if (!object->remodel)
         return;
 
-    object->model = mat4_translate_pos(object->pos);
+    mat4 model = mat4_identity();
+
+    model = mat4_mul(model, mat4_translate_pos(object->pos));
+    model = mat4_mul(model, mat4_rotate_y(object->rot.y));
+    model = mat4_mul(model, mat4_rotate_x(object->rot.x));
+    model = mat4_mul(model, mat4_rotate_z(object->rot.z));
+    model = mat4_mul(model, mat4_scale(object->scale));
+
+    object->model = model;
     object->remodel = false;
 }
 
@@ -391,12 +399,65 @@ void start_render(void) {
 
   // objects defined in header file
   demo_tri_
+  render_object_t demo_tri;
+  demo_tri.shader = init_shader("./src/render/basic.vert",
+                                "./src/render/basic.frag");
+  demo_tri.mesh   = init_mesh(3, vertices, 1, triangles);
+  demo_tri.pos    = (vec3){ 0 , 1 ,-10};
+  demo_tri.rot    = (vec3){ 0 , 0 , 0 };
+  demo_tri.scale  = (vec3){ 1 , 1 , 1 };
+  demo_tri.remodel  = 1;
+
+  render_object_t demo_tri2;
+  demo_tri2.shader = init_shader("./src/render/basic.vert",
+                                "./src/render/basic.frag");
+  demo_tri2.mesh   = init_mesh(3, vertices, 1, triangles);
+  demo_tri2.pos    = (vec3){ 5 , 3 ,-8};
+  demo_tri2.rot    = (vec3){ 1.0f , 1.0f , 1.0f };
+  demo_tri2.scale  = (vec3){ 1 , 1 , 1 };
+  demo_tri2.remodel  = 1;
+
   ground_
+
   tower_
+  render_object_t tower;
+  tower.shader = init_shader("./src/render/basic.vert",
+                              "./src/render/basic.frag");
+  tower.mesh = init_mesh(32, vertices, 48, triangles);
+  tower.pos = (vec3){-20,0,-20};
+  tower.rot    = (vec3){ 0 , 0 , 0 };
+  tower.scale  = (vec3){ 1 , 1 , 1 };
+  tower.remodel = 1;
+  
+  render_object_t tower2;
+  tower2.shader = init_shader("./src/render/basic.vert",
+                              "./src/render/basic.frag");
+  tower2.mesh = init_mesh(32, vertices, 48, triangles);
+  tower2.pos = (vec3){20,0,-20};
+  tower2.rot    = (vec3){ 0 , 0 , 0 };
+  tower2.scale  = (vec3){ .5 , .5 , .5 };
+  tower2.remodel = 1;
+
+
   roof_
 
+  render_object_t roof;                             
+  roof.shader = init_shader("./src/render/basic.vert", 
+                             "./src/render/basic.frag");  
+  roof.mesh = init_mesh(9, vertices, 8, triangles); 
+  roof.pos = (vec3){-20,15,-20};
+  roof.rot    = (vec3){ 0 , 0 , 0 };
+  roof.scale  = (vec3){ 1 , 1 , 1 };
+  roof.remodel = 1;
 
-
+  render_object_t roof2;                             
+  roof2.shader = init_shader("./src/render/basic.vert", 
+                             "./src/render/basic.frag");  
+  roof2.mesh    = init_mesh(9, vertices, 8, triangles); 
+  roof2.pos     = (vec3){20,7.5f,-20};
+  roof2.rot    = (vec3){ 0 , 0 , 0 };
+  roof2.scale  = (vec3){ .5 , .5 , .5 };
+  roof2.remodel = 1;
 
   
   camera.projection = mat4_perspective(
@@ -443,9 +504,14 @@ void start_render(void) {
 
     
     draw_object(&demo_tri, &camera);
+    draw_object(&demo_tri2, &camera);
+
     draw_object(&ground, &camera);
     draw_object(&tower, &camera);
     draw_object(&roof, &camera);
+
+    draw_object(&tower2, &camera);
+    draw_object(&roof2, &camera);
 
     gl_error_check();
 
