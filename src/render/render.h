@@ -2,29 +2,18 @@
 #define RENDER_H
 
 #include <glad/glad.h>
+#include <stdbool.h>
 
 #include "physics.h"
 #include "game.h"
+#include "matrix.h"
 
 
 void start_render(void);
 
 def {
-  int x, y;
-}point_t;
-
-def {
-  int x, y;
-  u8 visible;
-}vpoint_t;
-
-def {
-    float x, y, z;
+  float x, y, z;
 }vert_t;
-
-def {
-  size_t a, b, c;
-}tri_t;
 
 def {
     u32 A, B;
@@ -35,32 +24,92 @@ def {
     hexcode_u color;
 }triangle_t;
 
+
+
 def {
     u8 wire_frame: 1;
     u8 triangles: 1;
     u8 vertices: 1;
 }mesh_opts;
 
+
+typedef struct {
+    u8 r, g, b, a;
+} rgba_t;
+
+
+def {
+  vec3 pos;
+  vec2 uv;
+}vertex_t;
+
+def {
+  u32 a, b, c;
+}tri_t;
+
 def {
   size_t nverts;
-  vert_t *verts;
-  size_t ntrangs;
-  triangle_t *trangs;
+  vertex_t *vert;
+  size_t ntris;
+  tri_t *tri;
 
   GLuint vao;
   GLuint vbo;
   GLuint ebo;
 
-
   mesh_opts opts;
 }mesh_t;
 
 def {
-  float i[16];
-}mat4;
+    GLuint program;
+
+    GLint projection;
+    GLint model;
+    GLint view;
+
+}shader_t;
+
+def {
+    mesh_t mesh;
+    shader_t shader;
+
+    vec3 pos;
+
+    bool remodel;
+    mat4 model;
+}render_object_t;
+
+void start_render(void);
+void gl_error_check(void);
+void update_model(render_object_t *object);
+void draw_object(render_object_t *object, camera_t *camera);
 
 
 
+
+
+
+
+#define demo_tri_\
+\
+  free(vertices);\
+  vertices = malloc(sizeof(vertex_t)*3);\
+  vertices[0] = (vertex_t){{ 1 , 1 , 0 }, {0, 0}};\
+  vertices[1] = (vertex_t){{ 0 ,-1 , 0 }, {1, 0}};\
+  vertices[2] = (vertex_t){{-1 , 1 , 0 }, {0, 1}};\
+\
+  free(triangles);\
+  triangles = malloc(sizeof(tri_t)*1);\
+  triangles[0] = (tri_t){ 0 , 1 , 2 };\
+\
+  render_object_t demo_tri;\
+  demo_tri.shader = init_shader("./src/render/basic.vert",\
+                                "./src/render/basic.frag");\
+  demo_tri.mesh   = init_mesh(3, vertices, 1, triangles);\
+\
+  demo_tri.pos    = (vec3){0, 3,-10};\
+                               \
+  demo_tri.remodel  = 1;\
 
 
 
@@ -69,422 +118,202 @@ def {
 
   
   #define ground_                                       \
-  mesh_t ground = {0};                                  \
-  ground.nverts = 4;                                    \
-  ground.verts = malloc(sizeof(vert_t) * ground.nverts);\
-                                                        \
-  ground.verts[0].x = -100;                             \
-  ground.verts[0].y = 0;                                \
-  ground.verts[0].z = -100;                             \
-                                                        \
-  ground.verts[1].x = -100;                             \
-  ground.verts[1].y = 0;                                \
-  ground.verts[1].z = 100;                              \
-                                                        \
-  ground.verts[2].x = 100;                              \
-  ground.verts[2].y = 0;                                \
-  ground.verts[2].z = -100;                             \
-                                                        \
-  ground.verts[3].x = 100;                              \
-  ground.verts[3].y = 0;                                \
-  ground.verts[3].z = 100;                              \
-                                                        \
-  ground.ntrangs = 2;                                   \
-  ground.trangs = malloc(sizeof(triangle_t) * ground.ntrangs);\
-                                                        \
-  ground.trangs[0].a = 0;                               \
-  ground.trangs[0].b = 1;                               \
-  ground.trangs[0].c = 2;                               \
-  ground.trangs[0].color.code = 0x002D04;               \
-                                                        \
-  ground.trangs[1].a = 1;                               \
-  ground.trangs[1].b = 3;                               \
-  ground.trangs[1].c = 2;                               \
-  ground.trangs[1].color.code = 0x002D04;               \
-                                                        \
-  ground.opts.triangles = true;                            
+  \
+  free(vertices);\
+  vertices = malloc(sizeof(vertex_t)*4);\
+  vertices[0] = (vertex_t){{-32, 0 ,-32}, {0.33f, 0.7f}};\
+  vertices[1] = (vertex_t){{ 32, 0 ,-32}, {0.33f, 0.7f}};\
+  vertices[2] = (vertex_t){{ 32, 0 , 32}, {0.33f, 0.7f}};\
+  vertices[3] = (vertex_t){{-32, 0 , 32}, {0.33f, 0.7f}};\
+\
+  free(triangles);\
+  triangles = malloc(sizeof(tri_t)*2);\
+  triangles[0] = (tri_t){ 0 , 1 , 2 };\
+  triangles[1] = (tri_t){ 0 , 2 , 3 };\
+\
+  render_object_t ground;\
+  ground.shader = init_shader("./src/render/basic.vert",\
+                                "./src/render/basic.frag");\
+  ground.mesh   = init_mesh(4, vertices, 2, triangles);\
+\
+  ground.pos    = (vec3){ 0 , 0 , 0 };\
+                               \
+  ground.remodel  = 1;\
+
   
 
 
 
-#define tower_                                          \
-  mesh_t tower = {0};                                   \
-  tower.nverts = 33;                                    \
-  tower.verts = malloc(sizeof(vert_t) * tower.nverts);  \
-                                                        \
-  tower.verts[0].x = -18;                               \
-  tower.verts[0].y = 0;                                 \
-  tower.verts[0].z = -25;                               \
-                                                        \
-  tower.verts[1].x = -22;                               \
-  tower.verts[1].y = 0;                                 \
-  tower.verts[1].z = -25;                               \
-                                                        \
-  tower.verts[2].x = -25;                               \
-  tower.verts[2].y = 0;                                 \
-  tower.verts[2].z = -22;                               \
-                                                        \
-  tower.verts[3].x = -25;                               \
-  tower.verts[3].y = 0;                                 \
-  tower.verts[3].z = -18;                               \
-                                                        \
-  tower.verts[4].x = -22;                               \
-  tower.verts[4].y = 0;                                 \
-  tower.verts[4].z = -15;                               \
-                                                        \
-  tower.verts[5].x = -18;                               \
-  tower.verts[5].y = 0;                                 \
-  tower.verts[5].z = -15;                               \
-                                                        \
-  tower.verts[6].x = -15;                               \
-  tower.verts[6].y = 0;                                 \
-  tower.verts[6].z = -18;                               \
-                                                        \
-  tower.verts[7].x = -15;                               \
-  tower.verts[7].y = 0;                                 \
-  tower.verts[7].z = -22;                               \
-                                                        \
-  tower.verts[8].x = -18;                               \
-  tower.verts[8].y = 15;                                \
-  tower.verts[8].z = -25;                               \
-                                                        \
-  tower.verts[9].x = -22;                               \
-  tower.verts[9].y = 15;                                \
-  tower.verts[9].z = -25;                               \
-                                                        \
-  tower.verts[10].x = -25;                              \
-  tower.verts[10].y = 15;                               \
-  tower.verts[10].z = -22;                              \
-                                                        \
-  tower.verts[11].x = -25;                              \
-  tower.verts[11].y = 15;                               \
-  tower.verts[11].z = -18;                              \
-                                                        \
-  tower.verts[12].x = -22;                              \
-  tower.verts[12].y = 15;                               \
-  tower.verts[12].z = -15;                              \
-                                                        \
-  tower.verts[13].x = -18;                              \
-  tower.verts[13].y = 15;                               \
-  tower.verts[13].z = -15;                              \
-                                                        \
-  tower.verts[14].x = -15;                              \
-  tower.verts[14].y = 15;                               \
-  tower.verts[14].z = -18;                              \
-                                                        \
-  tower.verts[15].x = -15;                              \
-  tower.verts[15].y = 15;                               \
-  tower.verts[15].z = -22;                              \
-                                                        \
-  tower.verts[16].x = -18;                              \
-  tower.verts[16].y = 15;                               \
-  tower.verts[16].z = -26;                              \
-                                                        \
-  tower.verts[17].x = -22;                              \
-  tower.verts[17].y = 15;                               \
-  tower.verts[17].z = -26;                              \
-                                                        \
-  tower.verts[18].x = -26;                              \
-  tower.verts[18].y = 15;                               \
-  tower.verts[18].z = -22;                              \
-                                                        \
-  tower.verts[19].x = -26;                              \
-  tower.verts[19].y = 15;                               \
-  tower.verts[19].z = -18;                              \
-                                                        \
-  tower.verts[20].x = -22;                              \
-  tower.verts[20].y = 15;                               \
-  tower.verts[20].z = -14;                              \
-                                                        \
-  tower.verts[21].x = -18;                              \
-  tower.verts[21].y = 15;                               \
-  tower.verts[21].z = -14;                              \
-                                                        \
-  tower.verts[22].x = -14;                              \
-  tower.verts[22].y = 15;                               \
-  tower.verts[22].z = -18;                              \
-                                                        \
-  tower.verts[23].x = -14;                              \
-  tower.verts[23].y = 15;                               \
-  tower.verts[23].z = -22;                              \
-                                                        \
-  tower.verts[24].x = -18;                              \
-  tower.verts[24].y = 16;                               \
-  tower.verts[24].z = -26;                              \
-                                                        \
-  tower.verts[25].x = -22;                              \
-  tower.verts[25].y = 16;                               \
-  tower.verts[25].z = -26;                              \
-                                                        \
-  tower.verts[26].x = -26;                              \
-  tower.verts[26].y = 16;                               \
-  tower.verts[26].z = -22;                              \
-                                                        \
-  tower.verts[27].x = -26;                              \
-  tower.verts[27].y = 16;                               \
-  tower.verts[27].z = -18;                              \
-                                                        \
-  tower.verts[28].x = -22;                              \
-  tower.verts[28].y = 16;                               \
-  tower.verts[28].z = -14;                              \
-                                                        \
-  tower.verts[29].x = -18;                              \
-  tower.verts[29].y = 16;                               \
-  tower.verts[29].z = -14;                              \
-                                                        \
-  tower.verts[30].x = -14;                              \
-  tower.verts[30].y = 16;                               \
-  tower.verts[30].z = -18;                              \
-                                                        \
-  tower.verts[31].x = -14;                              \
-  tower.verts[31].y = 16;                               \
-  tower.verts[31].z = -22;                              \
-                                                        \
-  tower.verts[32].x = -20;                              \
-  tower.verts[32].y = 25;                               \
-  tower.verts[32].z = -20;                              \
-                                                        \
-  tower.ntrangs = 56;                                   \
-  tower.trangs = malloc(sizeof(triangle_t)*tower.ntrangs);\
-  int iki = 0;                                          \
-  tower.trangs[iki].a = 8;                              \
-  tower.trangs[iki].b = 9;                              \
-  tower.trangs[iki].c = 32;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 9;                              \
-  tower.trangs[iki].b = 10;                             \
-  tower.trangs[iki].c = 32;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 10;                             \
-  tower.trangs[iki].b = 11;                             \
-  tower.trangs[iki].c = 32;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 11;                             \
-  tower.trangs[iki].b = 12;                             \
-  tower.trangs[iki].c = 32;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 12;                             \
-  tower.trangs[iki].b = 13;                             \
-  tower.trangs[iki].c = 32;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 13;                             \
-  tower.trangs[iki].b = 14;                             \
-  tower.trangs[iki].c = 32;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 14;                             \
-  tower.trangs[iki].b = 15;                             \
-  tower.trangs[iki].c = 32;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 15;                             \
-  tower.trangs[iki].b = 8;                              \
-  tower.trangs[iki].c = 32;                             \
-  iki++;                                                \
-                                                        \
-  tower.trangs[iki].a = 0;                              \
-  tower.trangs[iki].b = 1;                              \
-  tower.trangs[iki].c = 9;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 1;                              \
-  tower.trangs[iki].b = 2;                              \
-  tower.trangs[iki].c = 10;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 2;                              \
-  tower.trangs[iki].b = 3;                              \
-  tower.trangs[iki].c = 11;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 3;                              \
-  tower.trangs[iki].b = 4;                              \
-  tower.trangs[iki].c = 12;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 4;                              \
-  tower.trangs[iki].b = 5;                              \
-  tower.trangs[iki].c = 13;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 5;                              \
-  tower.trangs[iki].b = 6;                              \
-  tower.trangs[iki].c = 14;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 6;                              \
-  tower.trangs[iki].b = 7;                              \
-  tower.trangs[iki].c = 15;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 7;                              \
-  tower.trangs[iki].b = 0;                              \
-  tower.trangs[iki].c = 8;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 9;                              \
-  tower.trangs[iki].b = 8;                              \
-  tower.trangs[iki].c = 0;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 10;                             \
-  tower.trangs[iki].b = 9;                              \
-  tower.trangs[iki].c = 1;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 11;                             \
-  tower.trangs[iki].b = 10;                             \
-  tower.trangs[iki].c = 2;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 12;                             \
-  tower.trangs[iki].b = 11;                             \
-  tower.trangs[iki].c = 3;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 13;                             \
-  tower.trangs[iki].b = 12;                             \
-  tower.trangs[iki].c = 4;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 14;                             \
-  tower.trangs[iki].b = 13;                             \
-  tower.trangs[iki].c = 5;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 15;                             \
-  tower.trangs[iki].b = 14;                             \
-  tower.trangs[iki].c = 6;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 8;                              \
-  tower.trangs[iki].b = 15;                             \
-  tower.trangs[iki].c = 7;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 17;                             \
-  tower.trangs[iki].b = 9;                              \
-  tower.trangs[iki].c = 8;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 18;                             \
-  tower.trangs[iki].b = 10;                             \
-  tower.trangs[iki].c = 9;                              \
-  iki++;                                                \
-  tower.trangs[iki].a = 19;                             \
-  tower.trangs[iki].b = 11;                             \
-  tower.trangs[iki].c = 10;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 20;                             \
-  tower.trangs[iki].b = 12;                             \
-  tower.trangs[iki].c = 11;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 21;                             \
-  tower.trangs[iki].b = 13;                             \
-  tower.trangs[iki].c = 12;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 22;                             \
-  tower.trangs[iki].b = 14;                             \
-  tower.trangs[iki].c = 13;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 23;                             \
-  tower.trangs[iki].b = 15;                             \
-  tower.trangs[iki].c = 14;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 16;                             \
-  tower.trangs[iki].b = 8;                              \
-  tower.trangs[iki].c = 15;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 17;                             \
-  tower.trangs[iki].b = 8;                              \
-  tower.trangs[iki].c = 16;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 18;                             \
-  tower.trangs[iki].b = 9;                              \
-  tower.trangs[iki].c = 17;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 19;                             \
-  tower.trangs[iki].b = 10;                             \
-  tower.trangs[iki].c = 18;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 20;                             \
-  tower.trangs[iki].b = 11;                             \
-  tower.trangs[iki].c = 19;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 21;                             \
-  tower.trangs[iki].b = 12;                             \
-  tower.trangs[iki].c = 20;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 22;                             \
-  tower.trangs[iki].b = 13;                             \
-  tower.trangs[iki].c = 21;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 23;                             \
-  tower.trangs[iki].b = 14;                             \
-  tower.trangs[iki].c = 22;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 16;                             \
-  tower.trangs[iki].b = 15;                             \
-  tower.trangs[iki].c = 23;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 17;                             \
-  tower.trangs[iki].b = 25;                             \
-  tower.trangs[iki].c = 16;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 18;                             \
-  tower.trangs[iki].b = 26;                             \
-  tower.trangs[iki].c = 17;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 19;                             \
-  tower.trangs[iki].b = 27;                             \
-  tower.trangs[iki].c = 18;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 20;                             \
-  tower.trangs[iki].b = 28;                             \
-  tower.trangs[iki].c = 19;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 21;                             \
-  tower.trangs[iki].b = 29;                             \
-  tower.trangs[iki].c = 20;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 22;                             \
-  tower.trangs[iki].b = 30;                             \
-  tower.trangs[iki].c = 21;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 23;                             \
-  tower.trangs[iki].b = 31;                             \
-  tower.trangs[iki].c = 22;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 16;                             \
-  tower.trangs[iki].b = 24;                             \
-  tower.trangs[iki].c = 23;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 25;                             \
-  tower.trangs[iki].b = 24;                             \
-  tower.trangs[iki].c = 16;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 26;                             \
-  tower.trangs[iki].b = 25;                             \
-  tower.trangs[iki].c = 17;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 27;                             \
-  tower.trangs[iki].b = 26;                             \
-  tower.trangs[iki].c = 18;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 28;                             \
-  tower.trangs[iki].b = 27;                             \
-  tower.trangs[iki].c = 19;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 29;                             \
-  tower.trangs[iki].b = 28;                             \
-  tower.trangs[iki].c = 20;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 30;                             \
-  tower.trangs[iki].b = 29;                             \
-  tower.trangs[iki].c = 21;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 31;                             \
-  tower.trangs[iki].b = 30;                             \
-  tower.trangs[iki].c = 22;                             \
-  iki++;                                                \
-  tower.trangs[iki].a = 24;                             \
-  tower.trangs[iki].b = 31;                             \
-  tower.trangs[iki].c = 23;                             \
-  iki++;                                                \
-                                                        \
-  for (int lol = 0; lol < iki; lol++)                   \
-    tower.trangs[lol].color.code = 0x3E3838;            \
-                                                        \
-  for (int i = 0; i < 8; i++)                           \
-    tower.trangs[i].color.code = 0x6B4423;              \
-                                                        \
-  tower.opts.triangles  = 1;                            \
-  tower.opts.wire_frame = 0;                            \
-  tower.opts.vertices   = 0;
-
-
-
+#define tower_                                                        \
+                                                                     \
+  free(vertices);                                                    \
+  vertices = malloc(sizeof(vertex_t)*32);                            \
+                                                                     \
+  /* tower bottom ring */                                            \
+  vertices[0] = (vertex_t){{  2, 0, -5 },{0.3f, 0.999f}};             \
+  vertices[1] = (vertex_t){{ -2, 0, -5 },{0.3f, 0.999f}};             \
+  vertices[2] = (vertex_t){{ -5, 0, -2 },{0.3f, 0.999f}};             \
+  vertices[3] = (vertex_t){{ -5, 0,  2 },{0.3f, 0.999f}};             \
+  vertices[4] = (vertex_t){{ -2, 0,  5 },{0.3f, 0.999f}};             \
+  vertices[5] = (vertex_t){{  2, 0,  5 },{0.3f, 0.999f}};             \
+  vertices[6] = (vertex_t){{  5, 0,  2 },{0.3f, 0.999f}};             \
+  vertices[7] = (vertex_t){{  5, 0, -2 },{0.3f, 0.999f}};             \
+                                                                     \
+  /* tower top ring (also roof base later) */                         \
+  vertices[8]  = (vertex_t){{  2,15,-5 },{0.3f, 0.999f}};             \
+  vertices[9]  = (vertex_t){{ -2,15,-5 },{0.3f, 0.999f}};             \
+  vertices[10] = (vertex_t){{ -5,15,-2 },{0.3f, 0.999f}};             \
+  vertices[11] = (vertex_t){{ -5,15, 2 },{0.3f, 0.999f}};             \
+  vertices[12] = (vertex_t){{ -2,15, 5 },{0.3f, 0.999f}};             \
+  vertices[13] = (vertex_t){{  2,15, 5 },{0.3f, 0.999f}};             \
+  vertices[14] = (vertex_t){{  5,15, 2 },{0.3f, 0.999f}};             \
+  vertices[15] = (vertex_t){{  5,15,-2 },{0.3f, 0.999f}};             \
+                                                                     \
+  /* turret lower ring (overhang, same y as tower top) */             \
+  vertices[16] = (vertex_t){{  2,15,-6 },{0.3f, 0.999f}};             \
+  vertices[17] = (vertex_t){{ -2,15,-6 },{0.3f, 0.999f}};             \
+  vertices[18] = (vertex_t){{ -6,15,-2 },{0.3f, 0.999f}};             \
+  vertices[19] = (vertex_t){{ -6,15, 2 },{0.3f, 0.999f}};             \
+  vertices[20] = (vertex_t){{ -2,15, 6 },{0.3f, 0.999f}};             \
+  vertices[21] = (vertex_t){{  2,15, 6 },{0.3f, 0.999f}};             \
+  vertices[22] = (vertex_t){{  6,15, 2 },{0.3f, 0.999f}};             \
+  vertices[23] = (vertex_t){{  6,15,-2 },{0.3f, 0.999f}};             \
+                                                                     \
+  /* turret upper ring (same footprint, +1 y) */                      \
+  vertices[24] = (vertex_t){{  2,16,-6 },{0.3f, 0.999f}};             \
+  vertices[25] = (vertex_t){{ -2,16,-6 },{0.3f, 0.999f}};             \
+  vertices[26] = (vertex_t){{ -6,16,-2 },{0.3f, 0.999f}};             \
+  vertices[27] = (vertex_t){{ -6,16, 2 },{0.3f, 0.999f}};             \
+  vertices[28] = (vertex_t){{ -2,16, 6 },{0.3f, 0.999f}};             \
+  vertices[29] = (vertex_t){{  2,16, 6 },{0.3f, 0.999f}};             \
+  vertices[30] = (vertex_t){{  6,16, 2 },{0.3f, 0.999f}};             \
+  vertices[31] = (vertex_t){{  6,16,-2 },{0.3f, 0.999f}};             \
+  free(triangles);                                                   \
+  triangles = malloc(sizeof(tri_t)*48);                              \
+                                                                     \
+  /* tower walls: bottom ring -> tower top ring */                    \
+  triangles[0]  = (tri_t){0,1,9};                                    \
+  triangles[1]  = (tri_t){0,9,8};                                    \
+                                                                     \
+  triangles[2]  = (tri_t){1,2,10};                                   \
+  triangles[3]  = (tri_t){1,10,9};                                   \
+                                                                     \
+  triangles[4]  = (tri_t){2,3,11};                                   \
+  triangles[5]  = (tri_t){2,11,10};                                  \
+                                                                     \
+  triangles[6]  = (tri_t){3,4,12};                                   \
+  triangles[7]  = (tri_t){3,12,11};                                  \
+                                                                     \
+  triangles[8]  = (tri_t){4,5,13};                                   \
+  triangles[9]  = (tri_t){4,13,12};                                  \
+                                                                     \
+  triangles[10] = (tri_t){5,6,14};                                   \
+  triangles[11] = (tri_t){5,14,13};                                  \
+                                                                     \
+  triangles[12] = (tri_t){6,7,15};                                   \
+  triangles[13] = (tri_t){6,15,14};                                  \
+                                                                     \
+  triangles[14] = (tri_t){7,0,8};                                    \
+  triangles[15] = (tri_t){7,8,15};                                   \
+                                                                     \
+  /* turret underside: tower top ring -> turret lower ring */         \
+  triangles[16] = (tri_t){8,16,17};                                  \
+  triangles[17] = (tri_t){8,17,9};                                   \
+                                                                     \
+  triangles[18] = (tri_t){9,17,18};                                  \
+  triangles[19] = (tri_t){9,18,10};                                  \
+                                                                     \
+  triangles[20] = (tri_t){10,18,19};                                 \
+  triangles[21] = (tri_t){10,19,11};                                 \
+                                                                     \
+  triangles[22] = (tri_t){11,19,20};                                 \
+  triangles[23] = (tri_t){11,20,12};                                 \
+                                                                     \
+  triangles[24] = (tri_t){12,20,21};                                 \
+  triangles[25] = (tri_t){12,21,13};                                 \
+                                                                     \
+  triangles[26] = (tri_t){13,21,22};                                 \
+  triangles[27] = (tri_t){13,22,14};                                 \
+                                                                     \
+  triangles[28] = (tri_t){14,22,23};                                 \
+  triangles[29] = (tri_t){14,23,15};                                 \
+                                                                     \
+  triangles[30] = (tri_t){15,23,16};                                 \
+  triangles[31] = (tri_t){15,16,8};                                  \
+  /* turret outer walls: lower ring -> upper ring */                   \
+  triangles[32] = (tri_t){16,17,25};                                 \
+  triangles[33] = (tri_t){16,25,24};                                 \
+                                                                     \
+  triangles[34] = (tri_t){17,18,26};                                 \
+  triangles[35] = (tri_t){17,26,25};                                 \
+                                                                     \
+  triangles[36] = (tri_t){18,19,27};                                 \
+  triangles[37] = (tri_t){18,27,26};                                 \
+                                                                     \
+  triangles[38] = (tri_t){19,20,28};                                 \
+  triangles[39] = (tri_t){19,28,27};                                 \
+                                                                     \
+  triangles[40] = (tri_t){20,21,29};                                 \
+  triangles[41] = (tri_t){20,29,28};                                 \
+                                                                     \
+  triangles[42] = (tri_t){21,22,30};                                 \
+  triangles[43] = (tri_t){21,30,29};                                 \
+                                                                     \
+  triangles[44] = (tri_t){22,23,31};                                 \
+  triangles[45] = (tri_t){22,31,30};                                 \
+                                                                     \
+  triangles[46] = (tri_t){23,16,24};                                 \
+  triangles[47] = (tri_t){23,24,31};                                 \
+                                                                     \
+  render_object_t tower;                                             \
+  tower.shader = init_shader("./src/render/basic.vert",              \
+                              "./src/render/basic.frag");            \
+                                                                     \
+  tower.mesh = init_mesh(32, vertices, 48, triangles);                \
+                                                                     \
+  tower.pos = (vec3){-20,0,-20};                                     \
+                                                                     \
+  tower.remodel = 1;
+  
+#define roof_                                                        \
+                                                                     \
+  free(vertices);                                                    \
+  vertices = malloc(sizeof(vertex_t)*9);                             \
+                                                                     \
+  /* roof base ring - identical to tower top ring */                 \
+  vertices[0] = (vertex_t){{  2,15,-5 },{0.078f,0.647f}};              \
+  vertices[1] = (vertex_t){{ -2,15,-5 },{0.078f,0.647f}};              \
+  vertices[2] = (vertex_t){{ -5,15,-2 },{0.078f,0.647f}};              \
+  vertices[3] = (vertex_t){{ -5,15, 2 },{0.078f,0.647f}};              \
+  vertices[4] = (vertex_t){{ -2,15, 5 },{0.078f,0.647f}};              \
+  vertices[5] = (vertex_t){{  2,15, 5 },{0.078f,0.647f}};              \
+  vertices[6] = (vertex_t){{  5,15, 2 },{0.078f,0.647f}};              \
+  vertices[7] = (vertex_t){{  5,15,-2 },{0.078f,0.647f}};              \
+                                                                     \
+  /* roof peak */                                                    \
+  vertices[8] = (vertex_t){{0,25,0},{0.078f,0.647f}};                  \
+                                                                     \
+  free(triangles);                                                   \
+  triangles = malloc(sizeof(tri_t)*8);                               \
+                                                                     \
+  triangles[0] = (tri_t){0,1,8};                                     \
+  triangles[1] = (tri_t){1,2,8};                                     \
+  triangles[2] = (tri_t){2,3,8};                                     \
+  triangles[3] = (tri_t){3,4,8};                                     \
+  triangles[4] = (tri_t){4,5,8};                                     \
+  triangles[5] = (tri_t){5,6,8};                                     \
+  triangles[6] = (tri_t){6,7,8};                                     \
+  triangles[7] = (tri_t){7,0,8};                                     \
+                                                                     \
+  render_object_t roof;                                              \
+  roof.shader = init_shader("./src/render/basic.vert",               \
+                             "./src/render/basic.frag");             \
+                                                                     \
+  roof.mesh = init_mesh(9, vertices, 8, triangles);                   \
+                                                                     \
+  roof.pos = (vec3){-20,0,-20};                                      \
+                                                                     \
+  roof.remodel = 1;
 
 
 #endif

@@ -7,10 +7,7 @@
 
 #include "editor.h"
 #include "game.h"
-
-def {
-    float x, y, z;
-}vec3_t;
+#include "matrix.h"
 
 def {
 
@@ -18,18 +15,29 @@ def {
     float mass;
     float normal_vel;
     float normal_acc;
+
     float theta;
     float phi;
-
-    vec3_t pos;
-    vec3_t vel;
-    vec3_t acc;
-    vec3_t desired_velocity;
-    vec3_t applied_force;
-    vec3_t net_force;
+    vec3 pos;
+    vec3 vel;
+    vec3 acc;
+    vec3 desired_velocity;
+    vec3 applied_force;
+    vec3 net_force;
 
 }actor_t;
 extern actor_t player;
+  
+def {
+    float theta;
+    float phi;
+
+    vec3 pos;
+    mat4 view;
+    mat4 projection;  
+}camera_t;
+extern camera_t camera;
+
 extern u8 flying;
 
 

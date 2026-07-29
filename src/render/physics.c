@@ -30,7 +30,7 @@
 
 
 actor_t player;
-
+camera_t camera;
 
 float phys_clamp(float value, float min, float max){
   if(value>max) return max;
@@ -41,7 +41,7 @@ void flying_movement_physics(actor_t *actor, float dt){
     float c = cosf(actor->theta);
     float s = sinf(actor->theta);
 
-    vec3_t desired_world;
+    vec3 desired_world;
     desired_world.x = player.desired_velocity.x * c +
                       player.desired_velocity.z * s;
     desired_world.y = player.desired_velocity.y;
@@ -76,7 +76,7 @@ void flying_movement_physics(actor_t *actor, float dt){
     normal_force = player.mass * cheat_grav;
     friction_force = 3 * friction_coeff * normal_force;
 
-    vec3_t net_force;
+    vec3 net_force;
     net_force.x = player.applied_force.x;
     net_force.y = player.applied_force.y;
     net_force.z = player.applied_force.z;
@@ -110,7 +110,7 @@ void movement_physics(actor_t *actor, float dt){
     float c = cosf(actor->theta);
     float s = sinf(actor->theta);
 
-    vec3_t desired_world;
+    vec3 desired_world;
     desired_world.x = player.desired_velocity.x * c +
                       player.desired_velocity.z * s;
     desired_world.z = -player.desired_velocity.x * s +
@@ -153,7 +153,7 @@ void movement_physics(actor_t *actor, float dt){
 
 
 
-    vec3_t net_force;
+    vec3 net_force;
 
     net_force.y = gravity_force + normal_force;
     net_force.x = player.applied_force.x;
@@ -306,11 +306,11 @@ void *editor_event_handler(void *args){
 
         $}case(SDL_MOUSEMOTION):{
           if(mousemode){
-            player.theta -= (float)event.motion.xrel * 0.01f;
-            player.phi   += (float)event.motion.yrel * 0.01f;
+            camera.theta -= (float)event.motion.xrel * 0.01f;
+            camera.phi   += (float)event.motion.yrel * 0.01f;
 
-            if(player.phi>1.55) player.phi = 1.55f;
-            else if(player.phi<-1.55) player.phi = -1.55f;
+            if(camera.phi>1.55) camera.phi = 1.55f;
+            else if(camera.phi<-1.55) camera.phi = -1.55f;
           }
         $}case(SDL_MOUSEBUTTONUP):{
           if(mousemode) SDL_SetRelativeMouseMode(SDL_FALSE);
@@ -332,12 +332,14 @@ void *editor_event_handler(void *args){
 
     }
     multipress(inputs);
+    player.theta = camera.theta;
+    player.phi = camera.phi;    
     if(flying){
       flying_movement_physics(&player, dt);
     }else{
       movement_physics(&player, dt);
     }
-
+    camera.pos = player.pos;
 
     last_movement = current_movement;
     usleep(event_rate);

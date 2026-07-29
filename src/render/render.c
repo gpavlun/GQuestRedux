@@ -14,203 +14,22 @@
 #include "render.h"
 #include "game.h"
 #include "physics.h"
+#include "matrix.h"
+#include "filehelper.h"
 
 
 
-int max(int a, int b, int c) {
-    if(a>=b && a>=c) return a;
-    if(b>=a && b>=c) return b;
-    return c;
-}
-
-int min(int a, int b, int c){
-    if(a<=b && a<=c) return a;
-    if(b<=a && b<=c) return b;
-    return c;
-}
-
-char *read_file(char *path){
-  size_t nread;
-
-  FILE *file = fopen(path, "rb");
-  logging.assert(file, "file not found!");
-
-  fseek(file, 0, SEEK_END);
-  long size = ftell(file);
-  rewind(file);
-
-  if(size< 0){
-      fclose(file);
-      return NULL;
-  }
-
-  char *source = malloc(size + 1);
-  nread = fread(source, 1, size, file);
-  source[nread] = 0;
-
-  fclose(file);
-
-  return source;
-}
-
-
-static inline float mat4_get(mat4 *m, int row, int col){
-    return m->i[col * 4 + row];
-}
-static inline void mat4_set(mat4 *m, int row, int col, float value){
-    m->i[col * 4 + row] = value;
-}
-mat4 mat4_mul(mat4 a, mat4 b){
-    mat4 result = {0};
-
-    for(int row = 0; row < 4; row++){
-        for(int col = 0; col < 4; col++){
-            float value = 0;
-
-            for(int k = 0; k < 4; k++){
-                value +=
-                    mat4_get(&a, row, k) *
-                    mat4_get(&b, k, col);
-            }
-
-            mat4_set(&result, row, col, value);
-        }
-    }
-
-    return result;
-}
-mat4 mat4_identity(void){
-    mat4 result = {
-        .i = {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-        }
-    };
-
-    return result;
-}
-
-
-
-
-
-
-
-
-
-mat4 mat4_perspective(float fov, float aspect_ratio, float near, float far){
-  float radians = fov * (M_PI / 180.0f);
-  float f = 1.0f / tan(radians / 2.0f);  
-  
-  float a = aspect_ratio;
-
-  float A = (far + near) / (near - far);
-  float B = (2 * far * near) / (near - far); 
-  
-  mat4 perspective = {
-    .i = {
-      f/a, 0 , 0 , 0 ,
-       0 , f , 0 , 0 ,
-       0 , 0 , A ,-1 ,
-       0 , 0 , B , 0
-    }
-  };
-
-  return perspective;
-}
-
-mat4 mat4_translate_camera(vec3_t pos){
-    mat4 view = {
-        .i = {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            -pos.x, -pos.y, -pos.z, 1
-        }
-    };
-
-    return view;
-}
-mat4 mat4_translate_pos(vec3_t pos){
-    mat4 view = {
-        .i = {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            pos.x, pos.y, pos.z, 1
-        }
-    };
-
-    return view;
-}
-
-mat4 mat4_rotate_y(float theta){
-    float c = cosf(theta);
-    float s = sinf(theta);
-
-    mat4 result = {
-        .i = {
-             c , 0 , s , 0 ,
-             0 , 1 , 0 , 0 ,
-            -s , 0 , c , 0 ,
-             0 , 0 , 0 , 1
-        }
-    };
-
-    return result;
-}
-
-mat4 mat4_rotate_x(float phi){
-    float c = cosf(phi);
-    float s = sinf(phi);
-
-    mat4 result = {
-        .i = {
-            1, 0, 0, 0,
-            0, c, s, 0,
-            0,-s, c, 0,
-            0, 0, 0, 1
-        }
-    };
-
-    return result;
-}
-
-void start_render(void) {
-  gui_engine_t gui = gui_engine_init();
-  init_events(&gui);
-
-  window_t *window = &gui.window;
-  
-
-  // create the gpu connection
-  SDL_GLContext gl_context = SDL_GL_CreateContext(gui.sdl2.window); 
-
-  // bind the gpu functions to this script               
-  logging.assert(gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress),
-                 "GLAD failed"); 
-  
-  
-  glEnable(GL_DEPTH_TEST);
-  glClearColor(0.486f, 0.686f, 0.761f, 1.0f);
+shader_t init_shader(char *vert_path, char *frag_path){
 
   GLint gl_success_code;
-  hexcode_u color;
-
-
-
-  player.pos.x = 0;
-  player.pos.y = 2;
-  player.pos.z = 0;
+  shader_t shader = {0};
 
 
 
   /*** create vertex shader ***/
 
   // read in shader data and create a context for it
-  char *source = read_file("./src/render/basic.vert");
+  char *source = read_file(vert_path);
   GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
   logging.assert(vertex_shader, "GL vertex failed!");
 
@@ -240,7 +59,7 @@ void start_render(void) {
   /*** create fragment shader ***/
 
   // read in shader data and create a context for it
-  source = read_file("./src/render/basic.frag");
+  source = read_file(frag_path);
   GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
   logging.assert(fragment_shader, "GL fragment failed!");
 
@@ -270,203 +89,368 @@ void start_render(void) {
   /*** link the vertex and fragment shaders ***/
 
   // create a program object
-  GLuint program = glCreateProgram();
-  logging.assert(program, "GL program failed!");
+  shader.program = glCreateProgram();
+  logging.assert(shader.program, "GL program failed!");
 
   // attach the shaders to the object
-  glAttachShader(program, vertex_shader);
-  glAttachShader(program, fragment_shader);
+  glAttachShader(shader.program, vertex_shader);
+  glAttachShader(shader.program, fragment_shader);
 
   // finish the linking
-  glLinkProgram(program);
+  glLinkProgram(shader.program);
 
   // check for linking failure
-  glGetProgramiv(program, GL_LINK_STATUS, &gl_success_code);
+  glGetProgramiv(shader.program, GL_LINK_STATUS, &gl_success_code);
   if(!gl_success_code){
     char log[512];
-    glGetProgramInfoLog(program, 512, NULL, log);
+    glGetProgramInfoLog(shader.program, 512, NULL, log);
     logging.error(0, log);
   }
 
-  // use the linked program
-  glUseProgram(program);
+
+
+  /*** variable declarations for program ***/
+
+  shader.projection = glGetUniformLocation(shader.program, "projection");  
+  logging.assert(shader.projection != -1, "projection not found");
+
+  shader.view = glGetUniformLocation(shader.program, "view");  
+  logging.assert(shader.view != -1, "projection not found");
+
+  shader.model = glGetUniformLocation(shader.program, "model");  
+  logging.assert(shader.model != -1, "model not found");
+
+  return shader;
+
+}
+
+mesh_t init_mesh(size_t nverts, vertex_t *verts, size_t ntris, tri_t *tris){
+
+  mesh_t mesh = {0};
+
+  mesh.nverts = nverts;
+  mesh.vert   = verts;
+  mesh.ntris  = ntris;
+  mesh.tri    = tris;
 
 
 
-  /*** Load player position in variable ***/
-
-
-  GLint projection_loc;
-
-  projection_loc = glGetUniformLocation(
-      program,
-      "projection"
-  );  
-
-  logging.assert(projection_loc != -1,
-                "projection not found");
-
-  GLint view_loc;
-
-  view_loc = glGetUniformLocation(
-      program,
-      "view"
-  );  
-
-  logging.assert(projection_loc != -1,
-                "projection not found");
-
-  GLint model_loc;
-
-  model_loc = glGetUniformLocation(
-      program,
-      "model"
-  );  
-
-  logging.assert(model_loc != -1,
-                "model not found");
-
- 
-
-
-  vert_t vertices[3] = {
-    { 1 , 1 , 0 },
-    { 0 ,-1 , 0 },
-    {-1 , 1 , 0 }
-  };
-
-
-
-  /*** create vertex array ***/
+  /*** create vertex array object ***/
 
   // create empty vertex array object
-  GLuint vao;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
+  glGenVertexArrays(1, &mesh.vao);
+  glBindVertexArray(mesh.vao);
 
-  // create vertex buffer object
-  GLuint vertex_buffer;
-  glGenBuffers(1, &vertex_buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+
+
+  /*** create vertex buffer object ***/
+
+  // create empty vertex buffer object
+  glGenBuffers(1, &mesh.vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
 
   // define and set the vertex buffer
   glBufferData(
       GL_ARRAY_BUFFER,
-      sizeof(vertices),
-      vertices,
+      sizeof(vertex_t) * nverts,
+      mesh.vert,
       GL_STATIC_DRAW
   );
 
-  // define how vertex buffer should be interpreted
+  // define vertex coordinates
   glVertexAttribPointer(
-      0,                  // shader location defined in shader
-      3,                  // three values per index
-      GL_FLOAT,           // each index value is a float
-      GL_FALSE,           // normalization
-      sizeof(vert_t),     // size of one index
-      NULL                // struct offset
+      0,                              // shader location defined in shader
+      3,                              // three values per index
+      GL_FLOAT,                       // each index value is a float
+      GL_FALSE,                       // normalization
+      sizeof(vertex_t),               // size of one index
+      (void *)offsetof(vertex_t, pos) // struct offset
   );
 
-  // enable this array
+  // enable this attribute with index 0
   glEnableVertexAttribArray(0);
 
+  // define vertex uv
+  glVertexAttribPointer(
+      1,                  // shader location
+      2,                  // two values: u and v
+      GL_FLOAT,
+      GL_FALSE,
+      sizeof(vertex_t),
+      (void *)(offsetof(vertex_t, uv))
+  );
+
+  // enable this attribute with index 1
+  glEnableVertexAttribArray(1);
 
 
-  u32 indices[3];
-  indices[0] = 0;
-  indices[1] = 1;
-  indices[2] = 2;
 
-
-
-  /*** triangle index map ***/
+  /*** create index buffer object ***/
   
   // create index object
-  GLuint index_buffer;
-  glGenBuffers(1, &index_buffer);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+  glGenBuffers(1, &mesh.ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
 
   // define and set index buffer
   glBufferData(
       GL_ELEMENT_ARRAY_BUFFER,
-      sizeof(indices),
-      indices,
+      sizeof(tri_t)*mesh.ntris,
+      mesh.tri,
       GL_STATIC_DRAW
   );
 
 
-  mat4 projection = mat4_perspective(
+  return mesh;
+}
+
+void draw_object(render_object_t *object, camera_t *camera){
+    
+  update_model(object);
+
+  glUseProgram(object->shader.program);
+  glBindVertexArray(object->mesh.vao);
+
+
+
+  glUniformMatrix4fv(
+    object->shader.projection,
+    1,
+    GL_FALSE,
+    camera->projection.i
+  ); 
+
+  glUniformMatrix4fv(
+      object->shader.model,
+      1,
+      GL_FALSE,
+      object->model.i
+  ); 
+
+  glUniformMatrix4fv(
+    object->shader.view, 
+    1, 
+    GL_FALSE, 
+    camera->view.i
+  );
+
+  glDrawElements(
+      GL_TRIANGLES,
+      object->mesh.ntris * 3, //mul by 3 for # of idx per tri
+      GL_UNSIGNED_INT,
+      0
+  );
+
+}
+
+void gl_error_check(void){
+    // check for errors
+    GLenum gl_err;
+    gl_err = glGetError();
+    while(gl_err != GL_NO_ERROR){
+        logging.warn("render failure");
+        gl_err = glGetError();
+    }
+}
+
+void update_model(render_object_t *object){
+    if (!object->remodel)
+        return;
+
+    object->model = mat4_translate_pos(object->pos);
+    object->remodel = false;
+}
+
+void update_camera(camera_t *camera){
+  mat4 view;
+  view = mat4_identity();
+  view = mat4_mul(mat4_translate_camera(camera->pos), view);
+  view = mat4_mul(mat4_rotate_y(camera->theta), view);
+  view = mat4_mul(mat4_rotate_x(camera->phi), view);
+  camera->view = view;
+}
+
+void hsv_to_rgb(float h, float s, float v,
+                u8 *r, u8 *g, u8 *b)
+{
+    float c = v * s;
+    float x = c * (1.0f - fabsf(fmodf(h / 60.0f, 2.0f) - 1.0f));
+    float m = v - c;
+
+    float rf, gf, bf;
+
+    if (h < 60) {
+        rf = c; gf = x; bf = 0;
+    } else if (h < 120) {
+        rf = x; gf = c; bf = 0;
+    } else if (h < 180) {
+        rf = 0; gf = c; bf = x;
+    } else if (h < 240) {
+        rf = 0; gf = x; bf = c;
+    } else if (h < 300) {
+        rf = x; gf = 0; bf = c;
+    } else {
+        rf = c; gf = 0; bf = x;
+    }
+
+    *r = (u8)((rf + m) * 255.0f);
+    *g = (u8)((gf + m) * 255.0f);
+    *b = (u8)((bf + m) * 255.0f);
+}
+
+void create_palette(rgba_t *pixels){
+
+  for (u32 y = 0; y < 256; y++) {
+      for (u32 x = 0; x < 256; x++) {
+
+          rgba_t *p = &pixels[y * 256 + x];
+
+          if (y < 255) {
+            float hue = 360.0f * x / 255.0f;
+            float value = 1.0f - (float)y / 254.0f;
+
+            hsv_to_rgb(
+                hue,
+                1.0f,
+                value,
+                &p->r,
+                &p->g,
+                &p->b
+            );
+
+            p->a = 255;
+          } else {
+            u8 c = x;
+
+            p->r = c;
+            p->g = c;
+            p->b = c;
+            p->a = 255;
+          }
+      }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void start_render(void) {
+  gui_engine_t gui = gui_engine_init();
+  init_events(&gui);
+
+  window_t *window = &gui.window;
+  
+
+  // create the gpu connection
+  SDL_GLContext gl_context = SDL_GL_CreateContext(gui.sdl2.window); 
+
+  // bind the gpu functions to this script               
+  logging.assert(gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress),
+                 "GLAD failed"); 
+  
+  
+  glEnable(GL_DEPTH_TEST);
+  glClearColor(0.486f, 0.686f, 0.761f, 1.0f);
+
+  GLint gl_success_code;
+  hexcode_u color;
+
+  player.pos = (vec3){ 0 , 2 , 0 };
+
+
+  vertex_t *vertices = NULL;
+  tri_t *triangles = NULL;
+
+  // objects defined in header file
+  demo_tri_
+  ground_
+  tower_
+  roof_
+
+
+
+
+  
+  camera.projection = mat4_perspective(
       70.0f,        // field of view
       (float)gui.window.dim.w/(float)gui.window.dim.h, // aspect ratio
       0.1f,         // near plane
       1000.0f       // far plane
   );
 
-  mat4 view;
-  vec3_t objpos = {0, 0,-10};
-  mat4 model;
 
-  model = mat4_translate_pos(objpos);
-  glUniformMatrix4fv(
-    model_loc,
-    1,
-    GL_FALSE,
-    model.i
+
+  rgba_t *pixels = malloc(256 * 256 * sizeof(rgba_t));
+  create_palette(pixels);
+
+  GLuint texture;
+
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);  
+
+  glTexImage2D(
+      GL_TEXTURE_2D,
+      0,                  // mip level
+      GL_RGBA8,           // GPU storage format
+      256,
+      256,
+      0,                  // border (always 0)
+      GL_RGBA,            // format of your CPU data
+      GL_UNSIGNED_BYTE,   // each channel is a u8
+      pixels
   );
 
-  glUniformMatrix4fv(
-    projection_loc,
-    1,
-    GL_FALSE,
-    projection.i
-  );    
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-  GLenum gl_err;
+  free(pixels);
+
   while(modes.RUNNING){
 
-    // clear the buffer colors and depth
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // use the progam and vao for this object-type
-    glUseProgram(program);
-    glBindVertexArray(vao);
+    update_camera(&camera);
+
     
-    view = mat4_identity();
-    view = mat4_mul(mat4_translate_camera(player.pos), view);
-    view = mat4_mul(mat4_rotate_y(player.theta), view);
-    view = mat4_mul(mat4_rotate_x(player.phi), view);
-    glUniformMatrix4fv(view_loc, 1, GL_FALSE, view.i);
-    
+    draw_object(&demo_tri, &camera);
+    draw_object(&ground, &camera);
+    draw_object(&tower, &camera);
+    draw_object(&roof, &camera);
 
+    gl_error_check();
 
-    // define object location
-    vec3_t obs1 = {0, 0,-10};
-    model = mat4_translate_pos(obs1);
-    glUniformMatrix4fv(model_loc, 1, GL_FALSE, model.i);
-
-    // draw the object
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-
-    // define object location
-    vec3_t obs2 = {5, 5,-10};
-    model = mat4_translate_pos(obs2);
-    glUniformMatrix4fv(model_loc, 1, GL_FALSE, model.i);
-
-    // draw the object
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-
-
-    // check for errors
-    gl_err = glGetError();
-    while(gl_err != GL_NO_ERROR){
-        logging.warn("render failure");
-        gl_err = glGetError();
-    }
-
-    // load the window
     SDL_GL_SwapWindow(gui.sdl2.window);
 
-    //usleep(event_rate);
   }
 
 
