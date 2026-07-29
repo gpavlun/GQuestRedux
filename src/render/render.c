@@ -386,7 +386,7 @@ void start_render(void) {
   
   
   glEnable(GL_DEPTH_TEST);
-  glClearColor(0.486f, 0.686f, 0.761f, 1.0f);
+  
 
   GLint gl_success_code;
   hexcode_u color;
@@ -496,7 +496,21 @@ void start_render(void) {
 
   free(pixels);
 
+  bool setting = ! modes.WIREFRAME;
   while(modes.RUNNING){
+
+    if(setting !=  modes.WIREFRAME){
+      if(modes.WIREFRAME){
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+      }else{
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glClearColor(0.486f, 0.686f, 0.761f, 1.0f);
+      }
+      setting =  modes.WIREFRAME;
+    }
+
+
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

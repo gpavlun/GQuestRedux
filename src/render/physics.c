@@ -293,6 +293,8 @@ void *editor_event_handler(void *args){
           switch(event.key.keysym.sym){
             case(SDLK_ESCAPE):{
               modes.RUNNING = 0;
+            $}case(SDLK_p):{
+              modes.WIREFRAME = !modes.WIREFRAME;
             $}default:{$}
           }
         $}case(SDL_KEYDOWN):{
