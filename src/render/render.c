@@ -110,6 +110,8 @@ shader_t init_shader(char *vert_path, char *frag_path){
 }
 
 void mesh_generate_normals(mesh_t *mesh){
+  if(!mesh) return;
+  
   u32 i;
 
   for(i=0;i<mesh->nverts;i++){
@@ -161,6 +163,8 @@ mesh_t new_mesh(size_t nverts, vertex_t *verts, size_t ntris, tri_t *tris) {
 }
 
 void load_mesh(mesh_t *mesh){
+  if(!mesh) return;
+
 
   /*** create vertex array object ***/
 
@@ -359,25 +363,7 @@ void create_palette(rgba_t *pixels){
       }
   }
 }
-
-
-
-
-
-
-
-
-void update_sun_cycle(sun_cycle_t *sun){
-
-
-}
-
-
-
-
-
-void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun)
-{
+void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
     if (!sun_c->visible) {
         sun->direction = vec3_fill(0);
         return;
@@ -400,7 +386,7 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun)
 
     if(sun->cycle.visible){
 
-      sun->cycle.angle = (elapsed / 30.0f) * 270.0f;
+      sun->cycle.angle = (elapsed / 300.0f) * 270.0f;
       if(sun->cycle.angle<90 && sun->cycle.angle>0){
         lighting->ambient = sun->cycle.angle / 100.0f + 0.1f;
       }else if(sun->cycle.angle>90 && sun->cycle.angle<180){
@@ -409,7 +395,7 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun)
       if(lighting->ambient > 0.3) lighting->ambient = 0.3;
       
 
-      if(elapsed >= 30.0f){
+      if(elapsed >= 300.0f){
         sun->cycle.start_time = now;
         sun->cycle.visible = 0;
         sun->cycle.angle = 270.0f;
@@ -418,7 +404,7 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun)
     }else{
       lighting->ambient = 0.1f;
       // hidden for 30 seconds
-      if(elapsed >= 30.0f){
+      if(elapsed >= 300.0f){
         sun->cycle.start_time = now;
         sun->cycle.visible = 1;
         sun->cycle.angle = -90.0f;
@@ -433,6 +419,93 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun)
     lighting->color = sun->color;
     lighting->intensity = sun->intensity;
   }
+
+  float height_func(float x, float z){
+      return 
+        sinf(x * 0.08f) * 3.0f +
+        cosf(z * 0.08f) * 3.0f;
+
+  }
+
+
+
+  #define chunk_quads_ 64
+  #define chunk_verts_ (chunk_quads_ + 1)
+  logical_chunk_t generate_terrain(){
+    i32 r, c, t;
+    
+    logical_chunk_t logical_chunk = {0};
+
+    logical_chunk.object.pos = (vec3){0,0,0};
+    logical_chunk.heightmap = calloc(chunk_verts_*chunk_verts_, sizeof(float));
+    for(r=0; r<chunk_verts_; r++){
+    for(c=0; c<chunk_verts_; c++){
+
+      *(logical_chunk.heightmap + r*chunk_verts_ + c) = 
+      height_func(r - chunk_verts_/2, c - chunk_verts_/2);
+
+    }
+    }
+
+
+    vertex_t *vertices = NULL;
+    tri_t *triangles = NULL;
+
+    vertices  = calloc(chunk_verts_ * chunk_verts_, sizeof(vertex_t));
+    triangles = calloc(chunk_quads_ * chunk_quads_* 2, sizeof(tri_t));
+
+    for(r=0; r<chunk_verts_; r++){
+    for(c=0; c<chunk_verts_; c++){
+        (vertices + r*chunk_verts_ + c)->pos = 
+          (vec3){
+            c - chunk_verts_/2,
+            logical_chunk.heightmap[r*chunk_verts_+c],
+            r - chunk_verts_/2
+          };
+
+          (vertices + r*chunk_verts_ + c)->uv = (vec2){0.33f, 0.7f};
+
+          // (vertices + r*chunk_verts_ + c)->uv = (vec2){
+          //   (float)c / chunk_quads_,
+          //   (float)r / chunk_quads_
+          // };
+    }
+    }
+
+    t=0;
+    for(r = 0; r < chunk_quads_; r++){
+    for(c = 0; c < chunk_quads_; c++){
+
+        u32 a = r * chunk_verts_ + c;
+        u32 b = r * chunk_verts_ + c + 1;
+        u32 c_idx = (r + 1) * chunk_verts_ + c;
+        u32 d = (r + 1) * chunk_verts_ + c + 1;
+
+        triangles[t++] = (tri_t){a, c_idx, b};
+        triangles[t++] = (tri_t){b, c_idx, d};
+    }
+    }
+
+
+    logging.assert(t == chunk_quads_ * chunk_quads_ * 2,
+                   "terrain failure, quads misaligned!");
+
+    logical_chunk.object.mesh = calloc(1, sizeof(mesh_t));
+    *logical_chunk.object.mesh = new_mesh(chunk_verts_*chunk_verts_, vertices,
+                          chunk_quads_*chunk_quads_*2, triangles);
+     
+    sprintf(glob_error, "height[5][5] = %f",logical_chunk.heightmap[5*chunk_verts_ +5]);
+
+    return logical_chunk;
+  }
+
+
+
+
+
+
+
+
 
 
 
@@ -464,6 +537,18 @@ void start_render(void) {
 
   GLint gl_success_code;
   hexcode_u color;
+
+
+  //terrain gen:
+  logical_chunk_t terrain = generate_terrain();
+  mesh_generate_normals(terrain.object.mesh);
+  load_mesh(terrain.object.mesh);
+  terrain.object.shader = init_shader("./src/render/basic.vert",
+                                "./src/render/basic.frag");
+  terrain.object.remodel = 1;
+  terrain.object.pos    = (vec3){ 0 , 0 , 0};
+  terrain.object.rot    = (vec3){ 0 , 0 , 0 };
+  terrain.object.scale  = (vec3){ 1 , 1 , 1 };
 
 
 
@@ -651,15 +736,17 @@ void start_render(void) {
 
     update_lighting(&lighting, &sun);
     
-    draw_object(&demo_tri, camera_glob, &lighting);
-    draw_object(&demo_tri2, camera_glob, &lighting);
+    draw_object(&terrain.object, camera_glob, &lighting);
+    
+    // draw_object(&demo_tri, camera_glob, &lighting);
+    // draw_object(&demo_tri2, camera_glob, &lighting);
 
-    draw_object(&ground, camera_glob, &lighting);
-    draw_object(&tower, camera_glob, &lighting);
-    draw_object(&roof, camera_glob, &lighting);
+    // //draw_object(&ground, camera_glob, &lighting);
+    // draw_object(&tower, camera_glob, &lighting);
+    // draw_object(&roof, camera_glob, &lighting);
 
-    draw_object(&tower2, camera_glob, &lighting);
-    draw_object(&roof2, camera_glob, &lighting);
+    // draw_object(&tower2, camera_glob, &lighting);
+    // draw_object(&roof2, camera_glob, &lighting);
 
     gl_error_check();
 

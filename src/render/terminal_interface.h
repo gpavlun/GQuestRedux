@@ -13,8 +13,6 @@
 
 #include "game.h"
 
-
-
 void *tui(void *arg);
 extern char glob_error[64];
 

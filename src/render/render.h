@@ -19,6 +19,7 @@
 #include "vector.h"
 #include "typing.h"
 #include "filehelper.h"
+#include "terminal_interface.h"
 
 
 
@@ -88,6 +89,11 @@ def {
     vec3 rot;
     vec3 scale;
 }render_object_t;
+
+def {
+  float *heightmap;
+  render_object_t object;
+} logical_chunk_t;
 
 def {
   Uint32 start_time;
