@@ -21,7 +21,7 @@
 #include "filehelper.h"
 #include "terminal_interface.h"
 
-  #define chunk_quads_ 64
+  #define chunk_quads_ 128
   #define chunk_verts_ (chunk_quads_ + 1)
 
 
