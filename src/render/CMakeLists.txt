@@ -1,4 +1,7 @@
-add_executable(render)
+add_executable(render
+        vector.c
+        vector.h
+        typing.h)
 
 file(GLOB RENDER_SOURCES CONFIGURE_DEPENDS
     *.c

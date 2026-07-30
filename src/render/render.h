@@ -1,19 +1,31 @@
 #ifndef RENDER_H
 #define RENDER_H
 
+
+#include <SDL2/SDL.h>
+#include <math.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 #include <glad/glad.h>
+#include <logging.h>
 #include <stdbool.h>
 
+#include "editor.h"
 #include "physics.h"
 #include "game.h"
 #include "matrix.h"
-
-
-void start_render(void);
+#include "vector.h"
+#include "typing.h"
+#include "filehelper.h"
 
 def {
-  float x, y, z;
-}vert_t;
+  vec3 direction;
+  vec3 color;
+  float intensity;
+}sun_t;
+
 
 def {
     u32 A, B;
@@ -40,6 +52,7 @@ typedef struct {
 
 def {
   vec3 pos;
+  vec3 normal;
   vec2 uv;
 }vertex_t;
 
@@ -70,7 +83,7 @@ def {
 }shader_t;
 
 def {
-    mesh_t mesh;
+    mesh_t *mesh;
     shader_t shader;
 
     bool remodel;
@@ -84,7 +97,7 @@ def {
 void start_render(void);
 void gl_error_check(void);
 void update_model(render_object_t *object);
-void draw_object(render_object_t *object, camera_t *camera);
+void draw_object(render_object_t *object, camera_t *camera, sun_t *sun);
 
 
 
@@ -92,17 +105,33 @@ void draw_object(render_object_t *object, camera_t *camera);
 
 
 
-#define demo_tri_\
+#define demo_tri_ \
 \
-  free(vertices);\
-  vertices = malloc(sizeof(vertex_t)*3);\
-  vertices[0] = (vertex_t){{ 1 , 1 , 0 }, {0, 0}};\
-  vertices[1] = (vertex_t){{ 0 ,-1 , 0 }, {1, 0}};\
-  vertices[2] = (vertex_t){{-1 , 1 , 0 }, {0, 1}};\
+free(vertices);\
+vertices = calloc(3, sizeof(vertex_t));\
 \
-  free(triangles);\
-  triangles = malloc(sizeof(tri_t)*1);\
-  triangles[0] = (tri_t){ 0 , 1 , 2 };
+vertices[0] = (vertex_t){\
+  .pos = { 1,  1, 0 },\
+  .normal = {0,0,1},\
+  .uv = {0,0}\
+};\
+\
+vertices[1] = (vertex_t){\
+  .pos = { 0, -1, 0 },\
+  .normal = {0,0,1},\
+  .uv = {1,0}\
+};\
+\
+vertices[2] = (vertex_t){\
+  .pos = {-1,  1, 0 },\
+  .normal = {0,0,1},\
+  .uv = {0,1}\
+};\
+\
+free(triangles);\
+triangles = calloc(1, sizeof(tri_t));\
+triangles[0] = (tri_t){2,1,0};
+
 
 
   #define GRASS {0.33f, 0.7f}
@@ -111,83 +140,187 @@ void draw_object(render_object_t *object, camera_t *camera);
 
 
   
-  #define ground_                                       \
-  \
-  free(vertices);\
-  vertices = malloc(sizeof(vertex_t)*4);\
-  vertices[0] = (vertex_t){{-32, 0 ,-32}, GRASS};\
-  vertices[1] = (vertex_t){{ 32, 0 ,-32}, GRASS};\
-  vertices[2] = (vertex_t){{ 32, 0 , 32}, GRASS};\
-  vertices[3] = (vertex_t){{-32, 0 , 32}, GRASS};\
+#define ground_ \
 \
-  free(triangles);\
-  triangles = malloc(sizeof(tri_t)*2);\
-  triangles[0] = (tri_t){ 0 , 1 , 2 };\
-  triangles[1] = (tri_t){ 0 , 2 , 3 };\
+free(vertices);\
+vertices = calloc(4, sizeof(vertex_t));\
 \
-  render_object_t ground;\
-  ground.shader = init_shader("./src/render/basic.vert",\
-                                "./src/render/basic.frag");\
-  ground.mesh   = init_mesh(4, vertices, 2, triangles);\
+vertices[0] = (vertex_t){\
+  .pos = {-32, 0, -32},\
+  .uv  = GRASS\
+};\
 \
-  ground.pos    = (vec3){ 0 , 0 , 0 };\
-  ground.rot    = (vec3){ 0 , 0 , 0 };\
-  ground.scale    = (vec3){ 1 , 1 , 1 };\
-                               \
-  ground.remodel  = 1;\
+vertices[1] = (vertex_t){\
+  .pos = {32, 0, -32},\
+  .uv  = GRASS\
+};\
+\
+vertices[2] = (vertex_t){\
+  .pos = {32, 0, 32},\
+  .uv  = GRASS\
+};\
+\
+vertices[3] = (vertex_t){\
+  .pos = {-32, 0, 32},\
+  .uv  = GRASS\
+};\
+\
+free(triangles);\
+triangles = calloc(2, sizeof(tri_t));\
+\
+triangles[0] = (tri_t){2,1,0};\
+triangles[1] = (tri_t){3,2,0};
+
 
   
 
 
 
-  #define tower_                                                        \
+#define tower_                                                        \
                                                                      \
   free(vertices);                                                    \
-  vertices = malloc(sizeof(vertex_t)*32);                            \
+  vertices = calloc(32, sizeof(vertex_t));                           \
                                                                      \
   /* tower bottom ring */                                            \
-  vertices[0] = (vertex_t){{  2, 0, -5 },STONE};             \
-  vertices[1] = (vertex_t){{ -2, 0, -5 },STONE};             \
-  vertices[2] = (vertex_t){{ -5, 0, -2 },STONE};             \
-  vertices[3] = (vertex_t){{ -5, 0,  2 },STONE};             \
-  vertices[4] = (vertex_t){{ -2, 0,  5 },STONE};             \
-  vertices[5] = (vertex_t){{  2, 0,  5 },STONE};             \
-  vertices[6] = (vertex_t){{  5, 0,  2 },STONE};             \
-  vertices[7] = (vertex_t){{  5, 0, -2 },STONE};             \
+  vertices[0] = (vertex_t){                                          \
+    .pos = {  2, 0, -5 },                                            \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[1] = (vertex_t){                                          \
+    .pos = { -2, 0, -5 },                                            \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[2] = (vertex_t){                                          \
+    .pos = { -5, 0, -2 },                                            \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[3] = (vertex_t){                                          \
+    .pos = { -5, 0,  2 },                                            \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[4] = (vertex_t){                                          \
+    .pos = { -2, 0,  5 },                                            \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[5] = (vertex_t){                                          \
+    .pos = {  2, 0,  5 },                                            \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[6] = (vertex_t){                                          \
+    .pos = {  5, 0,  2 },                                            \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[7] = (vertex_t){                                          \
+    .pos = {  5, 0, -2 },                                            \
+    .uv  = STONE                                                     \
+  };                                                                 \
                                                                      \
   /* tower top ring (also roof base later) */                         \
-  vertices[8]  = (vertex_t){{  2,15,-5 },STONE};             \
-  vertices[9]  = (vertex_t){{ -2,15,-5 },STONE};             \
-  vertices[10] = (vertex_t){{ -5,15,-2 },STONE};             \
-  vertices[11] = (vertex_t){{ -5,15, 2 },STONE};             \
-  vertices[12] = (vertex_t){{ -2,15, 5 },STONE};             \
-  vertices[13] = (vertex_t){{  2,15, 5 },STONE};             \
-  vertices[14] = (vertex_t){{  5,15, 2 },STONE};             \
-  vertices[15] = (vertex_t){{  5,15,-2 },STONE};             \
+  vertices[8] = (vertex_t){                                          \
+    .pos = {  2,15,-5 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[9] = (vertex_t){                                          \
+    .pos = { -2,15,-5 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[10] = (vertex_t){                                         \
+    .pos = { -5,15,-2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[11] = (vertex_t){                                         \
+    .pos = { -5,15, 2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[12] = (vertex_t){                                         \
+    .pos = { -2,15, 5 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[13] = (vertex_t){                                         \
+    .pos = {  2,15, 5 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[14] = (vertex_t){                                         \
+    .pos = {  5,15, 2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[15] = (vertex_t){                                         \
+    .pos = {  5,15,-2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
                                                                      \
   /* turret lower ring (overhang, same y as tower top) */             \
-  vertices[16] = (vertex_t){{  2,15,-6 },STONE};             \
-  vertices[17] = (vertex_t){{ -2,15,-6 },STONE};             \
-  vertices[18] = (vertex_t){{ -6,15,-2 },STONE};             \
-  vertices[19] = (vertex_t){{ -6,15, 2 },STONE};             \
-  vertices[20] = (vertex_t){{ -2,15, 6 },STONE};             \
-  vertices[21] = (vertex_t){{  2,15, 6 },STONE};             \
-  vertices[22] = (vertex_t){{  6,15, 2 },STONE};             \
-  vertices[23] = (vertex_t){{  6,15,-2 },STONE};             \
+  vertices[16] = (vertex_t){                                         \
+    .pos = {  2,15,-6 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[17] = (vertex_t){                                         \
+    .pos = { -2,15,-6 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[18] = (vertex_t){                                         \
+    .pos = { -6,15,-2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[19] = (vertex_t){                                         \
+    .pos = { -6,15, 2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[20] = (vertex_t){                                         \
+    .pos = { -2,15, 6 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[21] = (vertex_t){                                         \
+    .pos = {  2,15, 6 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[22] = (vertex_t){                                         \
+    .pos = {  6,15, 2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[23] = (vertex_t){                                         \
+    .pos = {  6,15,-2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
                                                                      \
   /* turret upper ring (same footprint, +1 y) */                      \
-  vertices[24] = (vertex_t){{  2,16,-6 },STONE};             \
-  vertices[25] = (vertex_t){{ -2,16,-6 },STONE};             \
-  vertices[26] = (vertex_t){{ -6,16,-2 },STONE};             \
-  vertices[27] = (vertex_t){{ -6,16, 2 },STONE};             \
-  vertices[28] = (vertex_t){{ -2,16, 6 },STONE};             \
-  vertices[29] = (vertex_t){{  2,16, 6 },STONE};             \
-  vertices[30] = (vertex_t){{  6,16, 2 },STONE};             \
-  vertices[31] = (vertex_t){{  6,16,-2 },STONE};             \
-  free(triangles);                                                   \
-  triangles = malloc(sizeof(tri_t)*48);                              \
+  vertices[24] = (vertex_t){                                         \
+    .pos = {  2,16,-6 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[25] = (vertex_t){                                         \
+    .pos = { -2,16,-6 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[26] = (vertex_t){                                         \
+    .pos = { -6,16,-2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[27] = (vertex_t){                                         \
+    .pos = { -6,16, 2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[28] = (vertex_t){                                         \
+    .pos = { -2,16, 6 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[29] = (vertex_t){                                         \
+    .pos = {  2,16, 6 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[30] = (vertex_t){                                         \
+    .pos = {  6,16, 2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
+  vertices[31] = (vertex_t){                                         \
+    .pos = {  6,16,-2 },                                             \
+    .uv  = STONE                                                     \
+  };                                                                 \
                                                                      \
-  /* tower walls: bottom ring -> tower top ring */                    \
+   free(triangles);                                                  \
+  triangles = calloc(48, sizeof(tri_t));                             \
+                                                                     \
+  /* tower walls: bottom ring -> tower top ring */                   \
   triangles[0]  = (tri_t){0,1,9};                                    \
   triangles[1]  = (tri_t){0,9,8};                                    \
                                                                      \
@@ -236,7 +369,8 @@ void draw_object(render_object_t *object, camera_t *camera);
                                                                      \
   triangles[30] = (tri_t){15,23,16};                                 \
   triangles[31] = (tri_t){15,16,8};                                  \
-  /* turret outer walls: lower ring -> upper ring */                   \
+                                                                     \
+  /* turret outer walls: lower ring -> upper ring */                 \
   triangles[32] = (tri_t){16,17,25};                                 \
   triangles[33] = (tri_t){16,25,24};                                 \
                                                                      \
@@ -269,23 +403,51 @@ void draw_object(render_object_t *object, camera_t *camera);
 #define roof_                                                        \
                                                                      \
   free(vertices);                                                    \
-  vertices = malloc(sizeof(vertex_t)*9);                             \
+  vertices = calloc(9, sizeof(vertex_t));                            \
                                                                      \
-  /* roof base ring - identical to tower top ring */                 \
-  vertices[0] = (vertex_t){{  2,0,-5 },WOOD};              \
-  vertices[1] = (vertex_t){{ -2,0,-5 },WOOD};              \
-  vertices[2] = (vertex_t){{ -5,0,-2 },WOOD};              \
-  vertices[3] = (vertex_t){{ -5,0, 2 },WOOD};              \
-  vertices[4] = (vertex_t){{ -2,0, 5 },WOOD};              \
-  vertices[5] = (vertex_t){{  2,0, 5 },WOOD};              \
-  vertices[6] = (vertex_t){{  5,0, 2 },WOOD};              \
-  vertices[7] = (vertex_t){{  5,0,-2 },WOOD};              \
+  /* roof base ring - identical to tower top ring */                  \
+  vertices[0] = (vertex_t){                                          \
+    .pos = {  2,0,-5 },                                               \
+    .uv  = WOOD                                                       \
+  };                                                                 \
+  vertices[1] = (vertex_t){                                          \
+    .pos = { -2,0,-5 },                                               \
+    .uv  = WOOD                                                       \
+  };                                                                 \
+  vertices[2] = (vertex_t){                                          \
+    .pos = { -5,0,-2 },                                               \
+    .uv  = WOOD                                                       \
+  };                                                                 \
+  vertices[3] = (vertex_t){                                          \
+    .pos = { -5,0, 2 },                                               \
+    .uv  = WOOD                                                       \
+  };                                                                 \
+  vertices[4] = (vertex_t){                                          \
+    .pos = { -2,0, 5 },                                               \
+    .uv  = WOOD                                                       \
+  };                                                                 \
+  vertices[5] = (vertex_t){                                          \
+    .pos = {  2,0, 5 },                                               \
+    .uv  = WOOD                                                       \
+  };                                                                 \
+  vertices[6] = (vertex_t){                                          \
+    .pos = {  5,0, 2 },                                               \
+    .uv  = WOOD                                                       \
+  };                                                                 \
+  vertices[7] = (vertex_t){                                          \
+    .pos = {  5,0,-2 },                                               \
+    .uv  = WOOD                                                       \
+  };                                                                 \
                                                                      \
-  /* roof peak */                                                    \
-  vertices[8] = (vertex_t){{0,10,0},WOOD};                  \
+  /* roof peak */                                                     \
+  vertices[8] = (vertex_t){                                          \
+    .pos = {0,10,0},                                                  \
+    .uv  = WOOD                                                       \
+  };                                                                 \
+\
                                                                      \
   free(triangles);                                                   \
-  triangles = malloc(sizeof(tri_t)*8);                               \
+  triangles = calloc(sizeof(tri_t), 8);                               \
                                                                      \
   triangles[0] = (tri_t){0,1,8};                                     \
   triangles[1] = (tri_t){1,2,8};                                     \

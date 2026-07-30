@@ -1,22 +1,5 @@
 // clang-format off
-
-#include <SDL2/SDL.h>
-#include <math.h>
-#include <pthread.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <glad/glad.h>
-#include <logging.h>
-
-#include "editor.h"
 #include "render.h"
-#include "game.h"
-#include "physics.h"
-#include "matrix.h"
-#include "filehelper.h"
-
 
 
 shader_t init_shader(char *vert_path, char *frag_path){
@@ -124,8 +107,47 @@ shader_t init_shader(char *vert_path, char *frag_path){
 
 }
 
-mesh_t init_mesh(size_t nverts, vertex_t *verts, size_t ntris, tri_t *tris){
+void mesh_generate_normals(mesh_t *mesh){
+  u32 i;
 
+  for(i=0;i<mesh->nverts;i++){
+    mesh->vert[i].normal = (vec3){0,0,0};
+  }
+
+  for(i=0;i<(mesh->ntris);i++){
+
+    u32 ia = mesh->tri[i].a;
+    u32 ib = mesh->tri[i].b;
+    u32 ic = mesh->tri[i].c;
+
+    vec3 a = mesh->vert[ia].pos;
+    vec3 b = mesh->vert[ib].pos;
+    vec3 c = mesh->vert[ic].pos;
+
+    vec3 edge1 = vec3_sub(b,a);
+    vec3 edge2 = vec3_sub(c,a);
+
+    vec3 normal = vec3_cross(edge1,edge2);
+    normal = vec3_normalize(normal);
+
+    mesh->vert[ia].normal =
+      vec3_add(mesh->vert[ia].normal,normal);
+
+    mesh->vert[ib].normal =
+      vec3_add(mesh->vert[ib].normal,normal);
+
+    mesh->vert[ic].normal =
+      vec3_add(mesh->vert[ic].normal,normal);
+  }
+
+  for(i=0;i<mesh->nverts;i++){
+    mesh->vert[i].normal =
+      vec3_normalize(mesh->vert[i].normal);
+  }
+}
+
+
+mesh_t new_mesh(size_t nverts, vertex_t *verts, size_t ntris, tri_t *tris) {
   mesh_t mesh = {0};
 
   mesh.nverts = nverts;
@@ -133,27 +155,30 @@ mesh_t init_mesh(size_t nverts, vertex_t *verts, size_t ntris, tri_t *tris){
   mesh.ntris  = ntris;
   mesh.tri    = tris;
 
+  return mesh;
+}
 
+void load_mesh(mesh_t *mesh){
 
   /*** create vertex array object ***/
 
   // create empty vertex array object
-  glGenVertexArrays(1, &mesh.vao);
-  glBindVertexArray(mesh.vao);
+  glGenVertexArrays(1, &mesh->vao);
+  glBindVertexArray(mesh->vao);
 
 
 
   /*** create vertex buffer object ***/
 
   // create empty vertex buffer object
-  glGenBuffers(1, &mesh.vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+  glGenBuffers(1, &mesh->vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
 
   // define and set the vertex buffer
   glBufferData(
       GL_ARRAY_BUFFER,
-      sizeof(vertex_t) * nverts,
-      mesh.vert,
+      sizeof(vertex_t) * mesh->nverts,
+      mesh->vert,
       GL_STATIC_DRAW
   );
 
@@ -170,9 +195,22 @@ mesh_t init_mesh(size_t nverts, vertex_t *verts, size_t ntris, tri_t *tris){
   // enable this attribute with index 0
   glEnableVertexAttribArray(0);
 
-  // define vertex uv
+  // define vertex normal
   glVertexAttribPointer(
       1,                  // shader location
+      3,                  // three values: x, y, and z
+      GL_FLOAT,
+      GL_FALSE,
+      sizeof(vertex_t),
+      (void *)(offsetof(vertex_t, normal))
+  );
+
+  // enable this attribute with index 1
+  glEnableVertexAttribArray(1);
+
+  // define vertex uv
+  glVertexAttribPointer(
+      2,                  // shader location
       2,                  // two values: u and v
       GL_FLOAT,
       GL_FALSE,
@@ -180,70 +218,53 @@ mesh_t init_mesh(size_t nverts, vertex_t *verts, size_t ntris, tri_t *tris){
       (void *)(offsetof(vertex_t, uv))
   );
 
-  // enable this attribute with index 1
-  glEnableVertexAttribArray(1);
+  // enable this attribute with index 2
+  glEnableVertexAttribArray(2);
+
 
 
 
   /*** create index buffer object ***/
   
   // create index object
-  glGenBuffers(1, &mesh.ebo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
+  glGenBuffers(1, &mesh->ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo);
 
   // define and set index buffer
   glBufferData(
       GL_ELEMENT_ARRAY_BUFFER,
-      sizeof(tri_t)*mesh.ntris,
-      mesh.tri,
+      sizeof(tri_t)*mesh->ntris,
+      mesh->tri,
       GL_STATIC_DRAW
   );
 
-
-  return mesh;
 }
 
-void draw_object(render_object_t *object, camera_t *camera){
+void draw_object(render_object_t *object, camera_t *camera, sun_t *sun){
     
   update_model(object);
 
   glUseProgram(object->shader.program);
-  glBindVertexArray(object->mesh.vao);
+  glBindVertexArray(object->mesh->vao);
+
+  glUniformMatrix4fv(object->shader.projection, 1, GL_FALSE, camera->projection.i);
+
+  glUniformMatrix4fv(object->shader.model, 1, GL_FALSE, object->model.i);
+
+  glUniformMatrix4fv(object->shader.view, 1, GL_FALSE, camera->view.i);
+
+  glUniform3fv(glGetUniformLocation(object->shader.program, "light_ray_direction"), 1, &sun->direction.x);
 
 
 
-  glUniformMatrix4fv(
-    object->shader.projection,
-    1,
-    GL_FALSE,
-    camera->projection.i
-  ); 
+  glUniform1i(glGetUniformLocation(object->shader.program, "palette"), 0);
 
-  glUniformMatrix4fv(
-      object->shader.model,
-      1,
-      GL_FALSE,
-      object->model.i
-  ); 
-
-  glUniformMatrix4fv(
-    object->shader.view, 
-    1, 
-    GL_FALSE, 
-    camera->view.i
-  );
-
-  glDrawElements(
-      GL_TRIANGLES,
-      object->mesh.ntris * 3, //mul by 3 for # of idx per tri
-      GL_UNSIGNED_INT,
-      0
-  );
+  //mul by 3 for # of idx per tri
+  glDrawElements(GL_TRIANGLES, object->mesh->ntris * 3, GL_UNSIGNED_INT, 0);
 
 }
 
 void gl_error_check(void){
-    // check for errors
     GLenum gl_err;
     gl_err = glGetError();
     while(gl_err != GL_NO_ERROR){
@@ -274,12 +295,11 @@ void update_camera(camera_t *camera){
   view = mat4_mul(mat4_translate_camera(camera->pos), view);
   view = mat4_mul(mat4_rotate_y(camera->theta), view);
   view = mat4_mul(mat4_rotate_x(camera->phi), view);
+  view = mat4_mul(mat4_rotate_z(camera->psi), view);
   camera->view = view;
 }
 
-void hsv_to_rgb(float h, float s, float v,
-                u8 *r, u8 *g, u8 *b)
-{
+void hsv_to_rgb(float h, float s, float v, u8 *r, u8 *g, u8 *b){
     float c = v * s;
     float x = c * (1.0f - fabsf(fmodf(h / 60.0f, 2.0f) - 1.0f));
     float m = v - c;
@@ -343,20 +363,59 @@ void create_palette(rgba_t *pixels){
 
 
 
+typedef struct{
+  Uint32 start_time;
+  float angle;
+  int visible;
+}sun_cycle_t;
+
+void update_sun_cycle(sun_cycle_t *sun){
+
+  Uint32 now = SDL_GetTicks();
+
+  float elapsed = (now - sun->start_time) / 250.0f;
+
+  if(sun->visible){
+
+    // 30 seconds = 180 degrees
+    sun->angle = (elapsed / 30.0f) * 270.0f;
+
+    if(elapsed >= 30.0f){
+      sun->start_time = now;
+      sun->visible = 0;
+      sun->angle = 270.0f;
+    }
+
+  }else{
+
+    // hidden for 30 seconds
+    if(elapsed >= 30.0f){
+      sun->start_time = now;
+      sun->visible = 1;
+      sun->angle = 0.0f;
+    }
+
+  }
+}
 
 
 
+void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
+
+  if(!sun_c->visible){
+    sun->direction = vec3_fill(0);
+    return;
+  }
 
 
+  float radians = sun_c->angle * (M_PI / 180.0f);
 
-
-
-
-
-
-
-
-
+  sun->direction = vec3_normalize((vec3){
+    -cosf(radians),
+    -0.8f,
+     sinf(radians)
+  });
+}
 
 
 
@@ -391,76 +450,109 @@ void start_render(void) {
   GLint gl_success_code;
   hexcode_u color;
 
-  player.pos = (vec3){ 0 , 2 , 0 };
 
 
   vertex_t *vertices = NULL;
   tri_t *triangles = NULL;
 
+
   // objects defined in header file
-  demo_tri_
+  demo_tri_;
+  mesh_t demo_tri_mesh = new_mesh(3, vertices, 1, triangles);
+  mesh_generate_normals(&demo_tri_mesh);
+  load_mesh(&demo_tri_mesh);
+
   render_object_t demo_tri;
+  demo_tri.mesh = &demo_tri_mesh;
   demo_tri.shader = init_shader("./src/render/basic.vert",
                                 "./src/render/basic.frag");
-  demo_tri.mesh   = init_mesh(3, vertices, 1, triangles);
   demo_tri.pos    = (vec3){ 0 , 1 ,-10};
   demo_tri.rot    = (vec3){ 0 , 0 , 0 };
   demo_tri.scale  = (vec3){ 1 , 1 , 1 };
   demo_tri.remodel  = 1;
 
+
   render_object_t demo_tri2;
+  demo_tri2.mesh = &demo_tri_mesh;
   demo_tri2.shader = init_shader("./src/render/basic.vert",
                                 "./src/render/basic.frag");
-  demo_tri2.mesh   = init_mesh(3, vertices, 1, triangles);
   demo_tri2.pos    = (vec3){ 5 , 3 ,-8};
   demo_tri2.rot    = (vec3){ 1.0f , 1.0f , 1.0f };
   demo_tri2.scale  = (vec3){ 1 , 1 , 1 };
   demo_tri2.remodel  = 1;
 
+
+
   ground_
+  mesh_t ground_mesh = new_mesh(4, vertices, 2, triangles);
+  mesh_generate_normals(&ground_mesh);
+  load_mesh(&ground_mesh);
+
+  render_object_t ground;
+  ground.mesh = &ground_mesh;
+  ground.shader = init_shader("./src/render/basic.vert",
+                              "./src/render/basic.frag");
+  ground.pos = (vec3){0,0,0};
+  ground.rot = (vec3){0,0,0};
+  ground.scale = (vec3){1,1,1};
+  ground.remodel = 1;
+
+
 
   tower_
+  mesh_t tower_mesh = new_mesh(32, vertices, 48, triangles);
+  mesh_generate_normals(&tower_mesh);
+  load_mesh(&tower_mesh);
+
   render_object_t tower;
+  tower.mesh = &tower_mesh;
   tower.shader = init_shader("./src/render/basic.vert",
                               "./src/render/basic.frag");
-  tower.mesh = init_mesh(32, vertices, 48, triangles);
   tower.pos = (vec3){-20,0,-20};
   tower.rot    = (vec3){ 0 , 0 , 0 };
   tower.scale  = (vec3){ 1 , 1 , 1 };
   tower.remodel = 1;
-  
+
+
+
   render_object_t tower2;
+  tower2.mesh = &tower_mesh;
   tower2.shader = init_shader("./src/render/basic.vert",
                               "./src/render/basic.frag");
-  tower2.mesh = init_mesh(32, vertices, 48, triangles);
   tower2.pos = (vec3){20,0,-20};
   tower2.rot    = (vec3){ 0 , 0 , 0 };
-  tower2.scale  = (vec3){ .5 , .5 , .5 };
+  tower2.scale  = (vec3){ .5f , .5f , .5f };
   tower2.remodel = 1;
 
 
-  roof_
 
-  render_object_t roof;                             
-  roof.shader = init_shader("./src/render/basic.vert", 
-                             "./src/render/basic.frag");  
-  roof.mesh = init_mesh(9, vertices, 8, triangles); 
+  roof_
+  mesh_t roof_mesh = new_mesh(9, vertices, 8, triangles);
+  mesh_generate_normals(&roof_mesh);
+  load_mesh(&roof_mesh);
+
+
+  render_object_t roof;
+  roof.mesh = &roof_mesh;
+  roof.shader = init_shader("./src/render/basic.vert",
+                             "./src/render/basic.frag");
   roof.pos = (vec3){-20,15,-20};
   roof.rot    = (vec3){ 0 , 0 , 0 };
   roof.scale  = (vec3){ 1 , 1 , 1 };
   roof.remodel = 1;
 
-  render_object_t roof2;                             
-  roof2.shader = init_shader("./src/render/basic.vert", 
-                             "./src/render/basic.frag");  
-  roof2.mesh    = init_mesh(9, vertices, 8, triangles); 
+  render_object_t roof2;
+  roof2.mesh = &roof_mesh;
+  roof2.shader = init_shader("./src/render/basic.vert",
+                             "./src/render/basic.frag");
   roof2.pos     = (vec3){20,7.5f,-20};
   roof2.rot    = (vec3){ 0 , 0 , 0 };
-  roof2.scale  = (vec3){ .5 , .5 , .5 };
+  roof2.scale  = (vec3){ .5f , .5f , .5f };
   roof2.remodel = 1;
 
+
   
-  camera.projection = mat4_perspective(
+  camera_glob->projection = mat4_perspective(
       70.0f,        // field of view
       (float)gui.window.dim.w/(float)gui.window.dim.h, // aspect ratio
       0.1f,         // near plane
@@ -494,7 +586,30 @@ void start_render(void) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, texture);
+
+
+
+
   free(pixels);
+
+
+  sun_t sun = {
+    .direction = {1.0f, 0.0f, 0.0f},
+    .color = {1.0f, 0.95f, 0.8f},
+    .intensity = 1.0f
+  };
+
+
+
+  sun_cycle_t sun_cycle = {
+    .start_time = SDL_GetTicks(),
+    .angle = 0.0f,
+    .visible = 1
+  };
+
+
 
   bool setting = ! modes.WIREFRAME;
   while(modes.RUNNING){
@@ -510,22 +625,30 @@ void start_render(void) {
       setting =  modes.WIREFRAME;
     }
 
+    if (get_dim(gui.sdl2.window, &gui.window)) {
+      glViewport(0, 0, gui.window.dim.w, gui.window.dim.h);
+      float aspect = (float)gui.window.dim.w / (float)gui.window.dim.h;
+      camera_glob->projection = mat4_perspective(70.0f, aspect, 0.1f, 1000.0f);
+    }
+
 
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    update_camera(&camera);
+    update_camera(camera_glob);
+    update_sun_cycle(&sun_cycle);
+    update_sun_direction(&sun_cycle, &sun);
 
     
-    draw_object(&demo_tri, &camera);
-    draw_object(&demo_tri2, &camera);
+    draw_object(&demo_tri, camera_glob, &sun);
+    draw_object(&demo_tri2, camera_glob, &sun);
 
-    draw_object(&ground, &camera);
-    draw_object(&tower, &camera);
-    draw_object(&roof, &camera);
+    draw_object(&ground, camera_glob, &sun);
+    draw_object(&tower, camera_glob, &sun);
+    draw_object(&roof, camera_glob, &sun);
 
-    draw_object(&tower2, &camera);
-    draw_object(&roof2, &camera);
+    draw_object(&tower2, camera_glob, &sun);
+    draw_object(&roof2, camera_glob, &sun);
 
     gl_error_check();
 

@@ -29,7 +29,7 @@ def {
     vec3_t net_force;
 
 }actor_t;
-extern actor_t player;
+extern actor_t player_glob;
 extern u8 flying;
 
 def {

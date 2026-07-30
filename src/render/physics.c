@@ -29,8 +29,8 @@
 
 
 
-actor_t player;
-camera_t camera;
+actor_t *player_glob;
+camera_t *camera_glob;
 
 float phys_clamp(float value, float min, float max){
   if(value>max) return max;
@@ -42,44 +42,44 @@ void flying_movement_physics(actor_t *actor, float dt){
     float s = sinf(actor->theta);
 
     vec3 desired_world;
-    desired_world.x = player.desired_velocity.x * c +
-                      player.desired_velocity.z * s;
-    desired_world.y = player.desired_velocity.y;
-    desired_world.z = -player.desired_velocity.x * s +
-                       player.desired_velocity.z * c;
+    desired_world.x = actor->desired_velocity.x * c +
+                      actor->desired_velocity.z * s;
+    desired_world.y = actor->desired_velocity.y;
+    desired_world.z = -actor->desired_velocity.x * s +
+                       actor->desired_velocity.z * c;
 
 
 
-    player.applied_force.x = player.max_force *
-              (desired_world.x - player.vel.x);
-    player.applied_force.y = player.max_force *
-              (desired_world.y - player.vel.y);
-    player.applied_force.z = player.max_force *
-              (desired_world.z - player.vel.z);
+    actor->applied_force.x = actor->max_force *
+              (desired_world.x - actor->vel.x);
+    actor->applied_force.y = actor->max_force *
+              (desired_world.y - actor->vel.y);
+    actor->applied_force.z = actor->max_force *
+              (desired_world.z - actor->vel.z);
 
     float force_len = sqrtf(
-        player.applied_force.x * player.applied_force.x +
-        player.applied_force.y * player.applied_force.y +
-        player.applied_force.z * player.applied_force.z
+        actor->applied_force.x * actor->applied_force.x +
+        actor->applied_force.y * actor->applied_force.y +
+        actor->applied_force.z * actor->applied_force.z
     );
 
-    if(force_len > player.max_force){
-        float scale = player.max_force / force_len;
-        player.applied_force.x *= scale;
-        player.applied_force.y *= scale;
-        player.applied_force.z *= scale;
+    if(force_len > actor->max_force){
+        float scale = actor->max_force / force_len;
+        actor->applied_force.x *= scale;
+        actor->applied_force.y *= scale;
+        actor->applied_force.z *= scale;
     }
 
     float normal_force = 0.0f;
     float friction_force;
 
-    normal_force = player.mass * cheat_grav;
+    normal_force = actor->mass * cheat_grav;
     friction_force = 3 * friction_coeff * normal_force;
 
     vec3 net_force;
-    net_force.x = player.applied_force.x;
-    net_force.y = player.applied_force.y;
-    net_force.z = player.applied_force.z;
+    net_force.x = actor->applied_force.x;
+    net_force.y = actor->applied_force.y;
+    net_force.z = actor->applied_force.z;
     float d3_force = sqrtf(
         net_force.x * net_force.x +
         net_force.y * net_force.y +
@@ -92,62 +92,62 @@ void flying_movement_physics(actor_t *actor, float dt){
       net_force.z *= scale;
     }
 
-    player.acc.x = net_force.x / player.mass;
-    player.acc.y = net_force.y / player.mass;
-    player.acc.z = net_force.z / player.mass;
+    actor->acc.x = net_force.x / actor->mass;
+    actor->acc.y = net_force.y / actor->mass;
+    actor->acc.z = net_force.z / actor->mass;
 
-    player.vel.x += player.acc.x * dt;
-    player.vel.y += player.acc.y * dt;
-    player.vel.z += player.acc.z * dt;
+    actor->vel.x += actor->acc.x * dt;
+    actor->vel.y += actor->acc.y * dt;
+    actor->vel.z += actor->acc.z * dt;
 
-    player.pos.x += player.vel.x * dt;
-    player.pos.y += player.vel.y * dt;
-    player.pos.z += player.vel.z * dt;
+    actor->pos.x += actor->vel.x * dt;
+    actor->pos.y += actor->vel.y * dt;
+    actor->pos.z += actor->vel.z * dt;
 
-    player.net_force = net_force;
+    actor->net_force = net_force;
 }
 void movement_physics(actor_t *actor, float dt){
     float c = cosf(actor->theta);
     float s = sinf(actor->theta);
 
     vec3 desired_world;
-    desired_world.x = player.desired_velocity.x * c +
-                      player.desired_velocity.z * s;
-    desired_world.z = -player.desired_velocity.x * s +
-                       player.desired_velocity.z * c;
-    desired_world.y = player.desired_velocity.y;
+    desired_world.x = actor->desired_velocity.x * c +
+                      actor->desired_velocity.z * s;
+    desired_world.z = -actor->desired_velocity.x * s +
+                       actor->desired_velocity.z * c;
+    desired_world.y = actor->desired_velocity.y;
 
 
-    player.applied_force.x = player.max_force *
-              (desired_world.x - player.vel.x);
-    player.applied_force.z = player.max_force *
-              (desired_world.z - player.vel.z);
+    actor->applied_force.x = actor->max_force *
+              (desired_world.x - actor->vel.x);
+    actor->applied_force.z = actor->max_force *
+              (desired_world.z - actor->vel.z);
 
     float force_len = sqrtf(
-        player.applied_force.x * player.applied_force.x +
-        player.applied_force.z * player.applied_force.z
+        actor->applied_force.x * actor->applied_force.x +
+        actor->applied_force.z * actor->applied_force.z
     );
 
-    if(force_len > player.max_force){
-        float scale = player.max_force / force_len;
-        player.applied_force.x *= scale;
-        player.applied_force.z *= scale;
+    if(force_len > actor->max_force){
+        float scale = actor->max_force / force_len;
+        actor->applied_force.x *= scale;
+        actor->applied_force.z *= scale;
     }
 
-    float gravity_force = player.mass * -cheat_grav;
+    float gravity_force = actor->mass * -cheat_grav;
     float normal_force = 0.0f;
     float friction_force;
 
 
-    player.applied_force.y = 0;
-    if(player.pos.y <= 2.0f){
+    actor->applied_force.y = 0;
+    if(actor->pos.y <= 2.0f){
 
-        if(player.pos.y < 2.0f){
-          player.pos.y = 2.0f;
-          if(player.vel.y < 0) player.vel.y = 0;
-          if(player.acc.y > 0) player.acc.y = 0;
+        if(actor->pos.y < 2.0f){
+          actor->pos.y = 2.0f;
+          if(actor->vel.y < 0) actor->vel.y = 0;
+          if(actor->acc.y > 0) actor->acc.y = 0;
         }
-        normal_force = player.mass * cheat_grav;
+        normal_force = actor->mass * cheat_grav;
     }
     friction_force = friction_coeff * normal_force;
 
@@ -156,8 +156,8 @@ void movement_physics(actor_t *actor, float dt){
     vec3 net_force;
 
     net_force.y = gravity_force + normal_force;
-    net_force.x = player.applied_force.x;
-    net_force.z = player.applied_force.z;
+    net_force.x = actor->applied_force.x;
+    net_force.z = actor->applied_force.z;
 
     float horizontal_force = sqrtf(
         net_force.x * net_force.x +
@@ -170,28 +170,28 @@ void movement_physics(actor_t *actor, float dt){
         net_force.z *= scale;
     }
 
-    player.acc.x = net_force.x / player.mass;
-    player.acc.y = net_force.y / player.mass;
-    player.acc.z = net_force.z / player.mass;
+    actor->acc.x = net_force.x / actor->mass;
+    actor->acc.y = net_force.y / actor->mass;
+    actor->acc.z = net_force.z / actor->mass;
 
-    player.vel.x += player.acc.x * dt;
-    player.vel.y += player.acc.y * dt;
-    player.vel.z += player.acc.z * dt;
+    actor->vel.x += actor->acc.x * dt;
+    actor->vel.y += actor->acc.y * dt;
+    actor->vel.z += actor->acc.z * dt;
 
-    player.pos.x += player.vel.x * dt;
-    player.pos.y += player.vel.y * dt;
-    player.pos.z += player.vel.z * dt;
+    actor->pos.x += actor->vel.x * dt;
+    actor->pos.y += actor->vel.y * dt;
+    actor->pos.z += actor->vel.z * dt;
 
-    player.net_force = net_force;
+    actor->net_force = net_force;
 }
 
 #define jump_interval 200
 #define walkspeed 6
 #define strafespeed (walkspeed/1.3f)
 u8 flying;
-void multipress(inputs_t key){
-  player.desired_velocity.x = player.desired_velocity.y = player.desired_velocity.z = 0;
-  if(!flying) player.applied_force.y = 0;
+void multipress(actor_t *player, inputs_t key){
+  player->desired_velocity.x = player->desired_velocity.y = player->desired_velocity.z = 0;
+  if(!flying) player->applied_force.y = 0;
   float input_x = 0, input_y = 0, input_z = 0;
   static u64 last_jump;
 
@@ -224,13 +224,13 @@ void multipress(inputs_t key){
     if(input_y>0 && now - last_jump < jump_interval && now - last_jump > jump_interval/3){
       flying = !flying;
       if(flying){
-        player.vel.x = 0;
-        player.vel.y = 0;
-        player.vel.z = 0;
+        player->vel.x = 0;
+        player->vel.y = 0;
+        player->vel.z = 0;
       }
     }
-    if(!flying && player.pos.y<=2){
-      player.vel.y = walkspeed;
+    if(!flying && player->pos.y<=2){
+      player->vel.y = walkspeed;
     }
     last_jump = now;
   }
@@ -254,12 +254,12 @@ void multipress(inputs_t key){
 
 
   if(flying){
-    player.desired_velocity.x = input_x * walkspeed * 2;
-    player.desired_velocity.y = input_y * walkspeed * 2;
-    player.desired_velocity.z = input_z * walkspeed * 2;
+    player->desired_velocity.x = input_x * walkspeed * 2;
+    player->desired_velocity.y = input_y * walkspeed * 2;
+    player->desired_velocity.z = input_z * walkspeed * 2;
   }else{
-    player.desired_velocity.x = input_x * strafespeed;
-    player.desired_velocity.z = input_z *  (input_z>0.0f ? walkspeed : strafespeed);
+    player->desired_velocity.x = input_x * strafespeed;
+    player->desired_velocity.z = input_z *  (input_z>0.0f ? walkspeed : strafespeed);
   }
 }
 
@@ -271,6 +271,11 @@ void *editor_event_handler(void *args){
 
   u64 current_movement;
   float dt;
+
+  actor_t player = {0};
+  player_glob = &player;
+  camera_t camera = {0};
+  camera_glob = &camera;
 
   player.mass = 80;
   player.max_force = 2745;
@@ -314,6 +319,14 @@ void *editor_event_handler(void *args){
             if(camera.phi>1.55) camera.phi = 1.55f;
             else if(camera.phi<-1.55) camera.phi = -1.55f;
           }
+        $}case(SDL_MOUSEWHEEL):{
+          if(mousemode){
+
+            camera.psi -= (float)event.wheel.y * 0.1f;
+
+            if(camera.psi > 1.55) camera.psi  = 1.55f;
+            else if(camera.psi < -1.55) camera.psi = -1.55f;
+          }
         $}case(SDL_MOUSEBUTTONUP):{
           if(mousemode) SDL_SetRelativeMouseMode(SDL_FALSE);
           else SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -333,15 +346,16 @@ void *editor_event_handler(void *args){
       }
 
     }
-    multipress(inputs);
+    multipress(&player, inputs);
     player.theta = camera.theta;
-    player.phi = camera.phi;    
+    player.phi = camera.phi;
     if(flying){
       flying_movement_physics(&player, dt);
     }else{
       movement_physics(&player, dt);
     }
     camera.pos = player.pos;
+
 
     last_movement = current_movement;
     usleep(event_rate);

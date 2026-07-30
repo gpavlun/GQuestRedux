@@ -5,9 +5,12 @@
 #ifndef GQUESTREDUX_PHYSICS_H
 #define GQUESTREDUX_PHYSICS_H
 
-#include "editor.h"
 #include "game.h"
+
+#include "typing.h"
+#include "vector.h"
 #include "matrix.h"
+
 
 def {
 
@@ -26,17 +29,16 @@ def {
     vec3 net_force;
 
 }actor_t;
-extern actor_t player;
+extern actor_t *player_glob;
   
 def {
-    float theta;
-    float phi;
+    float psi, theta, phi;
 
     vec3 pos;
     mat4 view;
     mat4 projection;  
 }camera_t;
-extern camera_t camera;
+extern camera_t *camera_glob;
 
 extern u8 flying;
 

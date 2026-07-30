@@ -1,570 +1,77 @@
-ai context summary
-
-
-
-
 Engine Project Summary
 Project Overview
 
-This project began as a terminal pseudo-isometric tile game. The original architecture was built around a grid because the terminal interface naturally encouraged that representation.
+This project is a custom 3D game engine written in C with SDL2 and OpenGL. Its primary goal is to understand and implement the fundamental systems behind modern game engines rather than relying on existing engine frameworks.
 
-After moving toward real graphics, the engine has evolved away from grid-based thinking into a true 3D engine.
+The engine began as a terminal-based pseudo-isometric tile project before evolving into a software renderer. After manually implementing the graphics pipeline—including perspective projection, clipping, wireframe rendering, and triangle rasterization—the renderer transitioned to an OpenGL backend. The focus has since shifted from implementing graphics algorithms to designing scalable engine architecture.
 
-The engine is written in C using SDL2 for window creation and basic rendering. The goal is to understand and implement core engine systems from first principles rather than immediately relying on existing graphics engines.
+The long-term goal is to support an open-world survival game inspired by the environmental scale of Skyrim, the player freedom of Minecraft, and the systemic gameplay of Valheim. Rather than focusing solely on rendering, the engine is being built around coherent world simulation, including physics, terrain representation, streaming, object management, and gameplay systems.
 
-The long-term goal is a game combining elements of:
+Then I'd have sections like:
 
-Skyrim-style natural environments
-Minecraft-style world freedom
-Valheim-style survival and simulation systems
+    Engine Philosophy
+    Mathematics Library
+    Rendering Architecture
+    Scene System
+    Physics
+    Camera
+    Object Transforms
+    Mesh & Material System
+    Terrain Philosophy
+    Chunk System
+    Input
+    Code Style
+    Current Status
+    Next Steps
 
-The focus is not only rendering, but coherent world systems:
+Instead of dedicating half a page to perspective projection equations, I'd simply note that the engine has a complete matrix library and uses a conventional model → view → projection pipeline. Those details are now implementation details rather than the project's defining achievements.
 
-physics
-terrain representation
-object systems
-world streaming
-simulation
-Engine Philosophy
+The renderer section would also change significantly. Instead of:
 
-The project follows these principles:
+    Wireframe rendering...
 
-Understand the math before abstracting it.
-Build systems incrementally.
-Avoid complexity until it is justified.
-Prefer physically motivated systems over arbitrary rules.
-Keep representations meaningful rather than optimizing prematurely.
+    Triangle rasterization...
 
-Examples:
+    Near-plane clipping...
 
-Instead of directly setting movement:
+it would become something like:
+Rendering Architecture
 
-input → velocity
+Rendering is now performed through OpenGL using a scene-oriented architecture. The original software renderer served as a learning exercise and has since been replaced with a GPU-accelerated pipeline.
 
+Current rendering features include:
 
-use:
+    OpenGL rendering backend
+    Matrix-based transformation pipeline
+    Independent object transforms
+    Scene generation framework
+    Basic mesh rendering
+    Palette-based texture system
+    Camera-independent rendering
 
-input
- |
- v
-force
- |
- v
-acceleration
- |
- v
-velocity
- |
- v
-position
+Objects exist in local space and are transformed using model matrices before being viewed through an independent camera and projected for rendering. This architecture provides a clean separation between scene management, object transforms, and rendering.
 
+The current texture system uses a palette texture functioning as a large RGB gradient. Meshes reference colors through UV coordinates, allowing uniform coloring while using the standard texture sampling pipeline. This approach minimizes texture memory while remaining compatible with future material and texturing systems.
 
-Instead of treating the world as a grid:
+I'd also update the "Current Status" section so it reflects today's engine rather than yesterday's:
 
-tiles → graphics
+Current Features
 
+    ✅ Matrix mathematics library
+    ✅ OpenGL renderer
+    ✅ Scene generation framework
+    ✅ Independent camera
+    ✅ Object position, rotation, and scale
+    ✅ Physics-based player movement
+    ✅ Palette-based texture system
+    ✅ Indexed meshes
+    ✅ Continuous world coordinates
 
-use:
+Planned Features
 
-world representation → geometry → rendering
-
-Physics System
-
-The engine uses continuous 3D physics.
-
-The player currently has:
-
-position
-velocity
-acceleration
-applied forces
-mass
-maximum force
-
-Physics update:
-
-net force
-=
-player force
-+
-gravity
-+
-drag
-
-
-Using:
-
-F = ma
-
-velocity += acceleration * dt
-
-position += velocity * dt
-
-
-Drag:
-
-Fdrag = -k * velocity
-
-
-The coefficient is tuned for gameplay rather than strict physical accuracy.
-
-Important realization:
-
-Removing movement input does not naturally feel like stopping because humans apply braking forces. A future character controller may generate counter-force when the desired velocity reaches zero.
-
-Coordinate System
-
-The engine uses:
-
-X = left/right
-Y = up/down
-Z = forward/back
-
-
-This follows common 3D graphics conventions.
-
-Movement is currently world-relative.
-
-Future improvement:
-
-Convert movement forces into camera-relative movement.
-
-Terrain System
-Design Philosophy
-
-Terrain is not intended to be purely procedural.
-
-The intended workflow is:
-
-hand-authored terrain
-generated terrain where useful
-human refinement afterward
-
-The goal is not to create infinite random worlds. The goal is to create large, detailed worlds with efficient representation.
-
-Chunk System
-
-The term "chunk" is retained from the original voxel/grid-based design, but chunks are no longer voxel containers.
-
-A chunk is a world-management and streaming unit.
-
-A chunk may contain:
-
-terrain representation
-objects
-entities
-simulation state
-loading state
-
-Chunks exist to control:
-
-memory usage
-streaming
-simulation updates
-rendering decisions
-Terrain Representation
-
-The terrain system is based on layered surface data rather than a voxel volume.
-
-A traditional heightmap stores:
-
-(x,z) → y
-
-
-The engine instead allows:
-
-(x,z) → multiple surface points
-
-
-Each surface point contains information such as:
-
-position
-normal
-material data
-
-Multiple surfaces at the same horizontal location allow:
-
-caves
-cliffs
-overhangs
-tunnels
-multiple vertical layers
-Surface Detection
-
-Surface normals determine whether geometry represents exposed terrain.
-
-Conceptually:
-
-A surface facing empty space is a visible boundary.
-
-A surface facing inward indicates enclosed terrain.
-
-This allows the terrain system to infer inside/outside relationships without storing every voxel.
-
-The terrain representation is therefore closer to a layered surface field than a voxel grid.
-
-Terrain Complexity
-
-Chunks do not require the same amount of detail everywhere.
-
-Simple areas can use a lightweight representation:
-
-single surface layer
-simple height information
-
-
-Complex areas can store additional surface layers:
-
-multiple surfaces
-caves
-cliffs
-overhangs
-
-
-Example:
-
-A mountain surface far above an underground cave does not need to actively process the cave representation when the player is nowhere near it.
-
-Terrain detail is loaded based on relevance.
-
-Rendering System
-
-The renderer is manually implemented using SDL2.
-
-The engine currently supports:
-
-world coordinates
-camera transforms
-perspective projection
-indexed meshes
-wireframe rendering
-triangle rasterization
-near-plane clipping
-Rendering Pipeline
-
-Current target pipeline:
-
-Mesh
-
- |
-
- v
-
-Object Transform
-
- |
-
- v
-
-World Coordinates
-
- |
-
- v
-
-Camera Transform
-
- |
-
- v
-
-Clipping
-
- |
-
- v
-
-Projection
-
- |
-
- v
-
-Rasterization
-
- |
-
- v
-
-Pixels
-
-Perspective Projection
-
-Relative position:
-
-object position - camera position
-
-
-Projection:
-
-screen_x = camera_x / camera_z
-screen_y = camera_y / camera_z
-
-
-Pixel conversion:
-
-pixel_x = center_x + screen_x * focal
-pixel_y = center_y - screen_y * focal
-
-
-Objects behind the camera are clipped or discarded.
-
-Camera Rotation
-
-The camera supports yaw and pitch.
-
-Yaw:
-
-x' = x cos(theta) - z sin(theta)
-
-z' = x sin(theta) + z cos(theta)
-
-
-Pitch:
-
-y' = y cos(phi) - z sin(phi)
-
-z' = y sin(phi) + z cos(phi)
-
-
-The camera now operates in true 3D space.
-
-Mesh System
-
-The renderer uses indexed meshes.
-
-A mesh contains:
-
-vertices
-edges
-triangles
-
-Vertices are stored once.
-
-Triangles reference vertex indices.
-
-Example:
-
-vertices:
-
-0
-1
-2
-3
-
-
-triangle:
-
-0,1,2
-
-Wireframe Rendering
-
-The engine can:
-
-Transform mesh vertices.
-Apply camera rotation.
-Project vertices.
-Draw visible edges.
-
-This was the point where the project became a true 3D renderer.
-
-Triangle Rasterization
-
-Triangle rendering works by:
-
-triangle vertices
-
-      |
-      v
-
-screen bounding box
-
-      |
-      v
-
-pixel testing
-
-      |
-      v
-
-edge function determines inside/outside
-
-
-Edge function:
-
-(x-a.x)*(b.y-a.y)
--
-(y-a.y)*(b.x-a.x)
-
-
-Important debugging discovery:
-
-Screen-space coordinates must use signed types.
-
-Unsigned coordinates caused:
-
--10
-
-
-to become:
-
-4294967286
-
-Near Plane Clipping
-
-The renderer now performs triangle clipping.
-
-Pipeline:
-
-triangle
-
-      |
-      v
-
-classify vertices
-
-      |
-      v
-
-clip against near plane
-
-      |
-      v
-
-generate valid triangles
-
-      |
-      v
-
-render
-
-
-This prevents triangles crossing the camera plane from rendering incorrectly.
-
-Input System
-
-Input uses SDL events.
-
-Current features:
-
-keyboard movement
-mouse camera control
-relative mouse mode
-escape handling
-
-Mouse camera:
-
-theta += mouse_x * sensitivity
-
-phi -= mouse_y * sensitivity
-
-
-Pitch is clamped.
-
-Current Renderer Status
-
-Working:
-
-✅ Continuous 3D coordinates
-✅ Physics-based movement
-✅ Camera-relative rendering
-✅ Perspective projection
-✅ Camera yaw/pitch
-✅ Indexed meshes
-✅ Wireframe rendering
-✅ Triangle rasterization
-✅ Near-plane clipping
-
-Current limitations:
-
-no depth buffer
-no lighting
-object transforms need cleanup
-terrain system not implemented
-renderer architecture still evolving
-Code Style Preferences
-
-When generating or modifying C code:
-
-Formatting
-2-space indentation.
-Braces attach to statements.
-if(x){
-}
-
-No spaces inside conditions:
-if(x>0)
-
-Normal spacing outside conditions:
-int x = 0;
-
-Short Conditions
-
-Short statements stay on one line:
-
-if(x>0) x = 0;
-
-
-Longer blocks use braces.
-
-Switch Formatting
-
-Switches use this style:
-
-switch(value){
-  case(TEST):{
-
-    code;
-
-  $}case(OTHER):{
-    code;
-  $}default:{$}
-}
-
-
-The $ macro is intentional and should not be replaced.
-
-Nested switches follow the same indentation.
-
-Next Steps
-
-Recommended order:
-
-Clean renderer architecture.
-separate projection from drawing
-separate mesh data from rendering
-Add object transforms.
-local coordinates
-world position
-rotation
-Add depth buffering.
-proper visibility
-overlapping objects
-Expand clipping.
-robust camera boundary handling
-Add lighting.
-Prototype terrain representation.
-Build chunk streaming system.
-Overall State
-
-The project has evolved from a terminal grid experiment into the foundation of a real 3D engine.
-
-Current achievements:
-
-continuous physics
-real camera space
-perspective projection
-mesh rendering
-triangle processing
-clipping groundwork
-
-The remaining problems are engine-scale problems:
-
-visibility
-transforms
-terrain representation
-streaming
-lighting
-simulation scale
-
-The project is no longer about making 3D math work. It is about designing the systems that make a 3D world practical.
+    Terrain representation
+    Chunk streaming
+    Lighting
+    Material system
+    World streaming
+    Simulation systems

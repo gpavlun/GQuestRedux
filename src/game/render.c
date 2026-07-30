@@ -170,17 +170,17 @@ void draw_mesh_triangle(gui_engine_t *gui, mesh_t mesh){
   int i, j, y, x;
 
   for(i=0; i<mesh.nverts; i++){
-    relative.x = mesh.verts[i].x - player.pos.x;
-    relative.y = mesh.verts[i].y - player.pos.y;
-    relative.z = mesh.verts[i].z - player.pos.z;
+    relative.x = mesh.verts[i].x - player_glob.pos.x;
+    relative.y = mesh.verts[i].y - player_glob.pos.y;
+    relative.z = mesh.verts[i].z - player_glob.pos.z;
 
-    rotated.x = relative.x * cosf(player.theta) - relative.z * sinf(player.theta);
+    rotated.x = relative.x * cosf(player_glob.theta) - relative.z * sinf(player_glob.theta);
     rotated.y = relative.y;
-    rotated.z = relative.x * sinf(player.theta) + relative.z * cosf(player.theta);
+    rotated.z = relative.x * sinf(player_glob.theta) + relative.z * cosf(player_glob.theta);
 
     pitched.x = rotated.x;
-    pitched.y = rotated.y * cosf(player.phi) - rotated.z * sinf(player.phi);
-    pitched.z = rotated.y * sinf(player.phi) + rotated.z * cosf(player.phi);
+    pitched.y = rotated.y * cosf(player_glob.phi) - rotated.z * sinf(player_glob.phi);
+    pitched.z = rotated.y * sinf(player_glob.phi) + rotated.z * cosf(player_glob.phi);
 
     trans_vert[i].x = pitched.x;
     trans_vert[i].y = pitched.y;
@@ -403,9 +403,9 @@ void start_render(void) {
   render_frame_t render;
 
 
-  player.pos.x = 0;
-  player.pos.y = 2;
-  player.pos.z = 0;
+  player_glob.pos.x = 0;
+  player_glob.pos.y = 2;
+  player_glob.pos.z = 0;
 
   // mesh construction defined in header
   cubiod_

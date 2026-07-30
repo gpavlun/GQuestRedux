@@ -1,6 +1,12 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
+
+#include "typing.h"
+#include "vector.h"
 
 def {
   float i[16];
@@ -15,13 +21,7 @@ def {
   u8 visible;
 }vpoint_t;
 
-def {
-    float x, y, z;
-}vec3;
 
-def {
-    float x, y;
-}vec2;
 
 
 static inline float mat4_get(mat4 *m, int row, int col);
