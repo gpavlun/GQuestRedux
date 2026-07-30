@@ -5,8 +5,17 @@
 #ifndef GQUESTREDUX_PHYSICS_H
 #define GQUESTREDUX_PHYSICS_H
 
-#include "game.h"
+#include <SDL2/SDL.h>
+#include <SDL_events.h>
+#include <math.h>
+#include <pthread.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <unistd.h>
 
+#include <gio.h>
+
+#include "game.h"
 #include "typing.h"
 #include "vector.h"
 #include "matrix.h"

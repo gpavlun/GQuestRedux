@@ -1,18 +1,5 @@
-//
-// Created by berserker on 7/24/26.
-//
-
-#include <SDL2/SDL.h>
-#include <SDL_events.h>
-#include <math.h>
-#include <pthread.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <gio.h>
 #include "physics.h"
-
+#include "render.h"
 
 
 
@@ -106,7 +93,49 @@ void flying_movement_physics(actor_t *actor, float dt){
 
     actor->net_force = net_force;
 }
+
+float terrain_height(vec3 pos){
+  while(!glob_terrain);
+  
+  float local_x = pos.x - glob_terrain->object.pos.x;
+  float local_z = pos.z - glob_terrain->object.pos.z;
+  
+  float gx = local_x + chunk_quads_ * 0.5f;
+  float gz = local_z + chunk_quads_ * 0.5f;
+  
+  int x0 = floorf(gx);
+  int z0 = floorf(gz);
+
+  int x1 = x0 + 1;
+  int z1 = z0 + 1;
+  
+  if (x0 < 0 || x1 >= chunk_verts_ ||
+      z0 < 0 || z1 >= chunk_verts_) {
+      return 2.0f;
+  }
+
+  float tx = gx - x0;
+  float tz = gz - z0;
+
+  float h00 = glob_terrain->heightmap[z0 * chunk_verts_ + x0];
+  float h10 = glob_terrain->heightmap[z0 * chunk_verts_ + x1];
+
+  float h01 = glob_terrain->heightmap[z1 * chunk_verts_ + x0];
+  float h11 = glob_terrain->heightmap[z1 * chunk_verts_ + x1];
+  
+  float top = h00 + tx * (h10 - h00);
+
+  float bottom = h01 + tx * (h11 - h01);
+
+  float height = top + tz * (bottom - top);
+  return height;
+}
+
+
 void movement_physics(actor_t *actor, float dt){
+
+    float height = terrain_height(actor->pos);
+
     float c = cosf(actor->theta);
     float s = sinf(actor->theta);
 
@@ -140,10 +169,10 @@ void movement_physics(actor_t *actor, float dt){
 
 
     actor->applied_force.y = 0;
-    if(actor->pos.y <= 2.0f){
+    if(actor->pos.y <= (height + 2.0f)){
 
-        if(actor->pos.y < 2.0f){
-          actor->pos.y = 2.0f;
+        if(actor->pos.y < (height + 2.0f)){
+          actor->pos.y = (height + 2.0f);
           if(actor->vel.y < 0) actor->vel.y = 0;
           if(actor->acc.y > 0) actor->acc.y = 0;
         }
@@ -229,7 +258,8 @@ void multipress(actor_t *player, inputs_t key){
         player->vel.z = 0;
       }
     }
-    if(!flying && player->pos.y<=2){
+    float height = terrain_height(player_glob->pos);
+    if(!flying && player->pos.y<=(height + 2.0f)){
       player->vel.y = walkspeed;
     }
     last_jump = now;
@@ -259,7 +289,7 @@ void multipress(actor_t *player, inputs_t key){
     player->desired_velocity.z = input_z * walkspeed * 2;
   }else{
     player->desired_velocity.x = input_x * strafespeed;
-    player->desired_velocity.z = input_z *  (input_z>0.0f ? walkspeed : strafespeed);
+    player->desired_velocity.z = input_z *  (input_z<0.0f ? walkspeed : strafespeed);
   }
 }
 

@@ -2,7 +2,7 @@
 #include "render.h"
 
 
-
+logical_chunk_t *glob_terrain;
 
 shader_t init_shader(char *vert_path, char *frag_path){
 
@@ -429,8 +429,7 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
 
 
 
-  #define chunk_quads_ 64
-  #define chunk_verts_ (chunk_quads_ + 1)
+
   logical_chunk_t generate_terrain(){
     i32 r, c, t;
     
@@ -446,7 +445,6 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
 
     }
     }
-
 
     vertex_t *vertices = NULL;
     tri_t *triangles = NULL;
@@ -493,8 +491,6 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
     logical_chunk.object.mesh = calloc(1, sizeof(mesh_t));
     *logical_chunk.object.mesh = new_mesh(chunk_verts_*chunk_verts_, vertices,
                           chunk_quads_*chunk_quads_*2, triangles);
-     
-    sprintf(glob_error, "height[5][5] = %f",logical_chunk.heightmap[5*chunk_verts_ +5]);
 
     return logical_chunk;
   }
@@ -541,6 +537,7 @@ void start_render(void) {
 
   //terrain gen:
   logical_chunk_t terrain = generate_terrain();
+  glob_terrain = &terrain;
   mesh_generate_normals(terrain.object.mesh);
   load_mesh(terrain.object.mesh);
   terrain.object.shader = init_shader("./src/render/basic.vert",
@@ -729,24 +726,28 @@ void start_render(void) {
       camera_glob->projection = mat4_perspective(70.0f, aspect, 0.1f, 1000.0f);
     }
 
+    update_lighting(&lighting, &sun);
+    if(modes.WIREFRAME){
+      lighting.ambient = 1.0f;
+    }
+    
 
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    update_lighting(&lighting, &sun);
+    
     
     draw_object(&terrain.object, camera_glob, &lighting);
     
-    // draw_object(&demo_tri, camera_glob, &lighting);
-    // draw_object(&demo_tri2, camera_glob, &lighting);
+     draw_object(&demo_tri, camera_glob, &lighting);
+     draw_object(&demo_tri2, camera_glob, &lighting);
 
-    // //draw_object(&ground, camera_glob, &lighting);
-    // draw_object(&tower, camera_glob, &lighting);
-    // draw_object(&roof, camera_glob, &lighting);
+     draw_object(&tower, camera_glob, &lighting);
+     draw_object(&roof, camera_glob, &lighting);
 
-    // draw_object(&tower2, camera_glob, &lighting);
-    // draw_object(&roof2, camera_glob, &lighting);
+     draw_object(&tower2, camera_glob, &lighting);
+     draw_object(&roof2, camera_glob, &lighting);
 
     gl_error_check();
 

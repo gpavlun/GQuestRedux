@@ -21,6 +21,9 @@
 #include "filehelper.h"
 #include "terminal_interface.h"
 
+  #define chunk_quads_ 64
+  #define chunk_verts_ (chunk_quads_ + 1)
+
 
 
 def {
@@ -94,6 +97,8 @@ def {
   float *heightmap;
   render_object_t object;
 } logical_chunk_t;
+extern logical_chunk_t *glob_terrain;
+
 
 def {
   Uint32 start_time;
