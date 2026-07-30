@@ -20,11 +20,6 @@
 #include "typing.h"
 #include "filehelper.h"
 
-def {
-  vec3 direction;
-  vec3 color;
-  float intensity;
-}sun_t;
 
 
 def {
@@ -94,10 +89,31 @@ def {
     vec3 scale;
 }render_object_t;
 
+def {
+  Uint32 start_time;
+  float angle;
+  int visible;
+}sun_cycle_t;
+
+def {
+  vec3 direction;
+  vec3 color;
+  float intensity;
+  sun_cycle_t cycle;
+}sun_t;
+
+def {
+  vec3 direction;
+  vec3 color;
+  float intensity;
+  float ambient;
+}lighting_t;
+
+
 void start_render(void);
 void gl_error_check(void);
 void update_model(render_object_t *object);
-void draw_object(render_object_t *object, camera_t *camera, sun_t *sun);
+void draw_object(render_object_t *object, camera_t *camera, lighting_t *lighting);
 
 
 

@@ -2,6 +2,8 @@
 #include "render.h"
 
 
+
+
 shader_t init_shader(char *vert_path, char *frag_path){
 
   GLint gl_success_code;
@@ -240,7 +242,7 @@ void load_mesh(mesh_t *mesh){
 
 }
 
-void draw_object(render_object_t *object, camera_t *camera, sun_t *sun){
+void draw_object(render_object_t *object, camera_t *camera, lighting_t *lighting){
     
   update_model(object);
 
@@ -253,9 +255,9 @@ void draw_object(render_object_t *object, camera_t *camera, sun_t *sun){
 
   glUniformMatrix4fv(object->shader.view, 1, GL_FALSE, camera->view.i);
 
-  glUniform3fv(glGetUniformLocation(object->shader.program, "light_ray_direction"), 1, &sun->direction.x);
+  glUniform3fv(glGetUniformLocation(object->shader.program, "light_ray_direction"), 1, &lighting->direction.x);
 
-
+  glUniform1f(glGetUniformLocation(object->shader.program, "ambient_light"), lighting->ambient);
 
   glUniform1i(glGetUniformLocation(object->shader.program, "palette"), 0);
 
@@ -363,61 +365,74 @@ void create_palette(rgba_t *pixels){
 
 
 
-typedef struct{
-  Uint32 start_time;
-  float angle;
-  int visible;
-}sun_cycle_t;
+
 
 void update_sun_cycle(sun_cycle_t *sun){
 
-  Uint32 now = SDL_GetTicks();
 
-  float elapsed = (now - sun->start_time) / 250.0f;
-
-  if(sun->visible){
-
-    // 30 seconds = 180 degrees
-    sun->angle = (elapsed / 30.0f) * 270.0f;
-
-    if(elapsed >= 30.0f){
-      sun->start_time = now;
-      sun->visible = 0;
-      sun->angle = 270.0f;
-    }
-
-  }else{
-
-    // hidden for 30 seconds
-    if(elapsed >= 30.0f){
-      sun->start_time = now;
-      sun->visible = 1;
-      sun->angle = 0.0f;
-    }
-
-  }
 }
 
 
 
-void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
-
-  if(!sun_c->visible){
-    sun->direction = vec3_fill(0);
-    return;
-  }
 
 
-  float radians = sun_c->angle * (M_PI / 180.0f);
+void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun)
+{
+    if (!sun_c->visible) {
+        sun->direction = vec3_fill(0);
+        return;
+    }
 
-  sun->direction = vec3_normalize((vec3){
-    -cosf(radians),
-    -0.8f,
-     sinf(radians)
-  });
+    float radians = sun_c->angle * (M_PI / 180.0f);
+
+    sun->direction = (vec3){
+        cosf(radians),
+        -sinf(radians),
+         0.0f
+    };
 }
 
+  void update_lighting(lighting_t *lighting, sun_t *sun){
+    update_camera(camera_glob);
+    Uint32 now = SDL_GetTicks();
 
+    float elapsed = (now - sun->cycle.start_time) / 270.0f;
+
+    if(sun->cycle.visible){
+
+      sun->cycle.angle = (elapsed / 30.0f) * 270.0f;
+      if(sun->cycle.angle<90 && sun->cycle.angle>0){
+        lighting->ambient = sun->cycle.angle / 100.0f + 0.1f;
+      }else if(sun->cycle.angle>90 && sun->cycle.angle<180){
+        lighting->ambient = (180.0f - sun->cycle.angle) / 100.0f + 0.1f;
+      }
+      if(lighting->ambient > 0.3) lighting->ambient = 0.3;
+      
+
+      if(elapsed >= 30.0f){
+        sun->cycle.start_time = now;
+        sun->cycle.visible = 0;
+        sun->cycle.angle = 270.0f;
+      }
+
+    }else{
+      lighting->ambient = 0.1f;
+      // hidden for 30 seconds
+      if(elapsed >= 30.0f){
+        sun->cycle.start_time = now;
+        sun->cycle.visible = 1;
+        sun->cycle.angle = -90.0f;
+      }
+
+    }
+
+
+    update_sun_direction(&sun->cycle, sun);
+    
+    lighting->direction = sun->direction;
+    lighting->color = sun->color;
+    lighting->intensity = sun->intensity;
+  }
 
 
 
@@ -598,18 +613,16 @@ void start_render(void) {
   sun_t sun = {
     .direction = {1.0f, 0.0f, 0.0f},
     .color = {1.0f, 0.95f, 0.8f},
-    .intensity = 1.0f
+    .intensity = 1.0f,
+    .cycle = (sun_cycle_t){
+      .start_time = SDL_GetTicks(),
+      .angle = 0.0f,
+      .visible = 1
+    }
   };
 
-
-
-  sun_cycle_t sun_cycle = {
-    .start_time = SDL_GetTicks(),
-    .angle = 0.0f,
-    .visible = 1
-  };
-
-
+  lighting_t lighting = {0};
+  lighting.ambient = .5f;
 
   bool setting = ! modes.WIREFRAME;
   while(modes.RUNNING){
@@ -635,20 +648,18 @@ void start_render(void) {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    update_camera(camera_glob);
-    update_sun_cycle(&sun_cycle);
-    update_sun_direction(&sun_cycle, &sun);
 
+    update_lighting(&lighting, &sun);
     
-    draw_object(&demo_tri, camera_glob, &sun);
-    draw_object(&demo_tri2, camera_glob, &sun);
+    draw_object(&demo_tri, camera_glob, &lighting);
+    draw_object(&demo_tri2, camera_glob, &lighting);
 
-    draw_object(&ground, camera_glob, &sun);
-    draw_object(&tower, camera_glob, &sun);
-    draw_object(&roof, camera_glob, &sun);
+    draw_object(&ground, camera_glob, &lighting);
+    draw_object(&tower, camera_glob, &lighting);
+    draw_object(&roof, camera_glob, &lighting);
 
-    draw_object(&tower2, camera_glob, &sun);
-    draw_object(&roof2, camera_glob, &sun);
+    draw_object(&tower2, camera_glob, &lighting);
+    draw_object(&roof2, camera_glob, &lighting);
 
     gl_error_check();
 
