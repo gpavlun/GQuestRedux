@@ -563,7 +563,7 @@ void start_render(void) {
   demo_tri.mesh = &demo_tri_mesh;
   demo_tri.shader = init_shader("./src/render/basic.vert",
                                 "./src/render/basic.frag");
-  demo_tri.pos    = (vec3){ 0 , 1 ,-10};
+  demo_tri.pos    = (vec3){ 0 , (terrain_height((vec3){0,0,-10}) + 1.0f) ,-10};
   demo_tri.rot    = (vec3){ 0 , 0 , 0 };
   demo_tri.scale  = (vec3){ 1 , 1 , 1 };
   demo_tri.remodel  = 1;
@@ -573,26 +573,10 @@ void start_render(void) {
   demo_tri2.mesh = &demo_tri_mesh;
   demo_tri2.shader = init_shader("./src/render/basic.vert",
                                 "./src/render/basic.frag");
-  demo_tri2.pos    = (vec3){ 5 , 3 ,-8};
+  demo_tri2.pos    = (vec3){ 5 ,(terrain_height((vec3){5,0,8}) + 3.0f) ,-8};
   demo_tri2.rot    = (vec3){ 1.0f , 1.0f , 1.0f };
   demo_tri2.scale  = (vec3){ 1 , 1 , 1 };
   demo_tri2.remodel  = 1;
-
-
-
-  ground_
-  mesh_t ground_mesh = new_mesh(4, vertices, 2, triangles);
-  mesh_generate_normals(&ground_mesh);
-  load_mesh(&ground_mesh);
-
-  render_object_t ground;
-  ground.mesh = &ground_mesh;
-  ground.shader = init_shader("./src/render/basic.vert",
-                              "./src/render/basic.frag");
-  ground.pos = (vec3){0,0,0};
-  ground.rot = (vec3){0,0,0};
-  ground.scale = (vec3){1,1,1};
-  ground.remodel = 1;
 
 
 
@@ -605,7 +589,7 @@ void start_render(void) {
   tower.mesh = &tower_mesh;
   tower.shader = init_shader("./src/render/basic.vert",
                               "./src/render/basic.frag");
-  tower.pos = (vec3){-20,0,-20};
+  tower.pos = (vec3){-20,(terrain_height((vec3){-20,0,-20}) + 0.0f),-20};
   tower.rot    = (vec3){ 0 , 0 , 0 };
   tower.scale  = (vec3){ 1 , 1 , 1 };
   tower.remodel = 1;
@@ -616,7 +600,7 @@ void start_render(void) {
   tower2.mesh = &tower_mesh;
   tower2.shader = init_shader("./src/render/basic.vert",
                               "./src/render/basic.frag");
-  tower2.pos = (vec3){20,0,-20};
+  tower2.pos = (vec3){20,(terrain_height((vec3){20,0,-20}) + 0.0f),-20};
   tower2.rot    = (vec3){ 0 , 0 , 0 };
   tower2.scale  = (vec3){ .5f , .5f , .5f };
   tower2.remodel = 1;
@@ -633,7 +617,7 @@ void start_render(void) {
   roof.mesh = &roof_mesh;
   roof.shader = init_shader("./src/render/basic.vert",
                              "./src/render/basic.frag");
-  roof.pos = (vec3){-20,15,-20};
+  roof.pos = (vec3){-20,(terrain_height((vec3){-20,0,-20}) + 15.0f),-20};
   roof.rot    = (vec3){ 0 , 0 , 0 };
   roof.scale  = (vec3){ 1 , 1 , 1 };
   roof.remodel = 1;
@@ -642,7 +626,7 @@ void start_render(void) {
   roof2.mesh = &roof_mesh;
   roof2.shader = init_shader("./src/render/basic.vert",
                              "./src/render/basic.frag");
-  roof2.pos     = (vec3){20,7.5f,-20};
+  roof2.pos     = (vec3){20,(terrain_height((vec3){20,0,-20}) + 7.5f),-20};
   roof2.rot    = (vec3){ 0 , 0 , 0 };
   roof2.scale  = (vec3){ .5f , .5f , .5f };
   roof2.remodel = 1;
@@ -730,7 +714,6 @@ void start_render(void) {
     if(modes.WIREFRAME){
       lighting.ambient = 1.0f;
     }
-    
 
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

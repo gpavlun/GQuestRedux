@@ -62,4 +62,7 @@ def {
     u8 shift : 1;
 }inputs_t;
 
+
+float terrain_height(vec3 pos);
+
 #endif //GQUESTREDUX_PHYSICS_H
