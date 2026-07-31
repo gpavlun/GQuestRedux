@@ -436,12 +436,12 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
     logical_chunk_t logical_chunk = {0};
 
     logical_chunk.object.pos = (vec3){0,0,0};
-    logical_chunk.heightmap = calloc(chunk_verts_*chunk_verts_, sizeof(float));
-    for(r=0; r<chunk_verts_; r++){
-    for(c=0; c<chunk_verts_; c++){
+    logical_chunk.heightmap = calloc($chunk_verts*$chunk_verts, sizeof(float));
+    for(r=0; r<$chunk_verts; r++){
+    for(c=0; c<$chunk_verts; c++){
 
-      *(logical_chunk.heightmap + r*chunk_verts_ + c) = 
-      height_func(r - chunk_verts_/2, c - chunk_verts_/2);
+      *(logical_chunk.heightmap + r*$chunk_verts + c) = 
+      height_func(r - $chunk_verts/2, c - $chunk_verts/2);
 
     }
     }
@@ -449,35 +449,35 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
     vertex_t *vertices = NULL;
     tri_t *triangles = NULL;
 
-    vertices  = calloc(chunk_verts_ * chunk_verts_, sizeof(vertex_t));
-    triangles = calloc(chunk_quads_ * chunk_quads_* 2, sizeof(tri_t));
+    vertices  = calloc($chunk_verts * $chunk_verts, sizeof(vertex_t));
+    triangles = calloc($chunk_quads * $chunk_quads* 2, sizeof(tri_t));
 
-    for(r=0; r<chunk_verts_; r++){
-    for(c=0; c<chunk_verts_; c++){
-        (vertices + r*chunk_verts_ + c)->pos = 
+    for(r=0; r<$chunk_verts; r++){
+    for(c=0; c<$chunk_verts; c++){
+        (vertices + r*$chunk_verts + c)->pos = 
           (vec3){
-            c - chunk_verts_/2,
-            logical_chunk.heightmap[r*chunk_verts_+c],
-            r - chunk_verts_/2
+            c - $chunk_verts/2,
+            logical_chunk.heightmap[r*$chunk_verts+c],
+            r - $chunk_verts/2
           };
 
-          (vertices + r*chunk_verts_ + c)->uv = (vec2){0.33f, 0.7f};
+          (vertices + r*$chunk_verts + c)->uv = (vec2){0.33f, 0.7f};
 
-          // (vertices + r*chunk_verts_ + c)->uv = (vec2){
-          //   (float)c / chunk_quads_,
-          //   (float)r / chunk_quads_
+          // (vertices + r*$chunk_verts + c)->uv = (vec2){
+          //   (float)c / $chunk_quads,
+          //   (float)r / $chunk_quads
           // };
     }
     }
 
     t=0;
-    for(r = 0; r < chunk_quads_; r++){
-    for(c = 0; c < chunk_quads_; c++){
+    for(r = 0; r < $chunk_quads; r++){
+    for(c = 0; c < $chunk_quads; c++){
 
-        u32 a = r * chunk_verts_ + c;
-        u32 b = r * chunk_verts_ + c + 1;
-        u32 c_idx = (r + 1) * chunk_verts_ + c;
-        u32 d = (r + 1) * chunk_verts_ + c + 1;
+        u32 a = r * $chunk_verts + c;
+        u32 b = r * $chunk_verts + c + 1;
+        u32 c_idx = (r + 1) * $chunk_verts + c;
+        u32 d = (r + 1) * $chunk_verts + c + 1;
 
         triangles[t++] = (tri_t){a, c_idx, b};
         triangles[t++] = (tri_t){b, c_idx, d};
@@ -485,12 +485,12 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
     }
 
 
-    logging.assert(t == chunk_quads_ * chunk_quads_ * 2,
+    logging.assert(t == $chunk_quads * $chunk_quads * 2,
                    "terrain failure, quads misaligned!");
 
     logical_chunk.object.mesh = calloc(1, sizeof(mesh_t));
-    *logical_chunk.object.mesh = new_mesh(chunk_verts_*chunk_verts_, vertices,
-                          chunk_quads_*chunk_quads_*2, triangles);
+    *logical_chunk.object.mesh = new_mesh($chunk_verts*$chunk_verts, vertices,
+                          $chunk_quads*$chunk_quads*2, triangles);
 
     return logical_chunk;
   }
@@ -689,7 +689,8 @@ void start_render(void) {
 
   lighting_t lighting = {0};
   lighting.ambient = .5f;
-
+  glUseProgram(terrain.object.shader.program);
+  glBindVertexArray(terrain.object.mesh->vao);
   bool setting = ! modes.WIREFRAME;
   while(modes.RUNNING){
 
@@ -718,19 +719,37 @@ void start_render(void) {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  update_model(&terrain.object);
+
+
+
+  glUniformMatrix4fv(terrain.object.shader.projection, 1, GL_FALSE, camera_glob->projection.i);
+
+  glUniformMatrix4fv(terrain.object.shader.model, 1, GL_FALSE, terrain.object.model.i);
+
+  glUniformMatrix4fv(terrain.object.shader.view, 1, GL_FALSE, camera_glob->view.i);
+
+  glUniform3fv(glGetUniformLocation(terrain.object.shader.program, "light_ray_direction"), 1, &lighting.direction.x);
+
+  glUniform1f(glGetUniformLocation(terrain.object.shader.program, "ambient_light"), lighting.ambient);
+
+  glUniform1i(glGetUniformLocation(terrain.object.shader.program, "palette"), 0);
+
+  //mul by 3 for # of idx per tri
+  glDrawElements(GL_TRIANGLES, terrain.object.mesh->ntris * 3, GL_UNSIGNED_INT, 0);
 
     
     
-    draw_object(&terrain.object, camera_glob, &lighting);
+    //draw_object(&terrain.object, camera_glob, &lighting);
     
-     draw_object(&demo_tri, camera_glob, &lighting);
-     draw_object(&demo_tri2, camera_glob, &lighting);
+     //draw_object(&demo_tri, camera_glob, &lighting);
+     //draw_object(&demo_tri2, camera_glob, &lighting);
 
-     draw_object(&tower, camera_glob, &lighting);
-     draw_object(&roof, camera_glob, &lighting);
+     //draw_object(&tower, camera_glob, &lighting);
+     //draw_object(&roof, camera_glob, &lighting);
 
-     draw_object(&tower2, camera_glob, &lighting);
-     draw_object(&roof2, camera_glob, &lighting);
+     //draw_object(&tower2, camera_glob, &lighting);
+     //draw_object(&roof2, camera_glob, &lighting);
 
     gl_error_check();
 

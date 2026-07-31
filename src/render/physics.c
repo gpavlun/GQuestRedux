@@ -94,14 +94,20 @@ void flying_movement_physics(actor_t *actor, float dt){
     actor->net_force = net_force;
 }
 
+
+
+
+
+
+
 float terrain_height(vec3 pos){
   while(!glob_terrain);
   
   float local_x = pos.x - glob_terrain->object.pos.x;
   float local_z = pos.z - glob_terrain->object.pos.z;
   
-  float gx = local_x + chunk_quads_ * 0.5f;
-  float gz = local_z + chunk_quads_ * 0.5f;
+  float gx = local_x + $chunk_quads * 0.5f;
+  float gz = local_z + $chunk_quads * 0.5f;
   
   int x0 = floorf(gx);
   int z0 = floorf(gz);
@@ -109,19 +115,19 @@ float terrain_height(vec3 pos){
   int x1 = x0 + 1;
   int z1 = z0 + 1;
   
-  if (x0 < 0 || x1 >= chunk_verts_ ||
-      z0 < 0 || z1 >= chunk_verts_) {
+  if (x0 < 0 || x1 >= $chunk_verts ||
+      z0 < 0 || z1 >= $chunk_verts) {
       return 2.0f;
   }
 
   float tx = gx - x0;
   float tz = gz - z0;
 
-  float h00 = glob_terrain->heightmap[z0 * chunk_verts_ + x0];
-  float h10 = glob_terrain->heightmap[z0 * chunk_verts_ + x1];
+  float h00 = glob_terrain->heightmap[z0 * $chunk_verts + x0];
+  float h10 = glob_terrain->heightmap[z0 * $chunk_verts + x1];
 
-  float h01 = glob_terrain->heightmap[z1 * chunk_verts_ + x0];
-  float h11 = glob_terrain->heightmap[z1 * chunk_verts_ + x1];
+  float h01 = glob_terrain->heightmap[z1 * $chunk_verts + x0];
+  float h11 = glob_terrain->heightmap[z1 * $chunk_verts + x1];
   
   float top = h00 + tx * (h10 - h00);
 
@@ -131,10 +137,34 @@ float terrain_height(vec3 pos){
   return height;
 }
 
+#define $sample_distance 1.0f
+vec3 terrain_normal(vec3 pos){
+  float hL = terrain_height((vec3){pos.x - $sample_distance, 0, pos.z});
+  float hR = terrain_height((vec3){pos.x + $sample_distance, 0, pos.z});
+
+  float hD = terrain_height((vec3){pos.x, 0, pos.z - $sample_distance});
+  float hU = terrain_height((vec3){pos.x, 0, pos.z + $sample_distance});
+
+  float dx = (hR - hL) / (2.0f * $sample_distance);
+  float dz = (hU - hD) / (2.0f * $sample_distance);
+
+  vec3 normal;
+
+  normal.x = -dx;
+  normal.y = 1.0f;
+  normal.z = -dz;
+
+  return vec3_normalize(normal);
+}
+
+vec3 constrain_to_surface(vec3 force, vec3 normal){
+
+}
 
 void movement_physics(actor_t *actor, float dt){
 
     float height = terrain_height(actor->pos);
+    vec3 normal = terrain_normal(actor->pos);
 
     float c = cosf(actor->theta);
     float s = sinf(actor->theta);
@@ -145,82 +175,66 @@ void movement_physics(actor_t *actor, float dt){
     desired_world.z = -actor->desired_velocity.x * s +
                        actor->desired_velocity.z * c;
     desired_world.y = actor->desired_velocity.y;
+    
+    float into_surface = vec3_dot(desired_world, normal);
 
+    desired_world = vec3_sub(desired_world, vec3_scale(normal, into_surface));
 
-    actor->applied_force.x = actor->max_force *
-              (desired_world.x - actor->vel.x);
-    actor->applied_force.z = actor->max_force *
-              (desired_world.z - actor->vel.z);
+    /* motor force */
+    actor->applied_force = vec3_scale(vec3_sub(desired_world, actor->vel), actor->max_force);
 
-    float force_len = sqrtf(
-        actor->applied_force.x * actor->applied_force.x +
-        actor->applied_force.z * actor->applied_force.z
-    );
-
+    float force_len = vec3_length(actor->applied_force);
     if(force_len > actor->max_force){
-        float scale = actor->max_force / force_len;
-        actor->applied_force.x *= scale;
-        actor->applied_force.z *= scale;
+        actor->applied_force = vec3_scale(actor->applied_force,
+                                          actor->max_force / force_len);
     }
 
-    float gravity_force = actor->mass * -cheat_grav;
-    float normal_force = 0.0f;
-    float friction_force;
+    vec3 gravity_force = {0, actor->mass * -cheat_grav, 0};
 
+    vec3 net_force = gravity_force;
+   
+    float normal_mag = 0;
+    vec3 normal_force = {0};
 
-    actor->applied_force.y = 0;
-    if(actor->pos.y <= (height + 2.0f)){
+    /* contact force */
+    if(actor->pos.y <= height){  
+      if(actor->pos.y < height){
+           actor->pos.y = height;
+      }
 
-        if(actor->pos.y < (height + 2.0f)){
-          actor->pos.y = (height + 2.0f);
-          if(actor->vel.y < 0) actor->vel.y = 0;
-          if(actor->acc.y > 0) actor->acc.y = 0;
-        }
-        normal_force = actor->mass * cheat_grav;
-    }
-    friction_force = friction_coeff * normal_force;
-
-
-
-    vec3 net_force;
-
-    net_force.y = gravity_force + normal_force;
-    net_force.x = actor->applied_force.x;
-    net_force.z = actor->applied_force.z;
-
-    float horizontal_force = sqrtf(
-        net_force.x * net_force.x +
-        net_force.z * net_force.z
-    );
-
-    if(horizontal_force > friction_force){
-        float scale = friction_force / horizontal_force;
-        net_force.x *= scale;
-        net_force.z *= scale;
+      into_surface = vec3_dot(net_force, normal);
+      if(into_surface < 0){
+        normal_mag = -into_surface;  
+        normal_force = vec3_scale(normal, normal_mag);
+      
+        net_force = vec3_add(net_force, normal_force);
+      }
     }
 
-    actor->acc.x = net_force.x / actor->mass;
-    actor->acc.y = net_force.y / actor->mass;
-    actor->acc.z = net_force.z / actor->mass;
+    /* friction */
+    float friction_mag = friction_coeff * normal_mag;
+    force_len = vec3_length(actor->applied_force);
 
-    actor->vel.x += actor->acc.x * dt;
-    actor->vel.y += actor->acc.y * dt;
-    actor->vel.z += actor->acc.z * dt;
+    if(force_len > friction_mag){
+        actor->applied_force = vec3_scale(actor->applied_force, friction_mag / force_len);
+    }
+  
+    net_force = vec3_add(net_force, actor->applied_force);
 
-    actor->pos.x += actor->vel.x * dt;
-    actor->pos.y += actor->vel.y * dt;
-    actor->pos.z += actor->vel.z * dt;
+    actor->acc = vec3_scale(net_force, 1/actor->mass);
+    actor->vel = vec3_add(actor->vel, vec3_scale(actor->acc, dt));
+    actor->pos = vec3_add(actor->pos, vec3_scale(actor->vel, dt));
 
     actor->net_force = net_force;
 }
 
 #define jump_interval 200
-#define walkspeed 6
+#define walkspeed 12
 #define strafespeed (walkspeed/1.3f)
 u8 flying;
 void multipress(actor_t *player, inputs_t key){
   player->desired_velocity.x = player->desired_velocity.y = player->desired_velocity.z = 0;
-  if(!flying) player->applied_force.y = 0;
+  //if(!flying) player->applied_force.y = 0;
   float input_x = 0, input_y = 0, input_z = 0;
   static u64 last_jump;
 
@@ -259,7 +273,7 @@ void multipress(actor_t *player, inputs_t key){
       }
     }
     float height = terrain_height(player_glob->pos);
-    if(!flying && player->pos.y<=(height + 2.0f)){
+    if(!flying && player->pos.y<=height){
       player->vel.y = walkspeed;
     }
     last_jump = now;
@@ -267,29 +281,27 @@ void multipress(actor_t *player, inputs_t key){
 
   float len;
   if(flying){
+
     len = sqrtf(input_x * input_x + input_y * input_y + input_z * input_z);
     if(len>0){
       input_x /= len;
       input_y /= len;
       input_z /= len;
     }
+    player->desired_velocity.x = input_x * walkspeed * 2;
+    player->desired_velocity.y = input_y * walkspeed * 2;
+    player->desired_velocity.z = input_z * walkspeed * 2;
+
   }else{
+
     len = sqrtf(input_x * input_x + input_z * input_z);
     if(len>0){
       input_x /= len;
       input_z /= len;
     }
-  }
-
-
-
-  if(flying){
-    player->desired_velocity.x = input_x * walkspeed * 2;
-    player->desired_velocity.y = input_y * walkspeed * 2;
-    player->desired_velocity.z = input_z * walkspeed * 2;
-  }else{
     player->desired_velocity.x = input_x * strafespeed;
     player->desired_velocity.z = input_z *  (input_z<0.0f ? walkspeed : strafespeed);
+  
   }
 }
 
@@ -309,6 +321,7 @@ void *editor_event_handler(void *args){
 
   player.mass = 80;
   player.max_force = 2745;
+  player.pos.y = terrain_height(player.pos) + 1;
   flying = 0;
   u8 mousemode = 0;
 
@@ -385,6 +398,7 @@ void *editor_event_handler(void *args){
       movement_physics(&player, dt);
     }
     camera.pos = player.pos;
+    camera.pos.y += 1.8f;
 
 
     last_movement = current_movement;
