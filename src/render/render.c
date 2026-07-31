@@ -445,6 +445,14 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
 
     }
     }
+    // flat spot
+    #define $flat_w 12
+    for(r=0;r<$flat_w;r++){
+    for(c=0;c<$flat_w;c++){
+      *(logical_chunk.heightmap + ($chunk_verts/2+$flat_w/2-r)*$chunk_verts + ($chunk_verts/2+$flat_w/2-c)) = 6.0f;
+    }
+    }
+
 
     vertex_t *vertices = NULL;
     tri_t *triangles = NULL;
@@ -462,13 +470,11 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
           };
 
           (vertices + r*$chunk_verts + c)->uv = (vec2){0.33f, 0.7f};
+    }
+    }
 
-          // (vertices + r*$chunk_verts + c)->uv = (vec2){
-          //   (float)c / $chunk_quads,
-          //   (float)r / $chunk_quads
-          // };
-    }
-    }
+
+
 
     t=0;
     for(r = 0; r < $chunk_quads; r++){
