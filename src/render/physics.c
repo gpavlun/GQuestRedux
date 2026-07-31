@@ -9,7 +9,7 @@
 #define planitary_diam 12756000
 #define gravitational_const 0.000000000067408
 #define cheat_grav 9.8f
-#define friction_coeff 1.6f
+#define $friction_coeff 2.0f
 
 #define sensitivity 0.5f
 
@@ -61,7 +61,7 @@ void flying_movement_physics(actor_t *actor, float dt){
     float friction_force;
 
     normal_force = actor->mass * cheat_grav;
-    friction_force = 3 * friction_coeff * normal_force;
+    friction_force = 3 * $friction_coeff * normal_force;
 
     vec3 net_force;
     net_force.x = actor->applied_force.x;
@@ -207,7 +207,7 @@ void movement_physics(actor_t *actor, float dt){
     }
 
     /* friction */
-    float friction_mag = friction_coeff * normal_mag;
+    float friction_mag = $friction_coeff * normal_mag;
     vec3 tangent_force = vec3_sub(gravity_force,
                                   vec3_scale(normal,
                                   vec3_dot(gravity_force, normal)));
@@ -221,7 +221,7 @@ void movement_physics(actor_t *actor, float dt){
     }    
     
 
-    float traction = friction_coeff * normal_mag;// * normal.y * 10;
+    float traction = $friction_coeff * normal_mag;// * normal.y * 10;
 
     
     force_len = vec3_length(actor->applied_force);
@@ -250,7 +250,7 @@ void movement_physics(actor_t *actor, float dt){
 }
 
 #define jump_interval 200
-#define walkspeed 6
+#define walkspeed 12
 #define strafespeed (walkspeed/1.3f)
 u8 flying;
 void multipress(actor_t *player, inputs_t key){
