@@ -12,7 +12,7 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
     return;
   }
 
-  float radians = sun_c->angle * (M_PI / 180.0f);
+  float radians = sun_c->angle * ((float)M_PI / 180.0f);
 
   sun->direction = (vec3){
     cosf(radians),
@@ -22,10 +22,10 @@ void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
 }
 
 void update_lighting(lighting_t *lighting, sun_t *sun){
-  update_camera(camera_glob);
+
   u32 now = SDL_GetTicks();
 
-  float elapsed = (now - sun->cycle.start_time) / 270.0f;
+  float elapsed = (float)(now - sun->cycle.start_time) / 270.0f;
 
   if(sun->cycle.visible){
 
@@ -35,7 +35,7 @@ void update_lighting(lighting_t *lighting, sun_t *sun){
     }else if(sun->cycle.angle>90 && sun->cycle.angle<180){
       lighting->ambient = (180.0f - sun->cycle.angle) / 100.0f + 0.1f;
     }
-    if(lighting->ambient > 0.3) lighting->ambient = 0.3;
+    if(lighting->ambient > 0.3) lighting->ambient = 0.3f;
 
 
     if(elapsed >= 300.0f){

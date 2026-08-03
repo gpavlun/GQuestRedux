@@ -449,14 +449,14 @@ int start_game(void) {
 int main(int argc, char **argv){
 
 
-    modes.RUNNING = 1;
+    modes.running = 1;
 
     pthread_t tui_thread;
     pthread_create(&tui_thread, NULL, tui, NULL);
 
     start_render();
 
-    modes.RUNNING = 0;
+    modes.running = 0;
     pthread_cancel(tui_thread);
     pthread_join(tui_thread, NULL);
     return 0;

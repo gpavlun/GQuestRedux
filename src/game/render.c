@@ -416,7 +416,7 @@ void start_render(void) {
 
 
 
-  while (modes.RUNNING) {
+  while (modes.running) {
 
     if(get_dim(gui.sdl2.window, window)){
       fb.width = window->dim.w;

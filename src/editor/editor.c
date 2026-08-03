@@ -111,20 +111,20 @@ void *editor_event_handler(void *args){
     gui_engine_t *gui = (gui_engine_t *)args;
     SDL_Event event;
     const uint8_t *keyscan = SDL_GetKeyboardState(NULL);
-    while(modes.RUNNING){
+    while(modes.running){
 
         while(SDL_PollEvent(&event)){
         
             switch(event.type){
                 case(SDL_QUIT):{
                 
-                    modes.RUNNING = 0;
+                    modes.running = 0;
                 
                 $}case(SDL_KEYUP):{
 
                     switch(event.key.keysym.sym){
                         case(SDLK_ESCAPE):{ // window ctrls
-                            modes.RUNNING = 0;
+                            modes.running = 0;
                         $}case(SDLK_o):{ // dev
                             debug.chunk_borders = !debug.chunk_borders;
                             if(debug.chunk_borders) logging.info("Chunk borders enabled");
@@ -146,7 +146,7 @@ void *editor_event_handler(void *args){
                             selected_terrain = water_tt;
                             logging.data("Selected terrain: ",selected_terrain);
                         $}default:{
-                            if(modes.DYNAMIC){
+                            if(modes.dynamic){
                                 switch(event.key.keysym.sym){
                                     case(SDLK_UP):{  
                                         origin_chunk_y--;
@@ -210,7 +210,7 @@ void *editor_event_handler(void *args){
 
 void start_editor(void){
 
-    modes.RUNNING = 1;
+    modes.running = 1;
     logging.info("Begin program");
     
     gui_engine_t gui = gui_engine_init();
@@ -233,7 +233,7 @@ void start_editor(void){
     
     
 
-    while(modes.RUNNING){
+    while(modes.running){
 
         get_dim(gui.sdl2.window, window);
 

@@ -9,4 +9,4 @@ echo "## Lines of code by file:  " >> architecture.md
 find ../ \
   \( -path "../target" -o -path "../.git" -o -path "../build" \) -prune -o \
   \( -name "*.c" -o -name "*.h" -o -name "*.rs" \) \
-  -exec wc -l {} + >> architecture.md
+  -exec wc -l {} + | sed 's/$/  /' >> architecture.md

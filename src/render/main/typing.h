@@ -9,8 +9,12 @@
 
 #define def typedef struct
 
+#define endcase default: break;
+
 #define true 1
 #define false 0
+
+#define loop while(1)
 
 typedef int64_t i64;
 typedef int32_t i32;

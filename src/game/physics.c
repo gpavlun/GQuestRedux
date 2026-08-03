@@ -277,7 +277,7 @@ void *editor_event_handler(void *args){
   flying = 0;
   u8 mousemode = 0;
 
-  while(modes.RUNNING){
+  while(modes.running){
     current_movement = SDL_GetPerformanceCounter();
     if(!flying) inputs.space = 0;
     dt = (float)(current_movement - last_movement) /
@@ -287,12 +287,12 @@ void *editor_event_handler(void *args){
       switch(event.type){
         case(SDL_QUIT):{
 
-          modes.RUNNING = 0;
+          modes.running = 0;
 
         $}case(SDL_KEYUP):{
           switch(event.key.keysym.sym){
             case(SDLK_ESCAPE):{
-              modes.RUNNING = 0;
+              modes.running = 0;
             $}default:{$}
           }
         $}case(SDL_KEYDOWN):{

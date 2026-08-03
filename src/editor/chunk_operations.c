@@ -40,9 +40,9 @@ void delete_dynamic(int x, int y){
 }
 void dynamic_loader(void){
     load_world();
-    modes.DYNAMIC = 1;
+    modes.dynamic = 1;
     start_editor();
-    modes.DYNAMIC = 0;
+    modes.dynamic = 0;
     logging.info("Saved Chunk");
     logging.info("press any key to return to menu");
     get_input();

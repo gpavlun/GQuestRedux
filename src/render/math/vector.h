@@ -5,8 +5,6 @@
 #ifndef GQUEST_VECTOR_H
 #define GQUEST_VECTOR_H
 
-#include <stdint.h>
-#include <stdlib.h>
 #include <math.h>
 
 #include "../main/typing.h"

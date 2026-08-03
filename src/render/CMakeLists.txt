@@ -14,8 +14,8 @@ add_executable(render
         rendering/render.c
         rendering/render.h
 
-        sdl_windowing/editor_window.c
-        sdl_windowing/editor.h
+        sdl_windowing/sdl_ops.c
+        sdl_windowing/sdl_ops.h
 
         tui_panel/terminal_interface.c
         tui_panel/terminal_interface.h
@@ -25,6 +25,14 @@ add_executable(render
         main/game.h
         rendering/lighting.c
         rendering/lighting.h
+        main/player_controller.c
+        main/player_controller.h
+        generation/mesh_generation.c
+        generation/shader_generation.c
+        generation/terrain_generation.c
+        generation/generation.h
+        main/simulation.c
+        main/simulation.h
 )
 
 file(GLOB RENDER_SOURCES CONFIGURE_DEPENDS

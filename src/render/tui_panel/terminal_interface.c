@@ -12,10 +12,11 @@ char glob_error[64];
 
 void *tui(void *arg) {
 
-  //pthread_exit(0);
+  engine_t *engine = (engine_t *)arg;
+  while (!engine->modes.running) usleep(10000);
 
-  while (!player_glob||!camera_glob);
-
+  player_t *player = engine->physics.player;
+  
   gc_term_t *terminal;
   terminal = gc_new();
   gc_io_block(terminal, 0);
@@ -31,7 +32,7 @@ void *tui(void *arg) {
   char source[128];
 
 
-  while (modes.RUNNING) {
+  while (engine->modes.running) {
 
     gc_frame_resize(terminal);
 
@@ -41,35 +42,34 @@ void *tui(void *arg) {
     sprintf(source, "player");
     gc_horz_str_disp(terminal, 1, 1, source);
 
-    sprintf(source, "    [s] : (%.2f m, %.2fm, %.2fm)", player_glob->pos.x,
-            player_glob->pos.y, player_glob->pos.z);
+    sprintf(source, "    [s] : (%.2f m, %.2fm, %.2fm)", player->actor.pos.x,
+            player->actor.pos.y, player->actor.pos.z);
     gc_horz_str_disp(terminal, 2, 1, source);
 
-    sprintf(source, "    [v] : (%.2f ms, %.2fms, %.2fms)", player_glob->vel.x,
-            player_glob->vel.y, player_glob->vel.z);
+    sprintf(source, "    [v] : (%.2f ms, %.2fms, %.2fms)", player->actor.vel.x,
+            player->actor.vel.y, player->actor.vel.z);
     gc_horz_str_disp(terminal, 3, 1, source);
 
-    sprintf(source, "    [a] : (%.2f ms^2, %.2fms^2, %.2fms^2)", player_glob->acc.x,
-            player_glob->acc.y, player_glob->acc.z);
+    sprintf(source, "    [a] : (%.2f ms^2, %.2fms^2, %.2fms^2)", player->actor.acc.x,
+            player->actor.acc.y, player->actor.acc.z);
     gc_horz_str_disp(terminal, 4, 1, source);
 
     sprintf(source, "    desired velocity : (%.2f N, %.2fN, %.2fN)",
-            player_glob->desired_velocity.x, player_glob->desired_velocity.y,
-            player_glob->desired_velocity.z);
+            player->actor.desired_velocity.x, player->actor.desired_velocity.y,
+            player->actor.desired_velocity.z);
     gc_horz_str_disp(terminal, 6, 1, source);
 
     sprintf(source, "    applied force    : (%.2f N, %.2fN, %.2fN)",
-            player_glob->applied_force.x, player_glob->applied_force.y,
-            player_glob->applied_force.z);
+            player->actor.applied_force.x, player->actor.applied_force.y,
+            player->actor.applied_force.z);
     gc_horz_str_disp(terminal, 7, 1, source);
 
     sprintf(source, "    net force        : (%.2f N, %.2fN, %.2fN)",
-            player_glob->net_force.x, player_glob->net_force.y,
-            player_glob->net_force.z);
+            player->actor.net_force.x, player->actor.net_force.y,
+            player->actor.net_force.z);
     gc_horz_str_disp(terminal, 8, 1, source);
 
-    sprintf(source, "    flying : %s",
-            flying?"true":"false");
+    sprintf(source, "    flying : %s", player->flying?"true":"false");
     gc_horz_str_disp(terminal, 9, 1, source);
 
 
@@ -77,7 +77,7 @@ void *tui(void *arg) {
     sprintf(source, "camera");
     gc_horz_str_disp(terminal, 11, 1, source);
 
-    sprintf(source, "    psi %.2f :: theta %.2f :: phi %.2f", camera_glob->psi, camera_glob->theta, camera_glob->phi);
+    sprintf(source, "    psi %.2f :: theta %.2f :: phi %.2f", player->camera.psi, player->camera.theta, player->camera.phi);
     gc_horz_str_disp(terminal, 12, 1, source);
 
     sprintf(source, "error message: %s", glob_error);

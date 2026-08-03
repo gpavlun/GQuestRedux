@@ -28,7 +28,7 @@ void *tui(void *arg) {
   char source[128];
 
 
-  while (modes.RUNNING) {
+  while (modes.running) {
 
     gc_frame_resize(terminal);
 

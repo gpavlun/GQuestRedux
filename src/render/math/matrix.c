@@ -50,8 +50,8 @@ mat4 mat4_identity(void){
 
 
 mat4 mat4_perspective(float fov, float aspect_ratio, float near, float far){
-  float radians = fov * (M_PI / 180.0f);
-  float f = 1.0f / tan(radians / 2.0f);  
+  float radians = fov * ((float)M_PI / 180.0f);
+  float f = 1.0f / tanf(radians / 2.0f);
   
   float a = aspect_ratio;
 

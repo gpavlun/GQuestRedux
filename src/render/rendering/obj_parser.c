@@ -3,6 +3,7 @@
 //
 
 #include "obj_parser.h"
+#include "../generation/generation.h"
 
 mesh_t obj_from_file(char *filename) {
 
@@ -38,7 +39,7 @@ mesh_t obj_from_file(char *filename) {
     if (strncmp(line, "v ", 2) == 0) {
       float x, y, z;
 
-      sscanf(line, "v %f %f %f", &x, &y, &z);
+      sscanf(line, "v %f %f %f", &x, &z, &y);
 
       vertices[current_vertex++] = (vertex_t){
         .pos = {x, y, z},

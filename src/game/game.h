@@ -12,8 +12,8 @@
 #define false 0
 
 typedef struct boolean_struct{
-  uint8_t RUNNING: 1;
-  uint8_t DYNAMIC: 1;
+  uint8_t running: 1;
+  uint8_t dynamic: 1;
 }boolean_t;
 extern boolean_t modes;
 
