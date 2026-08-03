@@ -15,5 +15,4 @@ void rotate_object(entity_t *object) {
 
 void step_simulation(simulation_t *simulation) {
   rotate_object(&simulation->entity_table[0]);
-
 }

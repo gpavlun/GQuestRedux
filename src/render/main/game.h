@@ -103,6 +103,8 @@ def {
 }physics_actor_t;
 
 def {
+  bool hidden;
+
   size_t mesh_idx;
   size_t shader_idx;
 

@@ -166,10 +166,10 @@ void gpu_upload_mesh(mesh_t *mesh){
 }
 
 /***** draw_object *****/
-void draw_object(render_object_t *object, camera_t *camera, lighting_t *lighting){
-  if (object->hidden) return;
+void draw_object(entity_t *entity, camera_t *camera, lighting_t *lighting){
+  if (entity->render_data.hidden) return;
 
-  update_model(object);
+  update_model(entity);
 
   glUseProgram(object->shader->program);
   glBindVertexArray(object->mesh->vao);
@@ -200,20 +200,20 @@ void gl_error_check(void){
     }
 }
 
-void update_model(render_object_t *object){
-    if (!object->remodel)
+void update_model(entity_t *entity){
+    if (!entity->render_data.remodel)
         return;
 
     mat4 model = mat4_identity();
 
-    model = mat4_mul(model, mat4_translate_pos(object->pos));
-    model = mat4_mul(model, mat4_rotate_y(object->rot.y));
-    model = mat4_mul(model, mat4_rotate_x(object->rot.x));
-    model = mat4_mul(model, mat4_rotate_z(object->rot.z));
-    model = mat4_mul(model, mat4_scale(object->scale));
+    model = mat4_mul(model, mat4_translate_pos(entity->transform.pos));
+    model = mat4_mul(model, mat4_rotate_y(entity->transform.rot.y));
+    model = mat4_mul(model, mat4_rotate_x(entity->transform.rot.x));
+    model = mat4_mul(model, mat4_rotate_z(entity->transform.rot.z));
+    model = mat4_mul(model, mat4_scale(entity->transform.scale));
 
-    object->model = model;
-    object->remodel = false;
+    entity->render_data.model   = model;
+    entity->render_data.remodel = false;
 }
 
 void update_camera(camera_t *camera){
@@ -329,24 +329,27 @@ void create_glctx(SDL_Window *window) {
 }
 
 
-void render_loop(render_state_t *render, gui_data_t *gui, render_array_t render_array) {
+void render_loop(
+  simulation_t *simulation, 
+  mesh_table_t *mesh_table,
+  gui_data_t *gui,
+  boolean_t *modes
+) {
+
   glEnable(GL_DEPTH_TEST);
 
   create_palette();
 
-  project_camera(gui, &render->camera);
+  project_camera(gui, &simulation->player_table[0].camera);
 
   sun_t sun = new_sun();
   lighting_t lighting = {0};
 
   lighting.ambient = .5f;
 
-  boolean_t *modes = render->modes;
   bool setting = ! modes->wireframe;
 
   while(modes->running){
-
-
 
     if(setting !=  modes->wireframe){
       if(modes->wireframe){
@@ -362,12 +365,12 @@ void render_loop(render_state_t *render, gui_data_t *gui, render_array_t render_
     if (get_dim(&gui->window)) {
       glViewport(0, 0, gui->window.dim.w, gui->window.dim.h);
       float aspect = (float)gui->window.dim.w / (float)gui->window.dim.h;
-      render->camera.projection = mat4_perspective(70.0f, aspect, 0.1f, 1000.0f);
+      &simulation->player_table[0].camera.projection = mat4_perspective(70.0f, aspect, 0.1f, 1000.0f);
     }
 
 
     // move to sim
-    update_camera(&render->camera);
+    update_camera(&simulation->player_table[0].camera);
     update_lighting(&lighting, &sun);
 
 
@@ -376,10 +379,13 @@ void render_loop(render_state_t *render, gui_data_t *gui, render_array_t render_
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    render_array.object[4]->pos = render->player_transform.pos;
-    render_array.object[4]->remodel = 1;
-    for (int i=0; i<render_array.nobjects; i++) {
-      draw_object(render_array.object[i], &render->camera, &lighting);
+    size_t count = simulation->nentities;
+    for (int i=0; i<count; i++) {
+      draw_object(
+        &simulation->entity_table[i], 
+        &simulation->player_table[0].camera, 
+        &lighting
+      );
     }
 
 
@@ -403,6 +409,7 @@ void *start_render(void *arg){
   gui_data_t *gui = &engine->gui;
   simulation_t *simulation = &engine->simulation;
   mesh_table_t *mesh_table = &engine->mesh_table;
+  boolean_t *modes = &engine->modes;
   pthread_barrier_t *barrier = &engine->barrier;
 
   create_glctx(gui->window.interface);
@@ -426,7 +433,7 @@ void *start_render(void *arg){
 
 
 
-  //render_loop(&engine->render, &engine->gui, render_array);
+  render_loop(simulation, mesh_table, gui, modes);
 
 
   SDL_DestroyWindow(gui->window.interface);

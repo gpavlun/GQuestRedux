@@ -16,7 +16,6 @@ CTestTestfile.cmake
 # ==============================
 
 *.o
-*.obj
 *.a
 *.so
 *.so.*

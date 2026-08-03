@@ -282,8 +282,6 @@ int main(int argc, char **argv){
   init_controller(&engine.controller);
 
 
-
-
   /*
    * basically, the uncomposed systems fail because there
    * is no orchestrating simulation code. I believe this
@@ -292,7 +290,6 @@ int main(int argc, char **argv){
    * tweaks to make it repeatable for different game
    * states.
    */
-
 
   u64 event_cycle = SDL_GetPerformanceCounter();
 
