@@ -230,4 +230,10 @@ void generate_meshes(mesh_table_t *mesh_table) {
   mesh_generate_uv(&temp_mesh, 1);
   add_mesh(mesh_table, &temp_mesh);
 
+  temp_mesh = obj_from_file("./assets/obj_models/tree.obj");
+  mesh_generate_normals(&temp_mesh);
+  mesh_generate_uv(&temp_mesh, 5);
+  add_mesh(mesh_table, &temp_mesh);
+
+
 }

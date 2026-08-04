@@ -237,6 +237,53 @@ void create_entities(
   };
   temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]);
   add_entity(simulation, &temp);
+
+  // trees
+  for(int i=0;i<20;i++){
+    for(int j=0;j<6;j++){
+      temp = (entity_t){
+        .render_data = {
+          .mesh_idx = $tree_mesh,
+          .shader_idx = 0,
+          .texture_idx = 5,
+          .remodel = 1,
+        },
+        .physics_actor = {
+          0
+        },
+        .transform = {
+          .pos   = (vec3){-35-(5*i)+((rand() % 11) - 5) , 0 , +20+(5*j)+((rand() % 11) - 5)},
+          .rot   = (vec3){ 0 , 0 , 0 },
+          .scale = (vec3){ .2f , .2f , .2f }
+        }
+      };
+      temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]);
+      add_entity(simulation, &temp);
+    }
+  }
+    for(int i=0;i<6;i++){
+    for(int j=0;j<20;j++){
+      temp = (entity_t){
+        .render_data = {
+          .mesh_idx = $tree_mesh,
+          .shader_idx = 0,
+          .texture_idx = 5,
+          .remodel = 1,
+        },
+        .physics_actor = {
+          0
+        },
+        .transform = {
+          .pos   = (vec3){-20-(5*i)+((rand() % 11) - 5) , 0 , +65+(5*j)+((rand() % 11) - 5)},
+          .rot   = (vec3){ 0 , 0 , 0 },
+          .scale = (vec3){ .2f , .2f , .2f }
+        }
+      };
+      temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]);
+      add_entity(simulation, &temp);
+    }
+  }
+
 }
 
 /***** add_player *****/

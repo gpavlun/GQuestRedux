@@ -43,7 +43,7 @@ void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table){
     for(c=0;c<$flat_w;c++){
       *(logical_chunk->heightmap +
       ($chunk_verts/2+$flat_w/2+100-r)*$chunk_verts +
-      ($chunk_verts/2+$flat_w/2-100-c)) = 0.0f;
+      ($chunk_verts/2+$flat_w/2-100-c)) = -10.0f;
     }
   }
   simulation->terrain_table = logical_chunk;
@@ -87,7 +87,7 @@ void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table){
 
   mesh_t temp_mesh = new_mesh($chunk_verts*$chunk_verts, vertices,
                               $chunk_quads*$chunk_quads*2, triangles);
-  terrain_generate_uv(&temp_mesh, 5);
+  terrain_generate_uv(&temp_mesh, 15);
                               mesh_generate_normals(&temp_mesh);
   simulation->terrain_table[0].render_data.mesh_idx = add_mesh(mesh_table, &temp_mesh);
   simulation->terrain_table[0].render_data.shader_idx = 0;

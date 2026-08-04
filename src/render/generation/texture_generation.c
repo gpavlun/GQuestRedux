@@ -35,5 +35,7 @@ void generate_textures(texture_table_t *texture_table) {
   add_texture(texture_table, texture);
   texture = read_bmp_file("./assets/bmp_textures/lava.bmp");
   add_texture(texture_table, texture);
+  texture = read_bmp_file("./assets/bmp_textures/needles.bmp");
+  add_texture(texture_table, texture);
 }
 

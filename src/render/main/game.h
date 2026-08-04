@@ -80,7 +80,8 @@ enum mesh_table_index_e {
   $tower_roof_mesh = 5,
   $castle_mesh = 6,
   $castle_roof_mesh = 7,
-  $terrain_mesh = 8
+  $tree_mesh = 8,
+  $terrain_mesh = 9
 };
 
 
