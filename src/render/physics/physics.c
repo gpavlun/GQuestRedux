@@ -1,6 +1,8 @@
 #include "physics.h"
-#include "../rendering/render.h"
 
+#include "logging.h"
+#include "../rendering/render.h"
+#include "../main/game.h"
 
 
 #define DRAG_CONSTANT 200
@@ -154,6 +156,8 @@ vec3 terrain_normal(vec3 pos, logical_chunk_t *terrain){
 
 void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
 
+
+
     float height = terrain_height(actor->transform.pos, terrain);
     vec3 normal  = terrain_normal(actor->transform.pos, terrain);
 
@@ -166,7 +170,7 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
     desired_world.z = -actor->physics_actor.desired_velocity.x * s +
                        actor->physics_actor.desired_velocity.z * c;
     desired_world.y = actor->physics_actor.desired_velocity.y;
-    
+
     float into_surface = vec3_dot(desired_world, normal);
 
     desired_world = vec3_sub(desired_world, vec3_scale(normal, into_surface));
@@ -192,7 +196,6 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
    
     float normal_mag = 0;
 
-
     /* contact force */
     if(actor->transform.pos.y <= (height + 0.1f)){
       into_surface = vec3_dot(net_force, normal);
@@ -217,7 +220,6 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
         net_force = vec3_add(net_force, friction);
     }    
     
-
     float traction = $friction_coeff * normal_mag;// * normal.y * 10;
 
     
@@ -232,7 +234,6 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
   
     net_force = vec3_add(net_force, actor->physics_actor.applied_force);
 
-
     /* integrations */
     actor->physics_actor.acc =
       vec3_scale(net_force, 1/actor->physics_actor.mass);
@@ -241,13 +242,14 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
     actor->transform.pos =
       vec3_add(actor->transform.pos, vec3_scale(actor->physics_actor.vel, dt));
 
+
     float penetration = height - actor->transform.pos.y / normal.y;
-    if(penetration > 0){
-      actor->transform.pos = vec3_add(
-          actor->transform.pos,
-          vec3_scale(normal, penetration)
-      );
-    }
+      if(penetration > 0){
+        actor->transform.pos = vec3_add(
+            actor->transform.pos,
+            vec3_scale(normal, penetration)
+        );
+      }
 
 
     actor->physics_actor.net_force = net_force;
@@ -262,7 +264,6 @@ void step_physics(
   controller_state_t  *controller,
   simulation_t     *simulation
   ) {
-
   if(simulation->player_table[0].flying){
     flying_movement_physics(
       &simulation->player_table[0].entity,
@@ -275,11 +276,16 @@ void step_physics(
       controller->dt
     );
   }
+
+
+
+
   simulation->player_table[0].camera.pos =
     vec3_add(
       simulation->player_table[0].entity.transform.pos,
       simulation->player_table[0].camera.offset
     );
+  simulation->player_table[0].camera.rot = simulation->player_table[0].entity.transform.rot;
 }
 
 

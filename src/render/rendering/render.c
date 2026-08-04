@@ -1,26 +1,33 @@
 // clang-format off
 #include "render.h"
 
-#include "obj_parser.h"
+#include <pthread.h>
 
+#include "../rendering/obj_parser.h"
+#include "../main/game.h"
+#include "../rendering/lighting.h"
 
 /***** load_shader *****/
 void gpu_upload_shader(shader_t *shader){
   if (!shader) {
-    logging.warn("shader invalid for load");
+    logging.warn("render_thread: shader invalid for load");
     return;
   }
+
   GLint gl_success_code;
   /*** create vertex shader ***/
 
+  //logging.info("render_thread: uploading .vert");
   // read in shader data and create a context for it
   GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
   logging.assert(vertex_shader, "GL vertex failed!");
 
   // load shader source
-  glShaderSource(vertex_shader, 1, (const GLchar * const*)shader->vert_glsl, NULL);
+  //logging.info("render_thread: loading .vert source");
+  glShaderSource(vertex_shader, 1, (const GLchar * const*)&shader->vert_glsl, NULL);
 
   // compile shader source
+  //logging.info("render_thread: compiling .vert source");
   glCompileShader(vertex_shader);
   
   // check for compile failure
@@ -33,14 +40,17 @@ void gpu_upload_shader(shader_t *shader){
 
   /*** create fragment shader ***/
 
+  //logging.info("render_thread: uploading .frag");
   // read in shader data and create a context for it
   GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-  logging.assert(fragment_shader, "GL fragment failed!");
+  //logging.assert(fragment_shader, "GL fragment failed!");
 
   // load shader source
-  glShaderSource(fragment_shader, 1, (const GLchar * const*)shader->frag_glsl, NULL);
+  //logging.info("render_thread: loading .frag source");
+  glShaderSource(fragment_shader, 1, (const GLchar * const*)&shader->frag_glsl, NULL);
 
   // compile shader source
+  //logging.info("render_thread: compiling .frag source");
   glCompileShader(fragment_shader);
 
   // check for compile failure
@@ -54,14 +64,18 @@ void gpu_upload_shader(shader_t *shader){
   /*** link the vertex and fragment shaders ***/
 
   // create a program object
+  //logging.info("render_thread: creating shader program");
   shader->program = glCreateProgram();
-  logging.assert(shader->program, "GL program failed!");
+  //logging.assert(shader->program, "GL program failed!");
 
   // attach the shaders to the object
+  //logging.info("render_thread: attaching shader vert");
   glAttachShader(shader->program, vertex_shader);
+  //logging.info("render_thread: attaching shader frag");
   glAttachShader(shader->program, fragment_shader);
 
   // finish the linking
+  //logging.info("render_thread: linking shader program");
   glLinkProgram(shader->program);
 
   // check for linking failure
@@ -74,14 +88,15 @@ void gpu_upload_shader(shader_t *shader){
 
   /*** variable declarations for program ***/
 
+  //logging.info("render_thread: declaring shader variables");
   shader->projection = glGetUniformLocation(shader->program, "projection");
-  logging.assert(shader->projection != -1, "projection not found");
+  logging.assert(shader->projection != -1, "render_thread: projection not found");
 
   shader->view = glGetUniformLocation(shader->program, "view");
-  logging.assert(shader->view != -1, "projection not found");
+  logging.assert(shader->view != -1, "render_thread: projection not found");
 
   shader->model = glGetUniformLocation(shader->program, "model");
-  logging.assert(shader->model != -1, "model not found");
+  logging.assert(shader->model != -1, "render_thread: model not found");
 
   free(shader->vert_glsl);
   free(shader->frag_glsl);
@@ -92,7 +107,7 @@ void gpu_upload_shader(shader_t *shader){
 /***** load_mesh *****/
 void gpu_upload_mesh(mesh_t *mesh){
   if(!mesh){
-    logging.warn("mesh invalid for load");
+    logging.warn("render_thread: mesh invalid for load");
     return;
   }
 
@@ -100,10 +115,12 @@ void gpu_upload_mesh(mesh_t *mesh){
 
   // create empty vertex array object
   glGenVertexArrays(1, &mesh->vao);
+  //logging.data("generated vao", mesh->vao);
   glBindVertexArray(mesh->vao);
 
   // create empty vertex buffer object
   glGenBuffers(1, &mesh->vbo);
+  //logging.data("generated vbo", mesh->vbo);
   glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
 
   // define and set the vertex buffer
@@ -153,6 +170,7 @@ void gpu_upload_mesh(mesh_t *mesh){
   
   // create index object
   glGenBuffers(1, &mesh->ebo);
+  //logging.data("generated ebo", mesh->ebo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo);
 
   // define and set index buffer
@@ -165,29 +183,100 @@ void gpu_upload_mesh(mesh_t *mesh){
   mesh->vert = NULL;
 }
 
+/***** load_texture *****/
+void gpu_upload_texture(texture_t *texture) {
+  GLuint handle;
+
+  glGenTextures(1, &handle);
+  glBindTexture(GL_TEXTURE_2D, handle);
+
+  glTexImage2D(
+      GL_TEXTURE_2D,
+      0,
+      GL_RGBA8,
+      256,
+      256,
+      0,
+      GL_RGBA,
+      GL_UNSIGNED_BYTE,
+      texture->pixels);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+  texture->handle = handle;
+  free(texture->pixels);
+  texture->pixels = NULL;
+}
+
 /***** draw_object *****/
-void draw_object(entity_t *entity, camera_t *camera, lighting_t *lighting){
+void draw_object(
+  entity_t *entity,
+  camera_t *camera,
+  lighting_t *lighting,
+  mesh_table_t *mesh_table,
+  shader_table_t *shader_table,
+  texture_table_t *texture_table
+){
   if (entity->render_data.hidden) return;
+
+  size_t mesh_idx = entity->render_data.mesh_idx;
+  size_t shader_idx = entity->render_data.shader_idx;
+  size_t texture_idx = entity->render_data.texture_idx;
+
+  shader_t *shaders = shader_table->shader;
+  mesh_t *meshes = mesh_table->mesh;
+  texture_t *textures = texture_table->texture;
 
   update_model(entity);
 
-  glUseProgram(object->shader->program);
-  glBindVertexArray(object->mesh->vao);
+  //logging.info("render_thread: using program");
+  glUseProgram(shaders[shader_idx].program);
+  //gl_error_check();
 
-  glUniformMatrix4fv(object->shader->projection, 1, GL_FALSE, camera->projection.i);
 
-  glUniformMatrix4fv(object->shader->model, 1, GL_FALSE, object->model.i);
 
-  glUniformMatrix4fv(object->shader->view, 1, GL_FALSE, camera->view.i);
+  glBindVertexArray(meshes[mesh_idx].vao);
+  //gl_error_check();
 
-  glUniform3fv(glGetUniformLocation(object->shader->program, "light_ray_direction"), 1, &lighting->direction.x);
+  //logging.info("render_thread: uploading projection");
+  glUniformMatrix4fv(shaders[shader_idx].projection, 1, GL_FALSE, camera->projection.i);
+  //gl_error_check();
 
-  glUniform1f(glGetUniformLocation(object->shader->program, "ambient_light"), lighting->ambient);
+  //logging.info("render_thread: uploading model");
+  glUniformMatrix4fv(shaders[shader_idx].model, 1, GL_FALSE, entity->render_data.model.i);
+  //gl_error_check();
 
-  glUniform1i(glGetUniformLocation(object->shader->program, "palette"), 0);
+  //logging.info("render_thread: uploading view");
+  glUniformMatrix4fv(shaders[shader_idx].view, 1, GL_FALSE, camera->view.i);
+  //gl_error_check();
+
+  //logging.info("render_thread: uploading directional light");
+  glUniform3fv(glGetUniformLocation(shaders[shader_idx].program, "light_ray_direction"), 1, &lighting->direction.x);
+  //gl_error_check();
+
+  //logging.info("render_thread: uploading ambient light");
+  glUniform1f(glGetUniformLocation(shaders[shader_idx].program, "ambient_light"), lighting->ambient);
+  //gl_error_check();
+
+  //logging.info("active texture");
+  glActiveTexture(GL_TEXTURE0);
+  //gl_error_check();
+
+  //logging.info("bind texture");
+  glBindTexture(GL_TEXTURE_2D, textures[texture_idx].handle);
+  //gl_error_check();
+
+  //logging.info("palette");
+  glUniform1i(glGetUniformLocation(shaders[shader_idx].program, "palette"), 0);
+  //gl_error_check();
 
   //mul by 3 for # of idx per tri
-  glDrawElements(GL_TRIANGLES, object->mesh->ntris * 3, GL_UNSIGNED_INT, 0);
+  //logging.info("draw");
+  glDrawElements(GL_TRIANGLES, (int)meshes[mesh_idx].ntris * 3, GL_UNSIGNED_INT, 0);
+  //gl_error_check();
 
 }
 
@@ -195,7 +284,8 @@ void gl_error_check(void){
     GLenum gl_err;
     gl_err = glGetError();
     while(gl_err != GL_NO_ERROR){
-        logging.warn("render failure");
+        logging.warn("render_thread: render failure");
+        logging.data("render_thread: error code", gl_err);
         gl_err = glGetError();
     }
 }
@@ -216,13 +306,30 @@ void update_model(entity_t *entity){
     entity->render_data.remodel = false;
 }
 
+void log_mat4(const char *name, mat4 m)
+{
+  logging.info(name);
+
+  logging.detail("row 0 %f %f %f %f",
+      m.i[0],  m.i[1],  m.i[2],  m.i[3]);
+
+  logging.detail("row 1 %f %f %f %f",
+      m.i[4],  m.i[5],  m.i[6],  m.i[7]);
+
+  logging.detail("row 2 %f %f %f %f",
+      m.i[8],  m.i[9],  m.i[10], m.i[11]);
+
+  logging.detail("row 3 %f %f %f %f",
+      m.i[12], m.i[13], m.i[14], m.i[15]);
+}
 void update_camera(camera_t *camera){
   mat4 view;
   view = mat4_identity();
+  view = mat4_mul(mat4_rotate_z(-camera->rot.z), view);
+  view = mat4_mul(mat4_rotate_x(-camera->rot.x), view);
+  view = mat4_mul(mat4_rotate_y(-camera->rot.y), view);
   view = mat4_mul(mat4_translate_camera(camera->pos), view);
-  view = mat4_mul(mat4_rotate_y(camera->rot.y), view);
-  view = mat4_mul(mat4_rotate_x(camera->rot.x), view);
-  view = mat4_mul(mat4_rotate_z(camera->rot.z), view);
+
   camera->view = view;
 }
 
@@ -260,7 +367,7 @@ void create_palette(void){
       rgba_t *p = &pixels[y * 256 + x];
 
       if (y < 255) {
-        float hue = 360.0f * x / 255.0f;
+        float hue = 360.0f * (float)x / 255.0f;
         float value = 1.0f - (float)y / 254.0f;
         hsv_to_rgb(hue, 1.0f, value, &p->r, &p->g, &p->b);
         p->a = 255;
@@ -285,8 +392,7 @@ void create_palette(void){
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, texture);
+
 
   free(pixels);
 }
@@ -324,14 +430,30 @@ void project_camera(gui_data_t *gui, camera_t *camera) {
 void create_glctx(SDL_Window *window) {
   // create the gpu connection
   SDL_GLContext gl_context = SDL_GL_CreateContext(window);
+  logging.assert(
+    gl_context != NULL,
+    SDL_GetError()
+  );
+
+  // assign this thread as the renderer
+  logging.assert(
+    SDL_GL_MakeCurrent(window, gl_context) == 0,
+    SDL_GetError()
+  );
+
   // bind the gpu functions to this script
-  logging.assert(gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress), "GLAD failed");
+  logging.assert(
+    gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress),
+    "render_thread: GLAD failed"
+  );
 }
 
 
 void render_loop(
   simulation_t *simulation, 
   mesh_table_t *mesh_table,
+  shader_table_t *shader_table,
+  texture_table_t *texture_table,
   gui_data_t *gui,
   boolean_t *modes
 ) {
@@ -348,8 +470,13 @@ void render_loop(
   lighting.ambient = .5f;
 
   bool setting = ! modes->wireframe;
-
+  static uint64_t frame = 0;
+  logging.data("render entities:", simulation->nentities);
   while(modes->running){
+
+    if ((frame++ % 300) == 0) {
+      logging.data("render frame", frame);
+    }
 
     if(setting !=  modes->wireframe){
       if(modes->wireframe){
@@ -365,7 +492,7 @@ void render_loop(
     if (get_dim(&gui->window)) {
       glViewport(0, 0, gui->window.dim.w, gui->window.dim.h);
       float aspect = (float)gui->window.dim.w / (float)gui->window.dim.h;
-      &simulation->player_table[0].camera.projection = mat4_perspective(70.0f, aspect, 0.1f, 1000.0f);
+      simulation->player_table[0].camera.projection = mat4_perspective(70.0f, aspect, 0.1f, 1000.0f);
     }
 
 
@@ -384,12 +511,15 @@ void render_loop(
       draw_object(
         &simulation->entity_table[i], 
         &simulation->player_table[0].camera, 
-        &lighting
+        &lighting,
+        mesh_table,
+        shader_table,
+        texture_table
       );
     }
 
-
     gl_error_check();
+
     SDL_GL_SwapWindow(gui->window.interface);
   }
 }
@@ -404,36 +534,62 @@ void render_loop(
  *  3. entity positions
  */
 void *start_render(void *arg){
-  //simulation_t *simulation, mesh_t *mesh_table, pthread_barrier_t *barrier
-  engine_t *engine = (engine_t*)arg;
+  logging.info("render_thread: starting");
+  engine_t *engine = (engine_t *)arg;
   gui_data_t *gui = &engine->gui;
   simulation_t *simulation = &engine->simulation;
+
   mesh_table_t *mesh_table = &engine->mesh_table;
+  shader_table_t *shader_table = &engine->shader_table;
+  texture_table_t *texture_table = &engine->texture_table;
+
   boolean_t *modes = &engine->modes;
   pthread_barrier_t *barrier = &engine->barrier;
+  logging.info("render_thread: caches created");
 
+  logging.info("render_thread: creating context...");
   create_glctx(gui->window.interface);
+  logging.info("render_thread: context created");
 
-  shader_t *shared_shader = malloc(sizeof(shader_t));
-  *shared_shader = init_shader("./src/render/basic.vert", "./src/render/basic.frag");
+  size_t count;
 
-  size_t nmeshes = mesh_table->nmeshes;
-  for (size_t i=0; i<nmeshes; i++) {
+  logging.info("render_thread: creating meshes...");
+  count = mesh_table->nmeshes;
+  for (size_t i=0; i<count; i++)
     gpu_upload_mesh(&mesh_table->mesh[i]);
-  }
+  logging.info("render_thread: meshes created");
 
-  // shader table like above
+  logging.info("render_thread: creating textures...");
+  count = texture_table->ntextures;
+  for (size_t i=0; i<count; i++)
+    gpu_upload_texture(&texture_table->texture[i]);
+  logging.info("render_thread: textures created");
+
+  logging.info("render_thread: creating shaders...");
+  count = shader_table->nshaders;
+  for (size_t i=0; i<count; i++)
+    gpu_upload_shader(&shader_table->shader[i]);
+  logging.info("render_thread: shaders created");
 
 
   /********* THE GREAT WALL *********/
-  logging.info("render init finished");
+  logging.info("render_thread: render init finished, waiting at barrier");
   pthread_barrier_wait(barrier);
-  logging.info("render loop starting");
+  logging.info("render_thread: render loop starting");
   /**********************************/
 
+  logging.data("camera x", simulation->player_table[0].camera.pos.x);
+  logging.data("camera y", simulation->player_table[0].camera.pos.y);
+  logging.data("camera z", simulation->player_table[0].camera.pos.z);
 
-
-  render_loop(simulation, mesh_table, gui, modes);
+  render_loop(
+    simulation,
+    mesh_table,
+    shader_table,
+    texture_table,
+    gui,
+    modes
+  );
 
 
   SDL_DestroyWindow(gui->window.interface);

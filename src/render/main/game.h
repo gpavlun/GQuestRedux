@@ -9,17 +9,16 @@
 #include "../math/vector.h"
 #include "../math/matrix.h"
 #include "../rendering/render.h"
-
 #include "../sdl_windowing/sdl_ops.h"
 
-typedef struct boolean_struct{
+def boolean_struct{
   u8 running: 1;
   u8 dynamic: 1;
   u8 wireframe:1;
 
 }boolean_t;
 
-def {
+def inputs_t{
   u8 w : 1;
   u8 a : 1;
   u8 s : 1;
@@ -28,14 +27,14 @@ def {
   u8 shift : 1;
 }inputs_t;
 
-def {
+def transform_t{
   vec3 pos;
   vec3 rot;
   vec3 scale;
 }transform_t;
 
 
-def {
+def actor_t{
 
   float max_force;
   float mass;
@@ -53,7 +52,7 @@ def {
 
 }actor_t;
 
-def {
+def camera_t{
   vec3 rot;
   vec3 pos;
   mat4 view;
@@ -65,7 +64,7 @@ def {
 
 
 
-def {
+def controller_state_t{
   inputs_t inputs;
   const uint8_t *keyscan;
   u8 mousemode;
@@ -87,7 +86,7 @@ enum mesh_table_index_e {
 
 
 
-def {
+def physics_actor_t{
 
   float max_force;
   float mass;
@@ -102,23 +101,24 @@ def {
 
 }physics_actor_t;
 
-def {
+def render_data_t{
   bool hidden;
 
   size_t mesh_idx;
   size_t shader_idx;
+  size_t texture_idx;
 
   bool remodel;
   mat4 model;
 }render_data_t;
 
-def {
+def entity_t{
   transform_t transform;
   physics_actor_t physics_actor;
   render_data_t render_data;
 }entity_t;
 
-def {
+def player_t{
   entity_t entity;
   camera_t camera;
 
@@ -126,7 +126,15 @@ def {
   bool flying;
 }player_t;
 
-def {
+def logical_chunk_t{
+  float *heightmap;
+  size_t mesh_idx;
+  size_t shader_idx;
+  size_t texture_idx;
+  vec3 pos;
+} logical_chunk_t;
+
+def simulation_t{
   logical_chunk_t *terrain_table;
   size_t nterrains;
   entity_t *entity_table;
@@ -136,33 +144,42 @@ def {
 
 }simulation_t;
 
-def {
+def shader_table_t{
   shader_t *shader;
   size_t nshaders;
 }shader_table_t;
 
-def {
+def mesh_table_t{
   mesh_t *mesh;
   size_t nmeshes;
 }mesh_table_t;
+
+def texture_table_t{
+  texture_t *texture;
+  size_t ntextures;
+}texture_table_t;
 // new model, simulation has entities, the enities have indexes
 // for their mesh in the mesh table. Then access is relegated to
 // the enitity table for all subsystems, the idea being that the
 // subsystems do not need to have straight access to other
 // systems data, with the entity table being a bridge of sorts.
-def {
+def engine_t{
   boolean_t modes;
   gui_data_t gui;
 
   controller_state_t controller;
   simulation_t simulation;
+
   mesh_table_t mesh_table;
   shader_table_t shader_table;
+  texture_table_t texture_table;
 
   pthread_barrier_t barrier;
 
   pthread_t render_thread;
   pthread_t console_thread;
 }engine_t;
+
+
 
 #endif

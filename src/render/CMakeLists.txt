@@ -33,6 +33,9 @@ add_executable(render
         generation/generation.h
         main/simulation.c
         main/simulation.h
+        generation/texture_generation.c
+        bmp_parser/bmp_parser.c
+        bmp_parser/bmp_parser.h
 )
 
 file(GLOB RENDER_SOURCES CONFIGURE_DEPENDS
@@ -52,6 +55,16 @@ target_link_libraries(render
         GQuest::gcurses
         GQuest::glad
         m
+)
+
+target_compile_options(render PRIVATE
+        -fsanitize=address
+        -fno-omit-frame-pointer
+        -g
+)
+
+target_link_options(render PRIVATE
+        -fsanitize=address
 )
 
 set_target_properties(render PROPERTIES

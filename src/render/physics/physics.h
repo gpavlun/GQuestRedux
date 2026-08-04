@@ -5,19 +5,13 @@
 #ifndef GQUESTREDUX_PHYSICS_H
 #define GQUESTREDUX_PHYSICS_H
 
-#include <SDL2/SDL.h>
-#include <SDL_events.h>
-#include <math.h>
-#include <pthread.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdbool.h>
+#include "../main/typing.h"
 
-#include <gio.h>
+#include "../math/vector.h"
 
-#include "../main/game.h"
-
+def logical_chunk_t logical_chunk_t;
+def controller_state_t controller_state_t;
+def simulation_t simulation_t;
 
 float terrain_height(vec3 pos, logical_chunk_t *terrain);
 void step_physics(controller_state_t *controller, simulation_t *simulation);

@@ -5,7 +5,9 @@
 #ifndef GQUEST_SIMULATION_H
 #define GQUEST_SIMULATION_H
 
-#include "game.h"
+#include "../main/typing.h"
+
+def simulation_t simulation_t;
 
 void step_simulation(simulation_t *simulation);
 

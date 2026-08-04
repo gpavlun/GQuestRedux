@@ -1,4 +1,8 @@
+#include "gio.h"
+#include "logging.h"
 #include "../rendering/render.h"
+#include "../main/game.h"
+#include "../rendering/filehelper.h"
 
 /***** add_shader *****/
 i64 add_shader(shader_table_t *shader_table, shader_t *shader) {

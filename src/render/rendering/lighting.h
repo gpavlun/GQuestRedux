@@ -5,22 +5,24 @@
 #ifndef GQUEST_LIGHTING_H
 #define GQUEST_LIGHTING_H
 
+#include "../main/typing.h"
+
 #include "../math/vector.h"
 
-def {
+def sun_cycle_t{
   u32 start_time;
   float angle;
   int visible;
 }sun_cycle_t;
 
-def {
+def sun_t{
   vec3 direction;
   vec3 color;
   float intensity;
   sun_cycle_t cycle;
 }sun_t;
 
-def {
+def lighting_t{
   vec3 direction;
   vec3 color;
   float intensity;

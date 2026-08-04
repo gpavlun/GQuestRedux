@@ -1,67 +1,42 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-
-#include <SDL2/SDL.h>
-#include <math.h>
-#include <pthread.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include "../main/typing.h"
 
 #include <glad/glad.h>
-#include <logging.h>
-#include <stdbool.h>
-
-#include "../sdl_windowing/sdl_ops.h"
-#include "../physics/physics.h"
-#include "../main/game.h"
 #include "../math/matrix.h"
 #include "../math/vector.h"
-#include "../main/typing.h"
-#include "../tui_panel/terminal_interface.h"
 
-#include "filehelper.h"
-#include "lighting.h"
+def mesh_table_t mesh_table_t;
+def shader_table_t shader_table_t;
+def texture_table_t texture_table_t;
+
+def entity_t entity_t;
+def camera_t camera_t;
+def lighting_t lighting_t;
 
 #define $chunk_quads 1024
 #define $chunk_verts ($chunk_quads + 1)
 
 
 
-def {
-    u32 A, B;
-}edge_t;
 
-def {
-    u16 a, b, c;
-    hexcode_u color;
-}triangle_t;
-
-
-
-def {
-    u8 wire_frame: 1;
-    u8 triangles: 1;
-    u8 vertices: 1;
-}mesh_opts;
-
-
-typedef struct {
+def rgba_t{
     u8 r, g, b, a;
 } rgba_t;
 
 
-def {
+def vertex_t{
   vec3 pos;
   vec3 normal;
   vec2 uv;
 }vertex_t;
 
-def {
+def tri_t{
   u32 a, b, c;
 }tri_t;
 
-def {
+def mesh_t{
   size_t nverts;
   vertex_t *vert;
   size_t ntris;
@@ -70,11 +45,16 @@ def {
   GLuint vao;
   GLuint vbo;
   GLuint ebo;
-
-  mesh_opts opts;
 }mesh_t;
 
-def {
+def texture_t{
+  GLuint handle;
+  u8 *pixels;
+  u32 width;
+  u32 height;
+}texture_t;
+
+def shader_t{
   char *vert_glsl;
   char *frag_glsl;
 
@@ -86,46 +66,26 @@ def {
 
 }shader_t;
 
-def {
-  bool hidden;
-
-  mesh_t *mesh;
-  shader_t *shader;
-
-  bool remodel;
-  mat4 model;
-
-  vec3 pos;
-  vec3 rot;
-  vec3 scale;
-}render_object_t;
-
-def {
-  render_object_t **object;
-  size_t nobjects;
-}render_array_t;
-
-
-def {
-  float *heightmap;
-  size_t mesh_idx;
-  vec3 pos;
-} logical_chunk_t;
-extern logical_chunk_t *glob_terrain;
-
-
-
-
-
 void *start_render(void *arg);
 void gl_error_check(void);
-void update_model(render_object_t *object);
-void draw_object(render_object_t *object, camera_t *camera, lighting_t *lighting);
+void update_model(entity_t *entity);
 void update_camera(camera_t *camera);
+
+
+
+void draw_object(
+  entity_t *entity,
+  camera_t *camera,
+  lighting_t *lighting,
+  mesh_table_t *mesh_table,
+  shader_table_t *shader_table,
+  texture_table_t *texture_table
+);
+
 
 void gpu_upload_mesh(mesh_t *mesh);
 void gpu_upload_shader(shader_t *shader);
-
+void gpu_upload_texture(texture_t *texture);
 
 shader_t init_shader(char *vert_path, char *frag_path);
 

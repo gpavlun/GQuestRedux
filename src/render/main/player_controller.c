@@ -3,8 +3,9 @@
 //
 
 #include "player_controller.h"
+#include "../physics/physics.h"
 
-void player_controller(player_t *player, inputs_t key){
+void player_controller(player_t *player, inputs_t key, simulation_t *simulation){
   player->entity.physics_actor.desired_velocity.x = 0;
   player->entity.physics_actor.desired_velocity.y = 0;
   player->entity.physics_actor.desired_velocity.z = 0;
@@ -27,7 +28,7 @@ void player_controller(player_t *player, inputs_t key){
       if( player->flying) player->entity.physics_actor.vel = (vec3){0,0,0};
     }
 
-    float height = terrain_height(player->entity.transform.pos);
+    float height = terrain_height(player->entity.transform.pos, &simulation->terrain_table[0]);
     if(!player->flying && player->entity.transform.pos.y<=(height + 0.1f)){
       player->entity.physics_actor.vel.y = $walkspeed*.8f;
     }
@@ -167,6 +168,6 @@ void event_handler(
 
   }
 
-  player_controller(&simulation->player_table[0], controller->inputs);
+  player_controller(&simulation->player_table[0], controller->inputs, simulation);
   simulation->player_table[0].entity.transform.rot = simulation->player_table[0].camera.rot;
 }

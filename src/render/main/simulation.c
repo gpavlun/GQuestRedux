@@ -1,10 +1,12 @@
+#include "simulation.h"
+
 #include "../main/game.h"
 
 void rotate_object(entity_t *object) {
 
   static u32 old;
   u32 now = SDL_GetTicks();
-  float elapsed = now - old;
+  u32 elapsed = now - old;
   if (elapsed > 10) {
     old = now;
     object->transform.rot.y += 0.1f;

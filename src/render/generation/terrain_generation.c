@@ -1,5 +1,8 @@
 #include "generation.h"
+#include "logging.h"
+
 #include "../rendering/render.h"
+#include "../main/game.h"
 
 float height_func(int row, int col){
   float y = (float)row;
@@ -19,11 +22,11 @@ float height_func(int row, int col){
 void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table){
   i32 r, c, t;
 
-  logical_chunk_t logical_chunk = {0};
-  logical_chunk.heightmap = calloc($chunk_verts*$chunk_verts, sizeof(float));
+  logical_chunk_t *logical_chunk = calloc(1, sizeof(logical_chunk_t));
+  logical_chunk->heightmap = calloc($chunk_verts*$chunk_verts, sizeof(float));
   for(r=0; r<$chunk_verts; r++){
     for(c=0; c<$chunk_verts; c++){
-      *(logical_chunk.heightmap + r*$chunk_verts + c) =
+      *(logical_chunk->heightmap + r*$chunk_verts + c) =
       height_func(r - $chunk_verts/2, c - $chunk_verts/2);
     }
   }
@@ -31,12 +34,12 @@ void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table){
 #define $flat_w 85
   for(r=0;r<$flat_w;r++){
     for(c=0;c<$flat_w;c++){
-      *(logical_chunk.heightmap +
+      *(logical_chunk->heightmap +
       ($chunk_verts/2+$flat_w/2+100-r)*$chunk_verts +
       ($chunk_verts/2+$flat_w/2-100-c)) = 0.0f;
     }
   }
-  simulation->terrain_table = &logical_chunk;
+  simulation->terrain_table = logical_chunk;
   simulation->nterrains = 1;
 
   vertex_t *vertices = NULL;
@@ -50,7 +53,7 @@ void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table){
       (vertices + r*$chunk_verts + c)->pos =
         (vec3){
           (float)c - (float)$chunk_verts/2,
-          logical_chunk.heightmap[r*$chunk_verts+c],
+          logical_chunk->heightmap[r*$chunk_verts+c],
           (float)r - (float)$chunk_verts/2
         };
 
@@ -79,4 +82,6 @@ void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table){
                               $chunk_quads*$chunk_quads*2, triangles);
   mesh_generate_normals(&temp_mesh);
   simulation->terrain_table[0].mesh_idx = add_mesh(mesh_table, &temp_mesh);
+  simulation->terrain_table[0].shader_idx = 0;
+  simulation->terrain_table[0].texture_idx = 0;
 }

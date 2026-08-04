@@ -1,5 +1,7 @@
+#include "gio.h"
 #include "../rendering/render.h"
 #include "../rendering/obj_parser.h"
+#include "../main/game.h"
 
 /***** add_mesh *****/
 i64 add_mesh(mesh_table_t *mesh_table, mesh_t *mesh) {
@@ -89,44 +91,48 @@ void generate_meshes(mesh_table_t *mesh_table) {
   add_mesh(mesh_table, &temp_mesh);
 
   // barad dur
-  temp_mesh = obj_from_file("./assets/barad_dur.obj");
+  temp_mesh = obj_from_file("./assets/obj_models/barad_dur.obj");
   mesh_generate_normals(&temp_mesh);
   for (int i=0; i<temp_mesh.nverts; i++)
     temp_mesh.vert[i].uv = (vec2){0.1f, 0.999f};
   add_mesh(mesh_table, &temp_mesh);
 
   // barad dur eye
-  temp_mesh = obj_from_file("./assets/eye.obj");
+  temp_mesh = obj_from_file("./assets/obj_models/eye.obj");
   mesh_generate_normals(&temp_mesh);
   add_mesh(mesh_table, &temp_mesh);
 
   // player
-  temp_mesh = obj_from_file("./assets/player.obj");
+  temp_mesh = obj_from_file("./assets/obj_models/player.obj");
   mesh_generate_normals(&temp_mesh);
   add_mesh(mesh_table, &temp_mesh);
 
   // lone tower
-  temp_mesh = obj_from_file("./assets/tower_body.obj");
+  temp_mesh = obj_from_file("./assets/obj_models/tower_body.obj");
   mesh_generate_normals(&temp_mesh);
   for (int i=0; i<temp_mesh.nverts; i++)
     temp_mesh.vert[i].uv = (vec2)STONE;
+  add_mesh(mesh_table, &temp_mesh);
 
   // lone tower roof
-  temp_mesh = obj_from_file("./assets/tower_roof.obj");
+  temp_mesh = obj_from_file("./assets/obj_models/tower_roof.obj");
   mesh_generate_normals(&temp_mesh);
   for (int i=0; i<temp_mesh.nverts; i++)
     temp_mesh.vert[i].uv = (vec2)WOOD;
+  add_mesh(mesh_table, &temp_mesh);
 
   // castle
-  temp_mesh = obj_from_file("./assets/castle.obj");
+  temp_mesh = obj_from_file("./assets/obj_models/castle.obj");
   mesh_generate_normals(&temp_mesh);
   for (int i=0; i<temp_mesh.nverts; i++)
     temp_mesh.vert[i].uv = (vec2)STONE;
+  add_mesh(mesh_table, &temp_mesh);
 
   // castle roof
-  temp_mesh = obj_from_file("./assets/roofs.obj");
+  temp_mesh = obj_from_file("./assets/obj_models/roofs.obj");
   mesh_generate_normals(&temp_mesh);
   for (int i=0; i<temp_mesh.nverts; i++)
     temp_mesh.vert[i].uv = (vec2)WOOD;
+  add_mesh(mesh_table, &temp_mesh);
 
 }

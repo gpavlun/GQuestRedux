@@ -3,7 +3,9 @@
 //
 
 #include "lighting.h"
-#include "render.h"
+
+#include <SDL_timer.h>
+#include "../rendering/render.h"
 
 
 void update_sun_direction(sun_cycle_t *sun_c, sun_t *sun){
