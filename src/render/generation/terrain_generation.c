@@ -19,6 +19,13 @@ float height_func(int row, int col){
   return h;
 }
 
+void terrain_generate_uv(mesh_t *mesh, float tile_size){
+    for (int i = 0; i < mesh->nverts; i++) {
+        mesh->vert[i].uv.x = mesh->vert[i].pos.x / tile_size;
+        mesh->vert[i].uv.y = mesh->vert[i].pos.z / tile_size;
+    }
+}
+
 void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table){
   i32 r, c, t;
 
@@ -80,7 +87,7 @@ void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table){
 
   mesh_t temp_mesh = new_mesh($chunk_verts*$chunk_verts, vertices,
                               $chunk_quads*$chunk_quads*2, triangles);
-  mesh_generate_uv(&temp_mesh);
+  terrain_generate_uv(&temp_mesh, 5);
                               mesh_generate_normals(&temp_mesh);
   simulation->terrain_table[0].render_data.mesh_idx = add_mesh(mesh_table, &temp_mesh);
   simulation->terrain_table[0].render_data.shader_idx = 0;

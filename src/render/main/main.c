@@ -1,4 +1,9 @@
 #include <pthread.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
 
 #include "game.h"
 
@@ -65,7 +70,7 @@ void create_entities(
     .render_data = {
       .mesh_idx = $demo_tri_mesh,
       .shader_idx = 0,
-      .texture_idx = 2,
+      .texture_idx = 4,
       .remodel = 1,
     },
     .physics_actor = {
@@ -77,7 +82,7 @@ void create_entities(
       .scale = (vec3){ 1 , 1 , 1 }
     }
   };
-  temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) + 1.0f;
+  temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) + 3.0f;
   add_entity(simulation, &temp);
 
   // barad dur
@@ -85,7 +90,7 @@ void create_entities(
     .render_data = {
       .mesh_idx = $barad_dur_mesh,
       .shader_idx = 0,
-      .texture_idx = 1,
+      .texture_idx = 3,
       .remodel = 1,
     },
     .physics_actor = {
@@ -104,7 +109,7 @@ void create_entities(
     .render_data = {
       .mesh_idx = $barad_eye_mesh,
       .shader_idx = 0,
-      .texture_idx = 2,
+      .texture_idx = 4,
       .remodel = 1,
     },
     .physics_actor = {
@@ -288,6 +293,40 @@ void create_player(simulation_t *simulation) {
 int main(int argc, char **argv){
 
   engine_t engine = {0};
+
+  engine.gui.window.dim.w = 800;
+  engine.gui.window.dim.h = 600;
+
+  
+
+  if(argc > 1){
+    for(int a = 1; a < argc; a++){
+      if(!strcmp(argv[a], "--width")){
+        if(a + 1 < argc){
+          char *end;
+          errno = 0;
+          unsigned long val = strtoul(argv[++a], &end, 10);
+
+          if(errno == 0 && *end == '\0' && val > 0 && val <= SIZE_MAX){
+            engine.gui.window.dim.w = (size_t)val;
+          }
+        }
+      }else if(!strcmp(argv[a], "--height")){
+        if(a + 1 < argc){
+          char *end;
+          errno = 0;
+          unsigned long val = strtoul(argv[++a], &end, 10);
+
+          if(errno == 0 && *end == '\0' && val > 0 && val <= SIZE_MAX){
+            engine.gui.window.dim.h  = (size_t)val;
+          }
+        }
+      }
+    }
+  }
+
+
+  
   pthread_barrier_init(&engine.barrier, NULL, 3);
 
   logging.info("initializing windowing...");

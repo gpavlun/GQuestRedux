@@ -1,3 +1,5 @@
+#include "generation.h"
+
 #include "gio.h"
 #include "../rendering/render.h"
 #include "../rendering/obj_parser.h"
@@ -74,7 +76,69 @@ mesh_t new_mesh(size_t nverts, vertex_t *verts, size_t ntris, tri_t *tris) {
 
   return mesh;
 }
-void mesh_generate_uv(mesh_t *mesh)
+void mesh_generate_uv_box_tiled(mesh_t *mesh, float tiles)
+{
+    float min_x = FLT_MAX;
+    float max_x = -FLT_MAX;
+    float min_y = FLT_MAX;
+    float max_y = -FLT_MAX;
+    float min_z = FLT_MAX;
+    float max_z = -FLT_MAX;
+
+    // Find bounds
+    for (int i = 0; i < mesh->nverts; i++) {
+        vec3 p = mesh->vert[i].pos;
+
+        min_x = fminf(min_x, p.x);
+        max_x = fmaxf(max_x, p.x);
+
+        min_y = fminf(min_y, p.y);
+        max_y = fmaxf(max_y, p.y);
+
+        min_z = fminf(min_z, p.z);
+        max_z = fmaxf(max_z, p.z);
+    }
+
+    float sx = max_x - min_x;
+    float sy = max_y - min_y;
+    float sz = max_z - min_z;
+
+    if (sx == 0.0f || sy == 0.0f || sz == 0.0f)
+        return;
+
+    for (int i = 0; i < mesh->nverts; i++) {
+        vec3 p = mesh->vert[i].pos;
+        vec3 n = mesh->vert[i].normal;
+
+        float u;
+        float v;
+
+        float ax = fabsf(n.x);
+        float ay = fabsf(n.y);
+        float az = fabsf(n.z);
+
+        if (ax > ay && ax > az) {
+            // X-facing faces
+            u = (p.z - min_z) / sz;
+            v = (p.y - min_y) / sy;
+        }
+        else if (ay > ax && ay > az) {
+            // Top/bottom faces
+            u = (p.x - min_x) / sx;
+            v = (p.z - min_z) / sz;
+        }
+        else {
+            // Z-facing faces
+            u = (p.x - min_x) / sx;
+            v = (p.y - min_y) / sy;
+        }
+
+        mesh->vert[i].uv.x = u * tiles;
+        mesh->vert[i].uv.y = v * tiles;
+    }
+}
+
+void mesh_generate_uv(mesh_t *mesh, float tiles)
 {
     float min_x = FLT_MAX;
     float max_x = -FLT_MAX;
@@ -94,9 +158,18 @@ void mesh_generate_uv(mesh_t *mesh)
     float sx = max_x - min_x;
     float sy = max_y - min_y;
 
+    // Avoid division by zero for flat meshes
+    if (sx == 0.0f || sy == 0.0f)
+        return;
+
     for (int i = 0; i < mesh->nverts; i++) {
-        mesh->vert[i].uv.x = (mesh->vert[i].pos.x - min_x) / sx;
-        mesh->vert[i].uv.y = (mesh->vert[i].pos.y - min_y) / sy;
+        vec3 p = mesh->vert[i].pos;
+
+        mesh->vert[i].uv.x =
+            ((p.x - min_x) / sx) * tiles;
+
+        mesh->vert[i].uv.y =
+            ((p.y - min_y) / sy) * tiles;
     }
 }
 /***** generate_meshes *****/
@@ -112,49 +185,49 @@ void generate_meshes(mesh_table_t *mesh_table) {
   demo_tri_;
   temp_mesh = new_mesh(3, vertices, 1, triangles);
   mesh_generate_normals(&temp_mesh);
-  mesh_generate_uv(&temp_mesh);
+  mesh_generate_uv(&temp_mesh, 1);
   add_mesh(mesh_table, &temp_mesh);
 
   // barad dur
   temp_mesh = obj_from_file("./assets/obj_models/barad_dur.obj");
   mesh_generate_normals(&temp_mesh);
-  mesh_generate_uv(&temp_mesh);
+  mesh_generate_uv(&temp_mesh, 1);
   add_mesh(mesh_table, &temp_mesh);
 
   // barad dur eye
   temp_mesh = obj_from_file("./assets/obj_models/eye.obj");
   mesh_generate_normals(&temp_mesh);
-  mesh_generate_uv(&temp_mesh);
+  mesh_generate_uv(&temp_mesh, 1);
   add_mesh(mesh_table, &temp_mesh);
 
   // player
   temp_mesh = obj_from_file("./assets/obj_models/player.obj");
   mesh_generate_normals(&temp_mesh);
-  mesh_generate_uv(&temp_mesh);
+  mesh_generate_uv(&temp_mesh, 1);
   add_mesh(mesh_table, &temp_mesh);
 
   // lone tower
   temp_mesh = obj_from_file("./assets/obj_models/tower_body.obj");
   mesh_generate_normals(&temp_mesh);
-  mesh_generate_uv(&temp_mesh);
+  mesh_generate_uv(&temp_mesh, 1);
   add_mesh(mesh_table, &temp_mesh);
 
   // lone tower roof
   temp_mesh = obj_from_file("./assets/obj_models/tower_roof.obj");
   mesh_generate_normals(&temp_mesh);
-  mesh_generate_uv(&temp_mesh);
+  mesh_generate_uv(&temp_mesh, 1);
   add_mesh(mesh_table, &temp_mesh);
 
   // castle
   temp_mesh = obj_from_file("./assets/obj_models/castle.obj");
   mesh_generate_normals(&temp_mesh);
-  mesh_generate_uv(&temp_mesh);
+  mesh_generate_uv(&temp_mesh, 5);
   add_mesh(mesh_table, &temp_mesh);
 
   // castle roof
   temp_mesh = obj_from_file("./assets/obj_models/roofs.obj");
   mesh_generate_normals(&temp_mesh);
-  mesh_generate_uv(&temp_mesh);
+  mesh_generate_uv(&temp_mesh, 1);
   add_mesh(mesh_table, &temp_mesh);
 
 }

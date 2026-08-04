@@ -23,10 +23,11 @@ void generate_meshes(mesh_table_t *mesh_table);
 void mesh_generate_normals(mesh_t *mesh);
 mesh_t new_mesh(size_t nverts, vertex_t *verts, size_t ntris, tri_t *tris);
 i64 add_mesh(mesh_table_t *mesh_table, mesh_t *mesh);
-void mesh_generate_uv(mesh_t *mesh);
+void mesh_generate_uv(mesh_t *mesh, float tiles);
 
 void generate_textures(texture_table_t *texture_table);
 i64 add_texture(texture_table_t *texture_table, texture_t *texture);
+void terrain_generate_uv(mesh_t *mesh, float tile_size);
 
 float height_func(int row, int col);
 void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table);

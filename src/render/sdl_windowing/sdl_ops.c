@@ -55,8 +55,6 @@ void init_sdl_engine(gui_data_t *gui){
                       SDL_GL_CONTEXT_PROFILE_CORE);
 
   get_mouse(&gui->mouse);
-  gui->window.dim.w = 800;
-  gui->window.dim.h = 600;
   gui->window.cen.x = gui->window.dim.w / 2;
   gui->window.cen.y = gui->window.dim.h / 2;
   gui->window.interface = init_sdl_window(gui->window.dim);

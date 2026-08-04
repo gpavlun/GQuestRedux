@@ -29,7 +29,11 @@ void generate_textures(texture_table_t *texture_table) {
   add_texture(texture_table, texture);
   texture = read_bmp_file("./assets/bmp_textures/bricks.bmp");
   add_texture(texture_table, texture);
-  texture = read_bmp_file("./assets/bmp_textures/planks1.bmp");
+  texture = read_bmp_file("./assets/bmp_textures/shingles1.bmp");
+  add_texture(texture_table, texture);
+  texture = read_bmp_file("./assets/bmp_textures/volcano.bmp");
+  add_texture(texture_table, texture);
+  texture = read_bmp_file("./assets/bmp_textures/lava.bmp");
   add_texture(texture_table, texture);
 }
 
