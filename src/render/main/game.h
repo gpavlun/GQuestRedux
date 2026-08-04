@@ -72,7 +72,7 @@ def controller_state_t{
 }controller_state_t;
 
 enum mesh_table_index_e {
-  $demo_tri_mesh = 0,
+  $cube_mesh = 0,
   $barad_dur_mesh = 1,
   $barad_eye_mesh = 2,
   $player_mesh = 3,

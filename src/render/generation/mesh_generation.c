@@ -179,11 +179,9 @@ void generate_meshes(mesh_table_t *mesh_table) {
   mesh_t temp_mesh;
 
   // eventually replace this with a lookup mechanism
-  // and remove harcoded meshes
 
-  // triangle
-  demo_tri_;
-  temp_mesh = new_mesh(3, vertices, 1, triangles);
+  // cube
+  temp_mesh = obj_from_file("./assets/obj_models/cube.obj");
   mesh_generate_normals(&temp_mesh);
   mesh_generate_uv(&temp_mesh, 1);
   add_mesh(mesh_table, &temp_mesh);
@@ -230,10 +228,12 @@ void generate_meshes(mesh_table_t *mesh_table) {
   mesh_generate_uv(&temp_mesh, 1);
   add_mesh(mesh_table, &temp_mesh);
 
+  // tree
   temp_mesh = obj_from_file("./assets/obj_models/tree.obj");
   mesh_generate_normals(&temp_mesh);
   mesh_generate_uv(&temp_mesh, 5);
   add_mesh(mesh_table, &temp_mesh);
+
 
 
 }

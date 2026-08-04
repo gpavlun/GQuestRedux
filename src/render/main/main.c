@@ -68,7 +68,7 @@ void create_entities(
 
   temp = (entity_t){
     .render_data = {
-      .mesh_idx = $demo_tri_mesh,
+      .mesh_idx = $cube_mesh,
       .shader_idx = 0,
       .texture_idx = 4,
       .remodel = 1,
@@ -82,7 +82,7 @@ void create_entities(
       .scale = (vec3){ 1 , 1 , 1 }
     }
   };
-  temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) + 3.0f;
+  temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) + 3.5f;
   add_entity(simulation, &temp);
 
   // barad dur

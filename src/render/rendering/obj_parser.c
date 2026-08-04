@@ -49,7 +49,7 @@ mesh_t obj_from_file(char *filename) {
     }else if (strncmp(line, "f ", 2) == 0){
       unsigned a, b, c;
 
-      sscanf(line, "f %u %u %u", &a, &b, &c);
+      sscanf(line, "f %u %u %u", &c, &b, &a);
 
       triangles[current_triangle++] = (tri_t){a - 1, b - 1, c - 1};
     }

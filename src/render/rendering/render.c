@@ -182,7 +182,13 @@ void gpu_upload_mesh(mesh_t *mesh){
   mesh->tri = NULL;
   mesh->vert = NULL;
 }
+#ifndef GL_TEXTURE_MAX_ANISOTROPY_EXT
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#endif
 
+#ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#endif
 /***** load_texture *****/
 void gpu_upload_texture(texture_t *texture) {
   GLuint handle;
@@ -201,10 +207,19 @@ void gpu_upload_texture(texture_t *texture) {
       GL_UNSIGNED_BYTE,
       texture->pixels);
 
+  glGenerateMipmap(GL_TEXTURE_2D);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+  float maxAniso = 0.0f;
+
+  glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+
+  glTexParameterf(GL_TEXTURE_2D,
+                  GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                  maxAniso);
 
   texture->handle = handle;
   free(texture->pixels);
@@ -498,6 +513,10 @@ void render_loop(
 ) {
 
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);      // Optional; this is the default.
+  glFrontFace(GL_CCW);
+
 
   create_palette();
 
