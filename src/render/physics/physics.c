@@ -242,7 +242,7 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
     actor->transform.pos =
       vec3_add(actor->transform.pos, vec3_scale(actor->physics_actor.vel, dt));
 
-    float penetration = height - actor->transform.pos.y / normal.y;
+    float penetration = (height - actor->transform.pos.y) / normal.y;
       if(penetration > 0){
         actor->transform.pos = vec3_add(
             actor->transform.pos,
