@@ -12,15 +12,21 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <logging.h>
+
 #include "gcurses.h"
 #include "../main/game.h"
+
 
 char glob_error[64];
 
 void *tui(void *arg) {
 
   engine_t *engine = (engine_t *)arg;
-  while (!engine->modes.running) usleep(10000);
+  logging.info("console_thread: console waiting");
+  logging.detail("console_thread: barrier at %p",&engine->barrier);
+  pthread_barrier_wait(&engine->barrier);
+  logging.info("console_thread: console started");
 
   player_t *player = &engine->simulation.player_table[0];
   
@@ -76,16 +82,22 @@ void *tui(void *arg) {
             player->entity.physics_actor.net_force.z);
     gc_horz_str_disp(terminal, 8, 1, source);
 
-    sprintf(source, "    flying : %s", player->flying?"true":"false");
+    sprintf(source, "    rotation (%.2f, %.2f, %.2f)", player->entity.transform.rot.x, player->entity.transform.rot.y, player->entity.transform.rot.z);
     gc_horz_str_disp(terminal, 9, 1, source);
+
+    sprintf(source, "    flying : %s", player->flying?"true":"false");
+    gc_horz_str_disp(terminal, 10, 1, source);
 
 
 
     sprintf(source, "camera");
     gc_horz_str_disp(terminal, 11, 1, source);
 
-    sprintf(source, "    psi %.2f :: theta %.2f :: phi %.2f", player->camera.rot.z, player->camera.rot.y, player->camera.rot.x);
+    sprintf(source, "    rotation (%.2f, %.2f, %.2f)", player->camera.rot.x, player->camera.rot.y, player->camera.rot.z);
     gc_horz_str_disp(terminal, 12, 1, source);
+
+    sprintf(source, "    position (%.2f, %.2f, %.2f)", player->camera.pos.x, player->camera.pos.y, player->camera.pos.z);
+    gc_horz_str_disp(terminal, 13, 1, source);
 
     sprintf(source, "error message: %s", glob_error);
     gc_horz_str_disp(terminal, 14, 1, source);

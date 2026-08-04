@@ -193,11 +193,11 @@ void gpu_upload_texture(texture_t *texture) {
   glTexImage2D(
       GL_TEXTURE_2D,
       0,
-      GL_RGBA8,
-      256,
-      256,
+      GL_RGB8,
+      texture->width,
+      texture->height,
       0,
-      GL_RGBA,
+      GL_RGB,
       GL_UNSIGNED_BYTE,
       texture->pixels);
 
@@ -211,8 +211,55 @@ void gpu_upload_texture(texture_t *texture) {
   texture->pixels = NULL;
 }
 
-/***** draw_object *****/
-void draw_object(
+/***** draw_terrain *****/
+void draw_terrain(
+  logical_chunk_t *terrain,
+  camera_t *camera,
+  lighting_t *lighting,
+  mesh_table_t *mesh_table,
+  shader_table_t *shader_table,
+  texture_table_t *texture_table
+){
+
+  size_t mesh_idx = terrain->render_data.mesh_idx;
+  size_t shader_idx = terrain->render_data.shader_idx;
+  size_t texture_idx = terrain->render_data.texture_idx;
+
+  shader_t *shaders = shader_table->shader;
+  mesh_t *meshes = mesh_table->mesh;
+  texture_t *textures = texture_table->texture;
+
+  terrain_update_model(terrain);
+
+
+  glUseProgram(shaders[shader_idx].program);
+
+  glBindVertexArray(meshes[mesh_idx].vao);
+
+  glUniformMatrix4fv(shaders[shader_idx].projection, 1, GL_FALSE, camera->projection.i);
+
+  glUniformMatrix4fv(shaders[shader_idx].model, 1, GL_FALSE, terrain->render_data.model.i);
+
+  glUniformMatrix4fv(shaders[shader_idx].view, 1, GL_FALSE, camera->view.i);
+
+  glUniform3fv(glGetUniformLocation(shaders[shader_idx].program, "light_ray_direction"), 1, &lighting->direction.x);
+
+  glUniform1f(glGetUniformLocation(shaders[shader_idx].program, "ambient_light"), lighting->ambient);
+
+  glActiveTexture(GL_TEXTURE0);
+
+  glBindTexture(GL_TEXTURE_2D, textures[texture_idx].handle);
+
+  glUniform1i(glGetUniformLocation(shaders[shader_idx].program, "palette"), 0);
+
+  //mul by 3 for # of idx per tri
+  glDrawElements(GL_TRIANGLES, (int)meshes[mesh_idx].ntris * 3, GL_UNSIGNED_INT, 0);
+
+
+}
+
+/***** draw_entity *****/
+void draw_entity(
   entity_t *entity,
   camera_t *camera,
   lighting_t *lighting,
@@ -232,51 +279,30 @@ void draw_object(
 
   update_model(entity);
 
-  //logging.info("render_thread: using program");
+
   glUseProgram(shaders[shader_idx].program);
-  //gl_error_check();
-
-
 
   glBindVertexArray(meshes[mesh_idx].vao);
-  //gl_error_check();
 
-  //logging.info("render_thread: uploading projection");
   glUniformMatrix4fv(shaders[shader_idx].projection, 1, GL_FALSE, camera->projection.i);
-  //gl_error_check();
 
-  //logging.info("render_thread: uploading model");
   glUniformMatrix4fv(shaders[shader_idx].model, 1, GL_FALSE, entity->render_data.model.i);
-  //gl_error_check();
 
-  //logging.info("render_thread: uploading view");
   glUniformMatrix4fv(shaders[shader_idx].view, 1, GL_FALSE, camera->view.i);
-  //gl_error_check();
 
-  //logging.info("render_thread: uploading directional light");
   glUniform3fv(glGetUniformLocation(shaders[shader_idx].program, "light_ray_direction"), 1, &lighting->direction.x);
-  //gl_error_check();
 
-  //logging.info("render_thread: uploading ambient light");
   glUniform1f(glGetUniformLocation(shaders[shader_idx].program, "ambient_light"), lighting->ambient);
-  //gl_error_check();
 
-  //logging.info("active texture");
   glActiveTexture(GL_TEXTURE0);
-  //gl_error_check();
 
-  //logging.info("bind texture");
   glBindTexture(GL_TEXTURE_2D, textures[texture_idx].handle);
-  //gl_error_check();
 
-  //logging.info("palette");
   glUniform1i(glGetUniformLocation(shaders[shader_idx].program, "palette"), 0);
-  //gl_error_check();
 
   //mul by 3 for # of idx per tri
-  //logging.info("draw");
   glDrawElements(GL_TRIANGLES, (int)meshes[mesh_idx].ntris * 3, GL_UNSIGNED_INT, 0);
-  //gl_error_check();
+
 
 }
 
@@ -288,6 +314,18 @@ void gl_error_check(void){
         logging.data("render_thread: error code", gl_err);
         gl_err = glGetError();
     }
+}
+
+void terrain_update_model(logical_chunk_t *terrain){
+    if (!terrain->render_data.remodel)
+        return;
+
+    mat4 model = mat4_identity();
+
+    model = mat4_mul(model, mat4_translate_pos(terrain->pos));
+
+    terrain->render_data.model   = model;
+    terrain->render_data.remodel = false;
 }
 
 void update_model(entity_t *entity){
@@ -325,10 +363,11 @@ void log_mat4(const char *name, mat4 m)
 void update_camera(camera_t *camera){
   mat4 view;
   view = mat4_identity();
-  view = mat4_mul(mat4_rotate_z(-camera->rot.z), view);
-  view = mat4_mul(mat4_rotate_x(-camera->rot.x), view);
-  view = mat4_mul(mat4_rotate_y(-camera->rot.y), view);
+
   view = mat4_mul(mat4_translate_camera(camera->pos), view);
+  view = mat4_mul(mat4_rotate_z(camera->rot.z), view);
+  view = mat4_mul(mat4_rotate_y(camera->rot.y), view);
+  view = mat4_mul(mat4_rotate_x(camera->rot.x), view);
 
   camera->view = view;
 }
@@ -472,6 +511,7 @@ void render_loop(
   bool setting = ! modes->wireframe;
   static uint64_t frame = 0;
   logging.data("render entities:", simulation->nentities);
+  size_t count;
   while(modes->running){
 
     if ((frame++ % 300) == 0) {
@@ -506,9 +546,21 @@ void render_loop(
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    size_t count = simulation->nentities;
+    count = simulation->nterrains;
     for (int i=0; i<count; i++) {
-      draw_object(
+      draw_terrain(
+        &simulation->terrain_table[i], 
+        &simulation->player_table[0].camera, 
+        &lighting,
+        mesh_table,
+        shader_table,
+        texture_table
+      );
+    }
+
+    count = simulation->nentities;
+    for (int i=0; i<count; i++) {
+      draw_entity(
         &simulation->entity_table[i], 
         &simulation->player_table[0].camera, 
         &lighting,
@@ -544,6 +596,7 @@ void *start_render(void *arg){
   texture_table_t *texture_table = &engine->texture_table;
 
   boolean_t *modes = &engine->modes;
+  logging.detail("render_thread: barrier at %p",&engine->barrier);
   pthread_barrier_t *barrier = &engine->barrier;
   logging.info("render_thread: caches created");
 
@@ -574,13 +627,10 @@ void *start_render(void *arg){
 
   /********* THE GREAT WALL *********/
   logging.info("render_thread: render init finished, waiting at barrier");
+  logging.detail("render_thread: barrier at %p",barrier);
   pthread_barrier_wait(barrier);
   logging.info("render_thread: render loop starting");
   /**********************************/
-
-  logging.data("camera x", simulation->player_table[0].camera.pos.x);
-  logging.data("camera y", simulation->player_table[0].camera.pos.y);
-  logging.data("camera z", simulation->player_table[0].camera.pos.z);
 
   render_loop(
     simulation,

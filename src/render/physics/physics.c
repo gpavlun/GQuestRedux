@@ -156,8 +156,6 @@ vec3 terrain_normal(vec3 pos, logical_chunk_t *terrain){
 
 void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
 
-
-
     float height = terrain_height(actor->transform.pos, terrain);
     vec3 normal  = terrain_normal(actor->transform.pos, terrain);
 
@@ -173,7 +171,9 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
 
     float into_surface = vec3_dot(desired_world, normal);
 
+
     desired_world = vec3_sub(desired_world, vec3_scale(normal, into_surface));
+
 
     /* motor force */
     actor->physics_actor.applied_force =
@@ -183,6 +183,7 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
       );
 
     float force_len = vec3_length(actor->physics_actor.applied_force);
+  
     if(force_len > actor->physics_actor.max_force){
         actor->physics_actor.applied_force =
           vec3_scale(
@@ -219,10 +220,9 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
         vec3 friction = vec3_scale(vec3_normalize(tangent_force), -friction_mag);
         net_force = vec3_add(net_force, friction);
     }    
-    
+
     float traction = $friction_coeff * normal_mag;// * normal.y * 10;
 
-    
     force_len = vec3_length(actor->physics_actor.applied_force);
     if(force_len > traction){
         actor->physics_actor.applied_force =
@@ -242,7 +242,6 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
     actor->transform.pos =
       vec3_add(actor->transform.pos, vec3_scale(actor->physics_actor.vel, dt));
 
-
     float penetration = height - actor->transform.pos.y / normal.y;
       if(penetration > 0){
         actor->transform.pos = vec3_add(
@@ -250,7 +249,6 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
             vec3_scale(normal, penetration)
         );
       }
-
 
     actor->physics_actor.net_force = net_force;
 }
@@ -285,7 +283,8 @@ void step_physics(
       simulation->player_table[0].entity.transform.pos,
       simulation->player_table[0].camera.offset
     );
-  simulation->player_table[0].camera.rot = simulation->player_table[0].entity.transform.rot;
+  simulation->player_table[0].entity.transform.rot = 
+  simulation->player_table[0].camera.rot;
 }
 
 

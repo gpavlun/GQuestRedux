@@ -21,7 +21,7 @@ add_executable(render
         tui_panel/terminal_interface.h
 
         main/typing.h
-        main/game.c
+        main/main.c
         main/game.h
         rendering/lighting.c
         rendering/lighting.h

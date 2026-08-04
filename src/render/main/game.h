@@ -128,10 +128,8 @@ def player_t{
 
 def logical_chunk_t{
   float *heightmap;
-  size_t mesh_idx;
-  size_t shader_idx;
-  size_t texture_idx;
   vec3 pos;
+  render_data_t render_data;
 } logical_chunk_t;
 
 def simulation_t{

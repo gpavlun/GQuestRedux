@@ -74,7 +74,31 @@ mesh_t new_mesh(size_t nverts, vertex_t *verts, size_t ntris, tri_t *tris) {
 
   return mesh;
 }
+void mesh_generate_uv(mesh_t *mesh)
+{
+    float min_x = FLT_MAX;
+    float max_x = -FLT_MAX;
+    float min_y = FLT_MAX;
+    float max_y = -FLT_MAX;
 
+    for (int i = 0; i < mesh->nverts; i++) {
+        vec3 p = mesh->vert[i].pos;
+
+        min_x = fminf(min_x, p.x);
+        max_x = fmaxf(max_x, p.x);
+
+        min_y = fminf(min_y, p.y);
+        max_y = fmaxf(max_y, p.y);
+    }
+
+    float sx = max_x - min_x;
+    float sy = max_y - min_y;
+
+    for (int i = 0; i < mesh->nverts; i++) {
+        mesh->vert[i].uv.x = (mesh->vert[i].pos.x - min_x) / sx;
+        mesh->vert[i].uv.y = (mesh->vert[i].pos.y - min_y) / sy;
+    }
+}
 /***** generate_meshes *****/
 void generate_meshes(mesh_table_t *mesh_table) {
   vertex_t *vertices = NULL;
@@ -88,51 +112,49 @@ void generate_meshes(mesh_table_t *mesh_table) {
   demo_tri_;
   temp_mesh = new_mesh(3, vertices, 1, triangles);
   mesh_generate_normals(&temp_mesh);
+  mesh_generate_uv(&temp_mesh);
   add_mesh(mesh_table, &temp_mesh);
 
   // barad dur
   temp_mesh = obj_from_file("./assets/obj_models/barad_dur.obj");
   mesh_generate_normals(&temp_mesh);
-  for (int i=0; i<temp_mesh.nverts; i++)
-    temp_mesh.vert[i].uv = (vec2){0.1f, 0.999f};
+  mesh_generate_uv(&temp_mesh);
   add_mesh(mesh_table, &temp_mesh);
 
   // barad dur eye
   temp_mesh = obj_from_file("./assets/obj_models/eye.obj");
   mesh_generate_normals(&temp_mesh);
+  mesh_generate_uv(&temp_mesh);
   add_mesh(mesh_table, &temp_mesh);
 
   // player
   temp_mesh = obj_from_file("./assets/obj_models/player.obj");
   mesh_generate_normals(&temp_mesh);
+  mesh_generate_uv(&temp_mesh);
   add_mesh(mesh_table, &temp_mesh);
 
   // lone tower
   temp_mesh = obj_from_file("./assets/obj_models/tower_body.obj");
   mesh_generate_normals(&temp_mesh);
-  for (int i=0; i<temp_mesh.nverts; i++)
-    temp_mesh.vert[i].uv = (vec2)STONE;
+  mesh_generate_uv(&temp_mesh);
   add_mesh(mesh_table, &temp_mesh);
 
   // lone tower roof
   temp_mesh = obj_from_file("./assets/obj_models/tower_roof.obj");
   mesh_generate_normals(&temp_mesh);
-  for (int i=0; i<temp_mesh.nverts; i++)
-    temp_mesh.vert[i].uv = (vec2)WOOD;
+  mesh_generate_uv(&temp_mesh);
   add_mesh(mesh_table, &temp_mesh);
 
   // castle
   temp_mesh = obj_from_file("./assets/obj_models/castle.obj");
   mesh_generate_normals(&temp_mesh);
-  for (int i=0; i<temp_mesh.nverts; i++)
-    temp_mesh.vert[i].uv = (vec2)STONE;
+  mesh_generate_uv(&temp_mesh);
   add_mesh(mesh_table, &temp_mesh);
 
   // castle roof
   temp_mesh = obj_from_file("./assets/obj_models/roofs.obj");
   mesh_generate_normals(&temp_mesh);
-  for (int i=0; i<temp_mesh.nverts; i++)
-    temp_mesh.vert[i].uv = (vec2)WOOD;
+  mesh_generate_uv(&temp_mesh);
   add_mesh(mesh_table, &temp_mesh);
 
 }

@@ -122,7 +122,7 @@ void event_handler(
 
         if(controller->mousemode){
           simulation->player_table[0].camera.rot.y -= (float)event.motion.xrel * 0.01f;
-          simulation->player_table[0].camera.rot.x   += (float)event.motion.yrel * 0.01f;
+          simulation->player_table[0].camera.rot.x += (float)event.motion.yrel * 0.01f;
 
           if(simulation->player_table[0].camera.rot.x>1.55)
             simulation->player_table[0].camera.rot.x = 1.55f;

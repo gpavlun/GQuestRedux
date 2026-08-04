@@ -14,6 +14,8 @@ def texture_table_t texture_table_t;
 def entity_t entity_t;
 def camera_t camera_t;
 def lighting_t lighting_t;
+def logical_chunk_t logical_chunk_t;
+
 
 #define $chunk_quads 1024
 #define $chunk_verts ($chunk_quads + 1)
@@ -68,6 +70,7 @@ def shader_t{
 
 void *start_render(void *arg);
 void gl_error_check(void);
+void terrain_update_model(logical_chunk_t *terrain);
 void update_model(entity_t *entity);
 void update_camera(camera_t *camera);
 

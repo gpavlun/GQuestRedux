@@ -80,8 +80,12 @@ void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table){
 
   mesh_t temp_mesh = new_mesh($chunk_verts*$chunk_verts, vertices,
                               $chunk_quads*$chunk_quads*2, triangles);
-  mesh_generate_normals(&temp_mesh);
-  simulation->terrain_table[0].mesh_idx = add_mesh(mesh_table, &temp_mesh);
-  simulation->terrain_table[0].shader_idx = 0;
-  simulation->terrain_table[0].texture_idx = 0;
+  mesh_generate_uv(&temp_mesh);
+                              mesh_generate_normals(&temp_mesh);
+  simulation->terrain_table[0].render_data.mesh_idx = add_mesh(mesh_table, &temp_mesh);
+  simulation->terrain_table[0].render_data.shader_idx = 0;
+  simulation->terrain_table[0].render_data.texture_idx = 0;
+  //simulation->terrain_table[0].render_data.model = (mat4){0};
+  simulation->terrain_table[0].render_data.remodel = 1;
+  simulation->terrain_table[0].render_data.hidden = 0;
 }
