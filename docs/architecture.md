@@ -3,25 +3,40 @@
 ├── assets  
 │   ├── bmp_textures  
 │   │   ├── bark1.bmp  
+│   │   ├── black_metal.bmp  
 │   │   ├── bricks.bmp  
+│   │   ├── brown1.bmp  
 │   │   ├── grass2.bmp  
+│   │   ├── grass3.bmp  
+│   │   ├── grass3.jpeg  
 │   │   ├── grass.bmp  
+│   │   ├── lava.bmp  
+│   │   ├── needles.bmp  
+│   │   ├── needles.jpeg  
 │   │   ├── peat1.bmp  
 │   │   ├── planks1.bmp  
 │   │   ├── rock1.bmp  
 │   │   ├── rockycoast.bmp  
 │   │   ├── shingles1.bmp  
-│   │   └── stone1.bmp  
+│   │   ├── stone1.bmp  
+│   │   └── volcano.bmp  
 │   ├── compressed.zip  
 │   └── obj_models  
 │       ├── barad_dur.obj  
 │       ├── castle.obj  
+│       ├── cube  
+│       │   └── obj.mtl  
+│       ├── cube.obj  
 │       ├── eye.obj  
 │       ├── placeholder (Copy).obj  
 │       ├── player.obj  
 │       ├── roofs.obj  
+│       ├── tinker.obj  
 │       ├── tower_body.obj  
-│       └── tower_roof.obj  
+│       ├── tower_roof.obj  
+│       ├── tree  
+│       │   └── obj.mtl  
+│       └── tree.obj  
 ├── CMakeLists.txt  
 ├── devtmux.conf  
 ├── docs  
@@ -134,8 +149,8 @@
 │       │   ├── terrain_generation.c  
 │       │   └── texture_generation.c  
 │       ├── main  
-│       │   ├── game.c  
 │       │   ├── game.h  
+│       │   ├── main.c  
 │       │   ├── player_controller.c  
 │       │   ├── player_controller.h  
 │       │   ├── simulation.c  
@@ -175,7 +190,7 @@
     ├── _1_-1_.ck  
     └── _1_1_.ck  
   
-39 directories, 136 files  
+41 directories, 149 files  
   
 ## Lines of code by file:  
     32 ../libs/logging/include/logging.h  
@@ -211,37 +226,37 @@
    350 ../src/game/physics.c  
     13 ../src/game/terminal_interface.h  
     36 ../src/render/rendering/lighting.h  
-   599 ../src/render/rendering/render.c  
-   124 ../src/render/rendering/render.h  
+   668 ../src/render/rendering/render.c  
+   127 ../src/render/rendering/render.h  
      9 ../src/render/rendering/filehelper.h  
     79 ../src/render/rendering/lighting.c  
     66 ../src/render/rendering/obj_parser.c  
     24 ../src/render/rendering/filehelper.c  
     15 ../src/render/rendering/obj_parser.h  
-    33 ../src/render/generation/generation.h  
-    86 ../src/render/generation/terrain_generation.c  
-   137 ../src/render/generation/mesh_generation.c  
+    35 ../src/render/generation/generation.h  
+    97 ../src/render/generation/terrain_generation.c  
+   238 ../src/render/generation/mesh_generation.c  
     29 ../src/render/generation/shader_generation.c  
-    35 ../src/render/generation/texture_generation.c  
+    41 ../src/render/generation/texture_generation.c  
     95 ../src/render/bmp_parser/bmp_parser.c  
     43 ../src/render/bmp_parser/bmp_parser.h  
-    63 ../src/render/sdl_windowing/sdl_ops.c  
+    61 ../src/render/sdl_windowing/sdl_ops.c  
     61 ../src/render/sdl_windowing/sdl_ops.h  
     18 ../src/render/main/player_controller.h  
    172 ../src/render/main/player_controller.c  
     31 ../src/render/main/typing.h  
+   454 ../src/render/main/main.c  
     14 ../src/render/main/simulation.h  
-   358 ../src/render/main/game.c  
-   185 ../src/render/main/game.h  
+   184 ../src/render/main/game.h  
     19 ../src/render/main/simulation.c  
     74 ../src/render/math/vector.h  
      2 ../src/render/math/vector.c  
     38 ../src/render/math/matrix.h  
    152 ../src/render/math/matrix.c  
-   106 ../src/render/tui_panel/terminal_interface.c  
+   118 ../src/render/tui_panel/terminal_interface.c  
     11 ../src/render/tui_panel/terminal_interface.h  
     19 ../src/render/physics/physics.h  
-   292 ../src/render/physics/physics.c  
+   291 ../src/render/physics/physics.c  
    162 ../src/editor/chunk_operations.c  
     89 ../src/editor/editor_menu.c  
    122 ../src/editor/editor.h  
@@ -250,4 +265,4 @@
     95 ../src/editor/editor_window.c  
     64 ../src/editor/rendering_ops.c  
    104 ../src/editor/legacy_functions.c  
- 16505 total  
+ 16801 total  
