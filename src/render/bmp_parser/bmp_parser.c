@@ -91,5 +91,7 @@ texture_t *read_bmp_file(char *path) {
   texture->height = bitmap_header.height;
   texture->width = bitmap_header.width;
 
+  fclose(bmp_file);
+
   return texture;
 }

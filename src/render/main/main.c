@@ -17,8 +17,25 @@
 
 void cleanup(engine_t *engine) {
   engine->modes.running = 0;
-  //pthread_join(engine->console_thread, NULL);
+
+  pthread_join(engine->console_thread, NULL);
   pthread_join(engine->render_thread, NULL);
+
+  SDL_GL_MakeCurrent(engine->gui.window.interface, NULL);
+  SDL_GL_DeleteContext(engine->gl_context);
+  SDL_DestroyWindow(engine->gui.window.interface);
+
+  SDL_Quit();
+
+  free(engine->mesh_table.mesh);
+  free(engine->texture_table.texture);
+  free(engine->shader_table.shader);
+  free(engine->simulation.entity_table);
+  free(engine->simulation.player_table);
+  size_t count = engine->simulation.nterrains;
+  for(int i=0; i<count;i++)
+    free(engine->simulation.terrain_table[i].heightmap);
+  free(engine->simulation.terrain_table);
 }
 
 void init_renderer(engine_t *engine) {
@@ -432,8 +449,6 @@ int main(int argc, char **argv){
 
   engine.modes.running = true;
   logging.info("main waiting at barrier");
-
-  logging.detail("barrier at %p",&engine.barrier);
   pthread_barrier_wait(&engine.barrier);
   logging.info("=== STARTING ENGINE LOOP ===");
   while (engine.modes.running) {

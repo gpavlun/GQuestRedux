@@ -177,6 +177,8 @@ def engine_t{
 
   pthread_t render_thread;
   pthread_t console_thread;
+
+  SDL_GLContext gl_context;
 }engine_t;
 
 

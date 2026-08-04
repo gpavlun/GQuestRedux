@@ -359,22 +359,6 @@ void update_model(entity_t *entity){
     entity->render_data.remodel = false;
 }
 
-void log_mat4(const char *name, mat4 m)
-{
-  logging.info(name);
-
-  logging.detail("row 0 %f %f %f %f",
-      m.i[0],  m.i[1],  m.i[2],  m.i[3]);
-
-  logging.detail("row 1 %f %f %f %f",
-      m.i[4],  m.i[5],  m.i[6],  m.i[7]);
-
-  logging.detail("row 2 %f %f %f %f",
-      m.i[8],  m.i[9],  m.i[10], m.i[11]);
-
-  logging.detail("row 3 %f %f %f %f",
-      m.i[12], m.i[13], m.i[14], m.i[15]);
-}
 void update_camera(camera_t *camera){
   mat4 view;
   view = mat4_identity();
@@ -481,18 +465,18 @@ void project_camera(gui_data_t *gui, camera_t *camera) {
 
 
 
-void create_glctx(SDL_Window *window) {
+void create_glctx(SDL_Window *window, SDL_GLContext *context) {
   // create the gpu connection
   SDL_GLContext gl_context = SDL_GL_CreateContext(window);
   logging.assert(
     gl_context != NULL,
-    SDL_GetError()
+    "SDL+GL context failed"
   );
 
   // assign this thread as the renderer
   logging.assert(
     SDL_GL_MakeCurrent(window, gl_context) == 0,
-    SDL_GetError()
+    "SDL+GL window selection failed"
   );
 
   // bind the gpu functions to this script
@@ -500,6 +484,9 @@ void create_glctx(SDL_Window *window) {
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress),
     "render_thread: GLAD failed"
   );
+
+  *context = gl_context;
+
 }
 
 
@@ -615,12 +602,11 @@ void *start_render(void *arg){
   texture_table_t *texture_table = &engine->texture_table;
 
   boolean_t *modes = &engine->modes;
-  logging.detail("render_thread: barrier at %p",&engine->barrier);
   pthread_barrier_t *barrier = &engine->barrier;
   logging.info("render_thread: caches created");
 
   logging.info("render_thread: creating context...");
-  create_glctx(gui->window.interface);
+  create_glctx(gui->window.interface, &engine->gl_context);
   logging.info("render_thread: context created");
 
   size_t count;
@@ -646,7 +632,6 @@ void *start_render(void *arg){
 
   /********* THE GREAT WALL *********/
   logging.info("render_thread: render init finished, waiting at barrier");
-  logging.detail("render_thread: barrier at %p",barrier);
   pthread_barrier_wait(barrier);
   logging.info("render_thread: render loop starting");
   /**********************************/

@@ -24,7 +24,6 @@ void *tui(void *arg) {
 
   engine_t *engine = (engine_t *)arg;
   logging.info("console_thread: console waiting");
-  logging.detail("console_thread: barrier at %p",&engine->barrier);
   pthread_barrier_wait(&engine->barrier);
   logging.info("console_thread: console started");
 
