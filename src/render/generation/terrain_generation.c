@@ -14,7 +14,7 @@ float height_func(int row, int col){
   // Medium features
   h += sinf(x * 0.08f) * cosf(y * 0.06f) * 4.0f;
   // Small roughness
-  h += sinf(x * 0.25f + y * 0.15f) * 1.5f;
+  h += sinf(x * 0.25f + y * 0.15f) * 0.5f;
   h += cosf(x * 0.40f - y * 0.30f) * 0.5f;
   return h;
 }
@@ -38,7 +38,7 @@ void generate_terrain(simulation_t *simulation, mesh_table_t *mesh_table){
     }
   }
   // flat spot
-#define $flat_w 85
+
   for(r=0;r<$flat_w;r++){
     for(c=0;c<$flat_w;c++){
       *(logical_chunk->heightmap +

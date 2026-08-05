@@ -31,6 +31,7 @@ def transform_t{
   vec3 pos;
   vec3 rot;
   vec3 scale;
+  vec3 forward;
 }transform_t;
 
 
@@ -80,8 +81,11 @@ enum mesh_table_index_e {
   $tower_roof_mesh = 5,
   $castle_mesh = 6,
   $castle_roof_mesh = 7,
-  $tree_mesh = 8,
-  $terrain_mesh = 9
+  $tree_top_mesh = 8,
+  $tree_log_mesh = 9,
+  $mountain_mesh = 10,
+  $horse_mesh = 11,
+  $terrain_mesh = 12
 };
 
 

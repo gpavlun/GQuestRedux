@@ -1,0 +1,5 @@
+Basic list of conventions:
+
+    triangles wind CCW
+    rotations about an axis are CW
+    +y is up, +x is right, and +z if behind you

@@ -364,9 +364,9 @@ void update_camera(camera_t *camera){
   view = mat4_identity();
 
   view = mat4_mul(mat4_translate_camera(camera->pos), view);
-  view = mat4_mul(mat4_rotate_z(camera->rot.z), view);
-  view = mat4_mul(mat4_rotate_y(camera->rot.y), view);
-  view = mat4_mul(mat4_rotate_x(camera->rot.x), view);
+  view = mat4_mul(mat4_rotate_z(-camera->rot.z), view);
+  view = mat4_mul(mat4_rotate_y(-camera->rot.y), view);
+  view = mat4_mul(mat4_rotate_x(-camera->rot.x), view);
 
   camera->view = view;
 }
@@ -569,6 +569,18 @@ void render_loop(
       draw_entity(
         &simulation->entity_table[i], 
         &simulation->player_table[0].camera, 
+        &lighting,
+        mesh_table,
+        shader_table,
+        texture_table
+      );
+    }
+
+    count = simulation->nplayers;
+    for (int i=0; i<count; i++) {
+      draw_entity(
+        &simulation->player_table[i].entity,
+        &simulation->player_table[0].camera,
         &lighting,
         mesh_table,
         shader_table,

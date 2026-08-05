@@ -98,9 +98,10 @@ void event_handler(
           $ case SDLK_F4:
               simulation->player_table[0].perspective = !simulation->player_table[0].perspective;
               if (simulation->player_table[0].perspective) {
-                simulation->player_table[0].camera.offset = (vec3){0, 3, 2};
+                simulation->player_table[0].entity.render_data.hidden = false;
               }else {
-                simulation->player_table[0].camera.offset = (vec3){0, 2, 0};
+                simulation->player_table[0].entity.render_data.hidden = true;
+                simulation->player_table[0].camera.offset = (vec3){0, 2.0, 0};
               }
 
           $ endcase
@@ -121,14 +122,24 @@ void event_handler(
       $ case SDL_MOUSEMOTION:
 
         if(controller->mousemode){
-          simulation->player_table[0].camera.rot.y -= (float)event.motion.xrel * 0.01f;
-          simulation->player_table[0].camera.rot.x += (float)event.motion.yrel * 0.01f;
 
-          if(simulation->player_table[0].camera.rot.x>1.55)
-            simulation->player_table[0].camera.rot.x = 1.55f;
-          else
-          if(simulation->player_table[0].camera.rot.x<-1.55)
-            simulation->player_table[0].camera.rot.x = -1.55f;
+
+
+            simulation->player_table[0].entity.transform.rot.y += (float)event.motion.xrel * 0.01f;
+            simulation->player_table[0].entity.transform.rot.x -= (float)event.motion.yrel * 0.01f;
+
+            if(simulation->player_table[0].entity.transform.rot.x>1.55)
+              simulation->player_table[0].entity.transform.rot.x = 1.55f;
+            else
+            if(simulation->player_table[0].entity.transform.rot.x<-1.55)
+              simulation->player_table[0].entity.transform.rot.x = -1.55f;
+
+          simulation->player_table[0].entity.transform.forward.x = sinf(simulation->player_table[0].entity.transform.rot.y);
+          simulation->player_table[0].entity.transform.forward.y = 0.0f;
+          simulation->player_table[0].entity.transform.forward.z = cosf(simulation->player_table[0].entity.transform.rot.y);
+
+
+
         }
 
       /***** when mouse scrolls *****/
@@ -169,5 +180,27 @@ void event_handler(
   }
 
   player_controller(&simulation->player_table[0], controller->inputs, simulation);
-  simulation->player_table[0].entity.transform.rot = simulation->player_table[0].camera.rot;
+
+
+  simulation->player_table[0].camera.rot = simulation->player_table[0].entity.transform.rot;
+  if (simulation->player_table[0].perspective) {
+
+    float camera_yaw = -simulation->player_table[0].entity.transform.rot.y;
+    float c = cosf(camera_yaw);
+    float s = sinf(camera_yaw);
+    vec3 local = { 0 , 3.0f , 2.0f};
+
+    vec3 world;
+
+    world.x = local.x * c +
+              local.z * s;
+
+    world.z = -local.x * s +
+               local.z * c;
+
+    world.y = local.y;
+    simulation->player_table[0].camera.offset = world;
+    }
+
+
 }

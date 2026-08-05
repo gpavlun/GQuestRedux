@@ -4,6 +4,8 @@
 #include "../main/typing.h"
 #include <stddef.h>
 
+#define $flat_w 85
+
 def mesh_table_t mesh_table_t;
 def shader_table_t shader_table_t;
 def texture_table_t texture_table_t;

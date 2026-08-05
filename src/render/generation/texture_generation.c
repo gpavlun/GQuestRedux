@@ -43,5 +43,14 @@ void generate_textures(texture_table_t *texture_table) {
   texture = read_bmp_file("./assets/bmp_textures/needles.bmp");
   add_texture(texture_table, texture);
   free(texture);
+  texture = read_bmp_file("./assets/bmp_textures/bark1.bmp");
+  add_texture(texture_table, texture);
+  free(texture);
+  texture = read_bmp_file("./assets/bmp_textures/stone2.bmp");
+  add_texture(texture_table, texture);
+  free(texture);
+  texture = read_bmp_file("./assets/bmp_textures/brown1.bmp");
+  add_texture(texture_table, texture);
+  free(texture);
 }
 

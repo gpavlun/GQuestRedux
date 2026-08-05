@@ -21,8 +21,8 @@ float phys_clamp(float value, float min, float max){
   return value;
 }
 void flying_movement_physics(entity_t *actor, float dt){
-    float c = cosf(actor->transform.rot.y);
-    float s = sinf(actor->transform.rot.y);
+    float c = cosf(-actor->transform.rot.y);
+    float s = sinf(-actor->transform.rot.y);
 
     vec3 desired_world;
     desired_world.x = actor->physics_actor.desired_velocity.x * c +
@@ -159,8 +159,8 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
     float height = terrain_height(actor->transform.pos, terrain);
     vec3 normal  = terrain_normal(actor->transform.pos, terrain);
 
-    float c = cosf(actor->transform.rot.y);
-    float s = sinf(actor->transform.rot.y);
+    float c = cosf(-actor->transform.rot.y);
+    float s = sinf(-actor->transform.rot.y);
 
     vec3 desired_world;
     desired_world.x = actor->physics_actor.desired_velocity.x * c +
@@ -274,7 +274,12 @@ void step_physics(
       controller->dt
     );
   }
-
+  movement_physics(
+    &simulation->entity_table[0],
+    &simulation->terrain_table[0],
+    controller->dt
+  );
+  simulation->entity_table[0].render_data.remodel = true;
 
 
 

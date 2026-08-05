@@ -81,8 +81,30 @@ void create_entities(
   ) {
 
   entity_t temp;
-  // demo triangle
+  // hort
+  temp = (entity_t){
+    .render_data = {
+      .mesh_idx = $horse_mesh,
+      .shader_idx = 0,
+      .texture_idx = 8,
+      .remodel = 1,
+    },
+    .physics_actor = {
+      0
+    },
+    .transform = {
+      .pos   = (vec3){ 0 , 0 , 0 },
+      .rot   = (vec3){ 0 , 0 , 0 },
+      .scale = (vec3){ .3f , .3f , .3f }
+    }
+  };
+  temp.physics_actor.mass = 500;
+  temp.physics_actor.max_force = 5000;
+  temp.physics_actor.desired_velocity.x = -9;
+  temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) + 10.0f;
+  add_entity(simulation, &temp);
 
+  // spinning cube
   temp = (entity_t){
     .render_data = {
       .mesh_idx = $cube_mesh,
@@ -256,11 +278,19 @@ void create_entities(
   add_entity(simulation, &temp);
 
   // trees
-  for(int i=0;i<20;i++){
-    for(int j=0;j<6;j++){
+
+    for(int i=0;i<25;i++){
+    for(int j=0;j<25;j++){
+      float x = -25-(15*i)+((rand() % 11) - 5);
+      float z =  25+(15*j)+((rand() % 11) - 5);
+      if(x < -65 && x > -140 && z < 140 && z > 65) continue;
+
+      float sc = 0.8f + ((float)rand() / (float)RAND_MAX) * (1.2f - 0.8f);
+      float rot = ((float)rand() / RAND_MAX) * (2.0f * M_PI);
+
       temp = (entity_t){
         .render_data = {
-          .mesh_idx = $tree_mesh,
+          .mesh_idx = $tree_top_mesh,
           .shader_idx = 0,
           .texture_idx = 5,
           .remodel = 1,
@@ -269,20 +299,43 @@ void create_entities(
           0
         },
         .transform = {
-          .pos   = (vec3){-35-(5*i)+((rand() % 11) - 5) , 0 , +20+(5*j)+((rand() % 11) - 5)},
-          .rot   = (vec3){ 0 , 0 , 0 },
-          .scale = (vec3){ .2f , .2f , .2f }
+          .pos   = (vec3){x , 0 , z},
+          .rot   = (vec3){ 0 , rot , 0 },
+          .scale = (vec3){ sc , sc , sc }
         }
       };
-      temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]);
+      temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) -1.5f;
+      add_entity(simulation, &temp);
+      temp = (entity_t){
+        .render_data = {
+          .mesh_idx = $tree_log_mesh,
+          .shader_idx = 0,
+          .texture_idx = 6,
+          .remodel = 1,
+        },
+        .physics_actor = {
+          0
+        },
+        .transform = {
+          .pos   = temp.transform.pos,
+          .rot   = (vec3){ 0 , rot , 0 },
+          .scale = (vec3){ sc , sc , sc }
+        }
+      };
       add_entity(simulation, &temp);
     }
   }
-    for(int i=0;i<6;i++){
-    for(int j=0;j<20;j++){
+  for(int i=0;i<17;i++){
+    for(int j=0;j<25;j++){
+      float x = -115-(15*i)+((rand() % 11) - 5);
+      float z = -355+(15*j)+((rand() % 11) - 5);
+
+      float sc = 0.8f + ((float)rand() / (float)RAND_MAX) * (1.2f - 0.8f);
+      float rot = ((float)rand() / RAND_MAX) * (2.0f * M_PI);
+
       temp = (entity_t){
         .render_data = {
-          .mesh_idx = $tree_mesh,
+          .mesh_idx = $tree_top_mesh,
           .shader_idx = 0,
           .texture_idx = 5,
           .remodel = 1,
@@ -291,15 +344,135 @@ void create_entities(
           0
         },
         .transform = {
-          .pos   = (vec3){-20-(5*i)+((rand() % 11) - 5) , 0 , +65+(5*j)+((rand() % 11) - 5)},
-          .rot   = (vec3){ 0 , 0 , 0 },
-          .scale = (vec3){ .2f , .2f , .2f }
+          .pos   = (vec3){x , 0 , z},
+          .rot   = (vec3){ 0 , rot , 0 },
+          .scale = (vec3){ sc , sc , sc }
+        }
+      };
+      temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) -1.5f;
+      add_entity(simulation, &temp);
+      temp = (entity_t){
+        .render_data = {
+          .mesh_idx = $tree_log_mesh,
+          .shader_idx = 0,
+          .texture_idx = 6,
+          .remodel = 1,
+        },
+        .physics_actor = {
+          0
+        },
+        .transform = {
+          .pos   = temp.transform.pos,
+          .rot   = (vec3){ 0 , rot , 0 },
+          .scale = (vec3){ sc , sc , sc }
         }
       };
       temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]);
       add_entity(simulation, &temp);
     }
   }
+  // mountain
+
+  for(int i=0;i<16;i++) {
+    for(int j=0;j<3;j++) {
+      float x = ((rand() % 50) - 25);
+      float z = ((rand() % 50) - 25);
+
+      float sc = 0.8f + ((float)rand() / (float)RAND_MAX) * (2.5f - 1.0f);
+      float rot = ((float)rand() / RAND_MAX) * (2.0f * M_PI);
+      temp = (entity_t){
+        .render_data = {
+          .mesh_idx = $mountain_mesh,
+          .shader_idx = 0,
+          .texture_idx = 7,
+          .remodel = 1,
+        },
+        .physics_actor = {
+          0
+        },
+        .transform = {
+          .pos   = (vec3){i*70-480+x , 0 , j*70-480+z},
+          .rot   = (vec3){ 0 , rot , 0 },
+          .scale = (vec3){ 1 , sc , 1 }
+        }
+      };
+      temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) -10.0f;
+      add_entity(simulation, &temp);
+
+      x = ((rand() % 50) - 25);
+      z = ((rand() % 50) - 25);
+
+      sc = 0.8f + ((float)rand() / (float)RAND_MAX) * (2.5f - 1.0f);
+      rot = ((float)rand() / RAND_MAX) * (2.0f * M_PI);
+      temp = (entity_t){
+        .render_data = {
+          .mesh_idx = $mountain_mesh,
+          .shader_idx = 0,
+          .texture_idx = 7,
+          .remodel = 1,
+        },
+        .physics_actor = {
+          0
+        },
+        .transform = {
+          .pos   = (vec3){i*70-480+x , 0 , j*70+380+z},
+          .rot   = (vec3){ 0 , rot , 0 },
+          .scale = (vec3){ 1 , sc , 1 }
+        }
+      };
+      temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) -10.0f;
+      add_entity(simulation, &temp);
+
+      x = ((rand() % 50) - 25);
+      z = ((rand() % 50) - 25);
+
+      sc = 0.8f + ((float)rand() / (float)RAND_MAX) * (2.5f - 1.0f);
+      rot = ((float)rand() / RAND_MAX) * (2.0f * M_PI);
+      temp = (entity_t){
+        .render_data = {
+          .mesh_idx = $mountain_mesh,
+          .shader_idx = 0,
+          .texture_idx = 7,
+          .remodel = 1,
+        },
+        .physics_actor = {
+          0
+        },
+        .transform = {
+          .pos   = (vec3){j*70-480+x , 0 , i*70-480+z},
+          .rot   = (vec3){ 0 , rot , 0 },
+          .scale = (vec3){ 1 , sc , 1 }
+        }
+      };
+      temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) -10.0f;
+      add_entity(simulation, &temp);
+
+      x = ((rand() % 50) - 25);
+      z = ((rand() % 50) - 25);
+
+      sc = 0.8f + ((float)rand() / (float)RAND_MAX) * (2.5f - 1.0f);
+      rot = ((float)rand() / RAND_MAX) * (2.0f * M_PI);
+      temp = (entity_t){
+        .render_data = {
+          .mesh_idx = $mountain_mesh,
+          .shader_idx = 0,
+          .texture_idx = 7,
+          .remodel = 1,
+        },
+        .physics_actor = {
+          0
+        },
+        .transform = {
+          .pos   = (vec3){j*70+380+x , 0 , i*70-480+z},
+          .rot   = (vec3){ 0 , rot , 0 },
+          .scale = (vec3){ 1 , sc , 1 }
+        }
+      };
+      temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) -10.0f;
+      add_entity(simulation, &temp);
+    }
+  }
+
 
 }
 
@@ -335,7 +508,13 @@ void create_player(simulation_t *simulation) {
         .mass = 80,
         .max_force = 2470
       },
-      .render_data = {0}
+      .render_data = {
+        .remodel = true,
+        .shader_idx = 0,
+        .texture_idx = 6,
+        .mesh_idx = 3,
+        .hidden = true,
+      }
     },
     .camera = {
       .pos        = (vec3){ 0 , 0 , 0 },

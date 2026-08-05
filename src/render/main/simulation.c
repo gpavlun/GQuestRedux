@@ -16,5 +16,6 @@ void rotate_object(entity_t *object) {
 }
 
 void step_simulation(simulation_t *simulation) {
-  rotate_object(&simulation->entity_table[0]);
+  rotate_object(&simulation->entity_table[1]);
+  simulation->player_table[0].entity.render_data.remodel = true;
 }
