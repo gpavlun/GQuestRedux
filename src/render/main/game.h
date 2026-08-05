@@ -89,6 +89,9 @@ enum mesh_table_index_e {
 
 def physics_actor_t{
 
+  float walkspeed;
+  float strafespeed;
+
   float max_force;
   float mass;
   float normal_vel;

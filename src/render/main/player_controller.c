@@ -12,6 +12,10 @@ void player_controller(player_t *player, inputs_t key, simulation_t *simulation)
   float input_x = 0, input_y = 0, input_z = 0;
   static u64 last_jump;
 
+  float walkspeed = player->entity.physics_actor.walkspeed;
+  float strafespeed = player->entity.physics_actor.strafespeed;
+
+
   if(key.w) input_z -= 1;
   if(key.s) input_z += 1;
   if(key.a) input_x -= 1;
@@ -30,7 +34,7 @@ void player_controller(player_t *player, inputs_t key, simulation_t *simulation)
 
     float height = terrain_height(player->entity.transform.pos, &simulation->terrain_table[0]);
     if(!player->flying && player->entity.transform.pos.y<=(height + 0.1f)){
-      player->entity.physics_actor.vel.y = $walkspeed*.8f;
+      player->entity.physics_actor.vel.y = walkspeed*.8f;
     }
 
     last_jump = now;
@@ -45,9 +49,9 @@ void player_controller(player_t *player, inputs_t key, simulation_t *simulation)
       input_y /= len;
       input_z /= len;
     }
-    player->entity.physics_actor.desired_velocity.x = input_x * $walkspeed * 2;
-    player->entity.physics_actor.desired_velocity.y = input_y * $walkspeed * 2;
-    player->entity.physics_actor.desired_velocity.z = input_z * $walkspeed * 2;
+    player->entity.physics_actor.desired_velocity.x = input_x * walkspeed * 2;
+    player->entity.physics_actor.desired_velocity.y = input_y * walkspeed * 2;
+    player->entity.physics_actor.desired_velocity.z = input_z * walkspeed * 2;
 
   }else{
 
@@ -56,8 +60,8 @@ void player_controller(player_t *player, inputs_t key, simulation_t *simulation)
       input_x /= len;
       input_z /= len;
     }
-    player->entity.physics_actor.desired_velocity.x = input_x * $strafespeed;
-    player->entity.physics_actor.desired_velocity.z = input_z *  (input_z<0.0f ? $walkspeed : $strafespeed);
+    player->entity.physics_actor.desired_velocity.x = input_x * strafespeed;
+    player->entity.physics_actor.desired_velocity.z = input_z *  (input_z<0.0f ? walkspeed : strafespeed);
 
   }
 }
@@ -114,6 +118,16 @@ void event_handler(
             if(!simulation->player_table[0].flying && !event.key.repeat){
               controller->inputs.space = 1;
             }
+          $ case SDLK_j:
+            simulation->player_table[0].camera.rot.z += 0.1f;
+
+            if(simulation->player_table[0].camera.rot.z >  1.55)
+              simulation->player_table[0].camera.rot.z  = 1.55f;
+          $ case SDLK_k:
+            simulation->player_table[0].camera.rot.z -= 0.1f;
+
+            if(simulation->player_table[0].camera.rot.z < -1.55)
+              simulation->player_table[0].camera.rot.z = -1.55f;
           $ endcase
         }
 
@@ -135,14 +149,7 @@ void event_handler(
       $ case SDL_MOUSEWHEEL:
 
         if(controller->mousemode){
-
-          simulation->player_table[0].camera.rot.z -= (float)event.wheel.y * 0.1f;
-
-          if(simulation->player_table[0].camera.rot.z >  1.55)
-            simulation->player_table[0].camera.rot.z  = 1.55f;
-          else
-          if(simulation->player_table[0].camera.rot.z < -1.55)
-            simulation->player_table[0].camera.rot.z = -1.55f;
+          simulation->player_table[0].entity.physics_actor.walkspeed += event.wheel.y;
         }
 
       /***** when mouse button is released *****/

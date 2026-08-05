@@ -449,7 +449,7 @@ void project_camera(gui_data_t *gui, camera_t *camera) {
   camera->projection = mat4_perspective(
       70.0f,        // field of view
       (float)gui->window.dim.w/(float)gui->window.dim.h, // aspect ratio
-      0.1f,         // near plane
+      0.01f,         // near plane
       1000.0f       // far plane
   );
 }

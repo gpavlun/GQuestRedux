@@ -171,7 +171,6 @@ void movement_physics(entity_t *actor, logical_chunk_t *terrain, float dt){
 
     float into_surface = vec3_dot(desired_world, normal);
 
-
     desired_world = vec3_sub(desired_world, vec3_scale(normal, into_surface));
 
 

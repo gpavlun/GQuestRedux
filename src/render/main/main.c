@@ -341,7 +341,9 @@ void create_player(simulation_t *simulation) {
       },
       .physics_actor = {
         .mass = 80,
-        .max_force = 2470
+        .max_force = 2470,
+        .walkspeed = 6,
+        .strafespeed = 6/1.5
       },
       .render_data = {0}
     },
