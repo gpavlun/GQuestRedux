@@ -58,13 +58,13 @@ target_link_libraries(render
 )
 
 target_compile_options(render PRIVATE
-        -fsanitize=address
+        -fsanitize=address,undefined
         -fno-omit-frame-pointer
         -g
 )
 
 target_link_options(render PRIVATE
-        -fsanitize=address
+        -fsanitize=address,undefined
 )
 
 set_target_properties(render PROPERTIES

@@ -12,7 +12,8 @@ mesh_t obj_from_file(char *filename) {
 
   FILE *fp = fopen(filename, "r");
   if (!fp){
-    logging.error(404, "obj file not found");
+    logging.warn("obj file not found");
+    goto missing;
   }
 
   char line[512];
@@ -64,4 +65,8 @@ mesh_t obj_from_file(char *filename) {
   );
 
   return mesh;
+
+  missing:
+  return obj_from_file("./assets/obj_models/placeholder.obj");
+
 }

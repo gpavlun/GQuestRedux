@@ -15,10 +15,18 @@
 #include "../main/simulation.h"
 #include "../physics/physics.h"
 
+__attribute__((constructor))
+static void my_startup(void){  
+  setenv("ASAN_OPTIONS", "detect_leaks=0", 0);
+  setenv("LSAN_OPTIONS", "detect_leaks=0", 0);
+}
+
 void cleanup(engine_t *engine) {
   engine->modes.running = 0;
 
-  pthread_join(engine->console_thread, NULL);
+  if(engine->modes.console){
+    pthread_join(engine->console_thread, NULL);
+  }
   pthread_join(engine->render_thread, NULL);
 
   SDL_GL_MakeCurrent(engine->gui.window.interface, NULL);
@@ -506,7 +514,9 @@ void create_player(simulation_t *simulation) {
       },
       .physics_actor = {
         .mass = 80,
-        .max_force = 2470
+        .max_force = 2470,
+        .walkspeed = 6,
+        .strafespeed = 6/1.5
       },
       .render_data = {
         .remodel = true,
@@ -540,11 +550,9 @@ int main(int argc, char **argv){
   engine.gui.window.dim.w = 800;
   engine.gui.window.dim.h = 600;
 
-  
-
   if(argc > 1){
     for(int a = 1; a < argc; a++){
-      if(!strcmp(argv[a], "--width")){
+      if(!strcmp(argv[a], "--width") || !strcmp(argv[a], "-ww")){
         if(a + 1 < argc){
           char *end;
           errno = 0;
@@ -554,7 +562,7 @@ int main(int argc, char **argv){
             engine.gui.window.dim.w = (size_t)val;
           }
         }
-      }else if(!strcmp(argv[a], "--height")){
+      }else if(!strcmp(argv[a], "--height") || !strcmp(argv[a], "-wh")){
         if(a + 1 < argc){
           char *end;
           errno = 0;
@@ -564,13 +572,22 @@ int main(int argc, char **argv){
             engine.gui.window.dim.h  = (size_t)val;
           }
         }
+      }else if(!strcmp(argv[a], "--console") || !strcmp(argv[a], "-c")){
+        engine.modes.console=true;
+      }else if(!strcmp(argv[a], "--logpath") || !strcmp(argv[a], "-lp")){
+        if(a + 1 < argc){
+          logging.path(argv[a + 1]);
+        }
+      }else if(!strcmp(argv[a], "--help") || !strcmp(argv[a], "-h")){
+        system("cat ./docs/cli_args.txt");
+        exit(0);
       }
     }
   }
 
 
   
-  pthread_barrier_init(&engine.barrier, NULL, 3);
+  pthread_barrier_init(&engine.barrier, NULL, 2 + engine.modes.console);
 
   logging.info("initializing windowing...");
   init_sdl_engine(&engine.gui);
@@ -607,9 +624,12 @@ int main(int argc, char **argv){
   init_renderer(&engine);
   logging.info("render thread started");
 
-  logging.info("starting console thread");
-  init_console(&engine);
-  logging.info("console thread started");
+  if(engine.modes.console){
+    logging.info("starting console thread");
+    init_console(&engine);
+    logging.info("console thread started");
+  }
+
 
   logging.info("initializing controller");
   init_controller(&engine.controller);

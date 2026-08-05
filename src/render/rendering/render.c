@@ -182,13 +182,13 @@ void gpu_upload_mesh(mesh_t *mesh){
   mesh->tri = NULL;
   mesh->vert = NULL;
 }
-#ifndef GL_TEXTURE_MAX_ANISOTROPY_EXT
-#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
-#endif
+// #ifndef GL_TEXTURE_MAX_ANISOTROPY_EXT
+// #define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+// #endif
 
-#ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
-#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
-#endif
+// #ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
+// #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+// #endif
 /***** load_texture *****/
 void gpu_upload_texture(texture_t *texture) {
   GLuint handle;
@@ -213,13 +213,13 @@ void gpu_upload_texture(texture_t *texture) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-  float maxAniso = 0.0f;
+  // float maxAniso = 0.0f;
 
-  glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+  // glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
 
-  glTexParameterf(GL_TEXTURE_2D,
-                  GL_TEXTURE_MAX_ANISOTROPY_EXT,
-                  maxAniso);
+  // glTexParameterf(GL_TEXTURE_2D,
+  //                 GL_TEXTURE_MAX_ANISOTROPY_EXT,
+  //                 maxAniso);
 
   texture->handle = handle;
   free(texture->pixels);
@@ -449,7 +449,7 @@ void project_camera(gui_data_t *gui, camera_t *camera) {
   camera->projection = mat4_perspective(
       70.0f,        // field of view
       (float)gui->window.dim.w/(float)gui->window.dim.h, // aspect ratio
-      0.1f,         // near plane
+      0.01f,         // near plane
       1000.0f       // far plane
   );
 }

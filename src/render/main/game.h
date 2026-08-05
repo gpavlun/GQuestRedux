@@ -15,7 +15,7 @@ def boolean_struct{
   u8 running: 1;
   u8 dynamic: 1;
   u8 wireframe:1;
-
+  u8 console: 1;
 }boolean_t;
 
 def inputs_t{
@@ -92,6 +92,9 @@ enum mesh_table_index_e {
 
 
 def physics_actor_t{
+
+  float walkspeed;
+  float strafespeed;
 
   float max_force;
   float mass;
