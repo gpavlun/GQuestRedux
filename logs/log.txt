@@ -1,0 +1,42 @@
+[11:46:00] [32mINFO:[0m	> initializing windowing...
+[11:46:00] [32mINFO:[0m	> windowing initialized
+[11:46:00] [32mINFO:[0m	> generating meshes...
+[11:46:00] [32mINFO:[0m	> meshes generated
+[11:46:00] [34mDATA:[0m	> mesh count: 9
+[11:46:00] [32mINFO:[0m	> generating shaders...
+[11:46:00] [32mINFO:[0m	> shaders generated
+[11:46:00] [34mDATA:[0m	> shader count: 1
+[11:46:00] [32mINFO:[0m	> generating textures...
+[11:46:00] [32mINFO:[0m	> textures generated
+[11:46:00] [34mDATA:[0m	> texture count: 6
+[11:46:00] [32mINFO:[0m	> generating terrain...
+[11:46:01] [32mINFO:[0m	> terrain generated
+[11:46:01] [32mINFO:[0m	> creating entities...
+[11:46:01] [32mINFO:[0m	> entities created
+[11:46:01] [32mINFO:[0m	> creating players...
+[11:46:01] [32mINFO:[0m	> player created
+[11:46:01] [32mINFO:[0m	> starting render thread
+[11:46:01] [32mINFO:[0m	> render thread started
+[11:46:01] [32mINFO:[0m	> starting console thread
+[11:46:01] [32mINFO:[0m	> console thread started
+[11:46:01] [32mINFO:[0m	> initializing controller
+[11:46:01] [32mINFO:[0m	> controller initialized
+[11:46:01] [32mINFO:[0m	> main waiting at barrier
+[11:46:01] [32mINFO:[0m	> render_thread: starting
+[11:46:01] [32mINFO:[0m	> render_thread: caches created
+[11:46:01] [32mINFO:[0m	> render_thread: creating context...
+[11:46:01] [32mINFO:[0m	> console_thread: console waiting
+[11:46:01] [32mINFO:[0m	> render_thread: context created
+[11:46:01] [32mINFO:[0m	> render_thread: creating meshes...
+[11:46:01] [32mINFO:[0m	> render_thread: meshes created
+[11:46:01] [32mINFO:[0m	> render_thread: creating textures...
+[11:46:01] [32mINFO:[0m	> render_thread: textures created
+[11:46:01] [32mINFO:[0m	> render_thread: creating shaders...
+[11:46:01] [32mINFO:[0m	> render_thread: shaders created
+[11:46:01] [32mINFO:[0m	> render_thread: render init finished, waiting at barrier
+[11:46:01] [32mINFO:[0m	> render_thread: render loop starting
+[11:46:01] [32mINFO:[0m	> === STARTING ENGINE LOOP ===
+[11:46:01] [32mINFO:[0m	> console_thread: console started
+[11:46:01] [34mDATA:[0m	> render entities: 249
+[11:46:01] [34mDATA:[0m	> render frame 1
+[11:46:11] [32mINFO:[0m	> === ENGINE LOOP FINISHED ===

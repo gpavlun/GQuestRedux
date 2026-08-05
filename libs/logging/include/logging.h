@@ -10,13 +10,14 @@
 #include <string.h>
 #include <stdbool.h>
 
-void info(char *message);
-void data(char *message, int number);
-void error(int number, char *message);
+void gl_info(char *message);
+void gl_data(char *message, int number);
+void gl_error(int number, char *message);
 char *indent(const char *str);
-void detail(const char *fmt, ...);
-void assert(bool condition, char *message);
-void warn(char *message);
+void gl_detail(const char *fmt, ...);
+void gl_assert(bool condition, char *message);
+void gl_warn(char *message);
+void gl_set_path(char *path);
 
 typedef struct logging{
     void (*info)(char *message);
@@ -25,6 +26,7 @@ typedef struct logging{
     void (*error)(int number, char *message);
     void (*detail)(const char *, ...);
     void (*assert)(bool condition, char *message);
+    void (*path)(char *path);
 } logging_t;
 
 extern logging_t logging;

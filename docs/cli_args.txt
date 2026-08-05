@@ -1,0 +1,15 @@
+As of Aug 5 2026, dev build has the following
+
+Formal:
+    --help              Prints this menu and exits
+    --width <number>    Sets the width of the window.
+    --height <number>   Sets the height of the window.
+    --console           Enables the terminal console.
+    --logpath <path>    Pipes the logs to a file
+
+Short:
+    --help      ->  -h
+    --width     ->  -ww
+    --height    ->  -wh
+    --console   ->  -c
+    --logpath   ->  -lp

@@ -1,20 +1,44 @@
 #include "logging.h"
 
 logging_t logging = {
-    .info = info,
-    .data = data,
-    .warn = warn,
-    .error = error,
-    .detail = detail,
-    .assert = assert
+    .info = gl_info,
+    .data = gl_data,
+    .warn = gl_warn,
+    .error = gl_error,
+    .detail = gl_detail,
+    .assert = gl_assert,
+    .path = gl_set_path
 };
+FILE *glob_gl_file;
+
+void gl_exit_des(void){
+    if(glob_gl_file!=stdout){
+        fclose(glob_gl_file);
+    }
+}
 
 
-void assert(bool condition, char *message){
+__attribute__((constructor))
+void gl_start_con(void){
+    glob_gl_file = stdout;
+    atexit(gl_exit_des);
+}
+
+
+void gl_set_path(char *path){
+    FILE *file = fopen(path,"w+");
+    if(!file) return;
+    if(glob_gl_file!=stdout){
+        fclose(glob_gl_file);
+    }
+    glob_gl_file = file;
+}
+
+void gl_assert(bool condition, char *message){
     if(!condition){
         time_t now = time(NULL);
         struct tm *t = localtime(&now);
-        printf("[%02d:%02d:%02d] \x1b[31mASSERT!\x1b[0m\t> %s\n",
+        fprintf(glob_gl_file,"[%02d:%02d:%02d] \x1b[31mASSERT!\x1b[0m\t> %s\n",
             t->tm_hour,
             t->tm_min,
             t->tm_sec,
@@ -24,29 +48,29 @@ void assert(bool condition, char *message){
     }
 }
 
-void info(char *message){
+void gl_info(char *message){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
-    printf("[%02d:%02d:%02d] \x1b[32mINFO:\x1b[0m\t> %s\n",
+    fprintf(glob_gl_file,"[%02d:%02d:%02d] \x1b[32mINFO:\x1b[0m\t> %s\n",
         t->tm_hour,
         t->tm_min,
         t->tm_sec,
         message);
 }
-void data(char *message, int number){
+void gl_data(char *message, int number){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
-    printf("[%02d:%02d:%02d] \x1b[34mDATA:\x1b[0m\t> %s %d\n",
+    fprintf(glob_gl_file,"[%02d:%02d:%02d] \x1b[34mDATA:\x1b[0m\t> %s %d\n",
         t->tm_hour,
         t->tm_min,
         t->tm_sec,
         message, 
         number);
 }
-void error(int number, char *message){
+void gl_error(int number, char *message){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
-    printf("[%02d:%02d:%02d] \x1b[31mERROR CODE %d:\x1b[0m %s\n",
+    fprintf(glob_gl_file,"[%02d:%02d:%02d] \x1b[31mERROR CODE %d:\x1b[0m\t> %s\n",
         t->tm_hour,
         t->tm_min,
         t->tm_sec,
@@ -54,10 +78,10 @@ void error(int number, char *message){
         message);
     exit(number);
 }
-void warn(char *message){
+void gl_warn(char *message){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
-    printf("[%02d:%02d:%02d] \x1b[38;5;208mWARN:\x1b[0m %s\n",
+    fprintf(glob_gl_file,"[%02d:%02d:%02d] \x1b[38;5;208mWARN:\x1b[0m\t> %s\n",
         t->tm_hour,
         t->tm_min,
         t->tm_sec,
@@ -92,7 +116,7 @@ char *indent(const char *str){
     *dst = '\0';
     return result;
 }
-void detail(const char *fmt, ...){
+void gl_detail(const char *fmt, ...){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
 
@@ -119,10 +143,12 @@ void detail(const char *fmt, ...){
     char *formatted = indent(message);
     free(message);
 
-    printf("[%02d:%02d:%02d] \x1b[33mDETAIL:\x1b[0m\t> %s\n",
+    fprintf(glob_gl_file,"[%02d:%02d:%02d] \x1b[33mDETAIL:\x1b[0m\t> %s\n",
         t->tm_hour,
         t->tm_min,
         t->tm_sec, 
         formatted);
+    
+    free(formatted);
 }
 

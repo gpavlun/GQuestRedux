@@ -3,27 +3,28 @@
 #include "logging.h"
 
 texture_t *read_bmp_file(char *path) {
+
   if (!path) {
     logging.warn("bmp image path is not set!");
-    return NULL;
+    goto missing;
   }
   FILE *bmp_file = fopen(path, "rb");
   if (!bmp_file){
     logging.warn("could not read bmp file!");
-    return NULL;
+    goto missing;
   }
 
   bmp_header_t header;
   if (!fread(&header, sizeof(bmp_header_t), 1, bmp_file)) {
     logging.warn("bmp file is invalid!");
-    return NULL;
+    goto missing;
   }
 
   u32 dib_header_size;
   fread(&dib_header_size, sizeof(u8), 4, bmp_file);
   if (dib_header_size<40) {
     logging.warn("unsupported bmp (40 minimum)!");
-    return NULL;
+    goto missing;
   }
   fseek( bmp_file, -4, SEEK_CUR);
 
@@ -32,16 +33,17 @@ texture_t *read_bmp_file(char *path) {
 
   if (bitmap_header.planes != 1){
     logging.warn("unsupported bmp planes (cannot be 1)!");
-    return NULL;
+    goto missing;
   }
   if (bitmap_header.compression != 0){
     logging.warn("unsupported bmp compression (must be 0)!");
-    return NULL;
+    goto missing;
   }
   if (bitmap_header.bitsPerPixel != 24){
     logging.warn("unsupported bmp pixel resolution (24 required)!");
-    return NULL;
+    goto missing;
   }
+
 
   fseek(bmp_file, header.pixelOffset, SEEK_SET);
 
@@ -94,4 +96,7 @@ texture_t *read_bmp_file(char *path) {
   fclose(bmp_file);
 
   return texture;
+
+  missing:
+  return read_bmp_file("./assets/bmp_textures/missing.bmp");
 }
