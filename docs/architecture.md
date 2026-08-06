@@ -8,41 +8,47 @@
 │   │   ├── brown1.bmp  
 │   │   ├── grass2.bmp  
 │   │   ├── grass3.bmp  
-│   │   ├── grass3.jpeg  
+│   │   ├── grass3.png  
+│   │   ├── grass4.bmp  
 │   │   ├── grass.bmp  
 │   │   ├── lava.bmp  
+│   │   ├── missing.bmp  
+│   │   ├── missing.jpeg  
 │   │   ├── needles.bmp  
-│   │   ├── needles.jpeg  
 │   │   ├── peat1.bmp  
 │   │   ├── planks1.bmp  
 │   │   ├── rock1.bmp  
 │   │   ├── rockycoast.bmp  
 │   │   ├── shingles1.bmp  
 │   │   ├── stone1.bmp  
+│   │   ├── stone2.bmp  
+│   │   ├── stone2.jpeg  
 │   │   └── volcano.bmp  
-│   ├── compressed.zip  
 │   └── obj_models  
 │       ├── barad_dur.obj  
 │       ├── castle.obj  
-│       ├── cube  
-│       │   └── obj.mtl  
 │       ├── cube.obj  
 │       ├── eye.obj  
-│       ├── placeholder (Copy).obj  
+│       ├── horse.obj  
+│       ├── mountain.obj  
+│       ├── placeholder.obj  
 │       ├── player.obj  
+│       ├── pupil.obj  
 │       ├── roofs.obj  
 │       ├── tinker.obj  
 │       ├── tower_body.obj  
 │       ├── tower_roof.obj  
-│       ├── tree  
-│       │   └── obj.mtl  
-│       └── tree.obj  
+│       ├── tree_log.obj  
+│       ├── tree.obj  
+│       └── tree_top.obj  
 ├── CMakeLists.txt  
 ├── devtmux.conf  
 ├── docs  
 │   ├── ai_summary.txt  
 │   ├── arch_gen.sh  
 │   ├── architecture.md  
+│   ├── cli_args.txt  
+│   ├── conventions.txt  
 │   ├── README.md  
 │   └── rending formulas.md  
 ├── first-time-startup.sh  
@@ -95,6 +101,9 @@
 │       ├── README.md  
 │       └── src  
 │           └── oop.c  
+├── llog.txt  
+├── logs  
+│   └── log.txt  
 ├── scripts  
 │   ├── build-boot.sh  
 │   ├── build-editor.sh  
@@ -161,6 +170,13 @@
 │       │   ├── matrix.h  
 │       │   ├── vector.c  
 │       │   └── vector.h  
+│       ├── memory  
+│       │   ├── allocation.c  
+│       │   ├── logs  
+│       │   │   ├── alloc_08-05_09h12m58s.log  
+│       │   │   ├── alloc_08-05_09h13m00s.log  
+│       │   │   └── alloc_08-05_09h13m02s.log  
+│       │   └── test  
 │       ├── physics  
 │       │   ├── physics.c  
 │       │   └── physics.h  
@@ -190,11 +206,11 @@
     ├── _1_-1_.ck  
     └── _1_1_.ck  
   
-41 directories, 149 files  
+42 directories, 164 files  
   
 ## Lines of code by file:  
-    32 ../libs/logging/include/logging.h  
-   128 ../libs/logging/src/logging.c  
+    34 ../libs/logging/include/logging.h  
+   154 ../libs/logging/src/logging.c  
     84 ../libs/gio/include/gio.h  
     33 ../libs/gio/src/cli_input.c  
   3611 ../libs/glad/include/glad/glad.h  
@@ -226,37 +242,38 @@
    350 ../src/game/physics.c  
     13 ../src/game/terminal_interface.h  
     36 ../src/render/rendering/lighting.h  
-   668 ../src/render/rendering/render.c  
+   678 ../src/render/rendering/render.c  
    127 ../src/render/rendering/render.h  
      9 ../src/render/rendering/filehelper.h  
     79 ../src/render/rendering/lighting.c  
-    66 ../src/render/rendering/obj_parser.c  
+    71 ../src/render/rendering/obj_parser.c  
     24 ../src/render/rendering/filehelper.c  
     15 ../src/render/rendering/obj_parser.h  
-    35 ../src/render/generation/generation.h  
+    37 ../src/render/generation/generation.h  
     97 ../src/render/generation/terrain_generation.c  
-   238 ../src/render/generation/mesh_generation.c  
+   259 ../src/render/generation/mesh_generation.c  
     29 ../src/render/generation/shader_generation.c  
-    41 ../src/render/generation/texture_generation.c  
-    95 ../src/render/bmp_parser/bmp_parser.c  
+    56 ../src/render/generation/texture_generation.c  
+    76 ../src/render/memory/allocation.c  
+   102 ../src/render/bmp_parser/bmp_parser.c  
     43 ../src/render/bmp_parser/bmp_parser.h  
     61 ../src/render/sdl_windowing/sdl_ops.c  
     61 ../src/render/sdl_windowing/sdl_ops.h  
     18 ../src/render/main/player_controller.h  
-   172 ../src/render/main/player_controller.c  
+   212 ../src/render/main/player_controller.c  
     31 ../src/render/main/typing.h  
-   454 ../src/render/main/main.c  
+   700 ../src/render/main/main.c  
     14 ../src/render/main/simulation.h  
-   184 ../src/render/main/game.h  
-    19 ../src/render/main/simulation.c  
+   194 ../src/render/main/game.h  
+    20 ../src/render/main/simulation.c  
     74 ../src/render/math/vector.h  
      2 ../src/render/math/vector.c  
     38 ../src/render/math/matrix.h  
    152 ../src/render/math/matrix.c  
-   118 ../src/render/tui_panel/terminal_interface.c  
+   117 ../src/render/tui_panel/terminal_interface.c  
     11 ../src/render/tui_panel/terminal_interface.h  
     19 ../src/render/physics/physics.h  
-   291 ../src/render/physics/physics.c  
+   295 ../src/render/physics/physics.c  
    162 ../src/editor/chunk_operations.c  
     89 ../src/editor/editor_menu.c  
    122 ../src/editor/editor.h  
@@ -265,4 +282,4 @@
     95 ../src/editor/editor_window.c  
     64 ../src/editor/rendering_ops.c  
    104 ../src/editor/legacy_functions.c  
- 16801 total  
+ 17265 total  
