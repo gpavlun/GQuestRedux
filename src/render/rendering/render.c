@@ -518,7 +518,10 @@ void render_loop(
   static uint64_t frame = 0;
   logging.data("render entities:", simulation->nentities);
   size_t count;
+
+  double fps_target = 1.0 / 128.0; // 60 FPS
   while(modes->running){
+    u64 frame_start = SDL_GetPerformanceCounter();
 
     if ((frame++ % 300) == 0) {
       logging.data("render frame", frame);
@@ -591,6 +594,16 @@ void render_loop(
     gl_error_check();
 
     SDL_GL_SwapWindow(gui->window.interface);
+
+
+    double frame_time =
+        (double)(SDL_GetPerformanceCounter() - frame_start) /
+        (double)SDL_GetPerformanceFrequency();
+
+    if (frame_time < fps_target) {
+        SDL_Delay((Uint32)((fps_target - frame_time) * 1000.0));
+    }
+
   }
 }
 

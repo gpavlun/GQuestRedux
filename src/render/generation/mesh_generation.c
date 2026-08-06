@@ -251,4 +251,10 @@ void generate_meshes(mesh_table_t *mesh_table) {
   mesh_generate_normals(&temp_mesh);
   mesh_generate_uv(&temp_mesh, 20);
   add_mesh(mesh_table, &temp_mesh);
+
+   // barad dur eye pupil
+  temp_mesh = obj_from_file("./assets/obj_models/pupil.obj");
+  mesh_generate_normals(&temp_mesh);
+  mesh_generate_uv(&temp_mesh, 1);
+  add_mesh(mesh_table, &temp_mesh);
 }

@@ -85,7 +85,8 @@ enum mesh_table_index_e {
   $tree_log_mesh = 9,
   $mountain_mesh = 10,
   $horse_mesh = 11,
-  $terrain_mesh = 12
+  $barad_pupil_mesh = 12,
+  $terrain_mesh = 13
 };
 
 

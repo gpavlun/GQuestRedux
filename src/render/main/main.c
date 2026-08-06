@@ -171,6 +171,25 @@ void create_entities(
   temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) - 2.0f;
   add_entity(simulation, &temp);
 
+    temp = (entity_t){
+    .render_data = {
+      .mesh_idx = $barad_pupil_mesh,
+      .shader_idx = 0,
+      .texture_idx = 3,
+      .remodel = 1,
+    },
+    .physics_actor = {
+      0
+    },
+    .transform = {
+      .pos = temp.transform.pos,
+      .rot = (vec3){ 0 , 0 , 0 },
+      .scale = (vec3){ 1 , 1 , 1 }
+    }
+  };
+  temp.transform.pos.y  = terrain_height(temp.transform.pos, &simulation->terrain_table[0]) - 2.0f;
+  add_entity(simulation, &temp);
+
   // towers
   temp = (entity_t){
     .render_data = {
@@ -650,12 +669,25 @@ int main(int argc, char **argv){
   logging.info("main waiting at barrier");
   pthread_barrier_wait(&engine.barrier);
   logging.info("=== STARTING ENGINE LOOP ===");
+
+
+  double fps_target = 1.0 / 512.0;
+
   while (engine.modes.running) {
+    u64 frame_start = SDL_GetPerformanceCounter();
 
     engine.controller.dt = cycle_time(&event_cycle);
     event_handler(&engine.controller, &engine.simulation, &engine.modes);
     step_simulation(&engine.simulation);
     step_physics(&engine.controller, &engine.simulation);
+
+    double frame_time =
+        (double)(SDL_GetPerformanceCounter() - frame_start) /
+        (double)SDL_GetPerformanceFrequency();
+
+    if (frame_time < fps_target) {
+        SDL_Delay((Uint32)((fps_target - frame_time) * 1000.0));
+    }
 
   }
   logging.info("=== ENGINE LOOP FINISHED ===");
